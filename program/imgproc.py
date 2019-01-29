@@ -2,7 +2,6 @@ import gzip
 import numpy as np
 import cv2
 import pandas as pd
-import matplotlib.pyplot as plt
 import glob
 import pickle
 from scipy.cluster.vq import whiten
@@ -139,15 +138,3 @@ class dataload:
         idx2 = sortedlis[self.ramdom_pickedup[:,1]]
         return idx1, idx2
 
-    def show(self, num):
-        plt.figure()
-        for i in range(num):
-            m =len(self.GP[i])
-            k =0
-            print((i+1),'.pair')
-            for j in self.GP[i]:
-                plt.subplot(1, m, (k+1))
-                plt.title(str(j))
-                plt.imshow(cv2.imread(self.sortedlis[j]))
-                k+=1
-            plt.show()

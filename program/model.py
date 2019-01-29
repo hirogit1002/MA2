@@ -7,9 +7,9 @@ from layerfunctions import*
 
 def AE(x, keep_prob, batch_size, latent_size, Training):
     with tf.variable_scope("AE", reuse=tf.AUTO_REUSE):
-        flat = encoder(x)
+        flat = encoder(x,Training)
         z = fullyConnected(flat, name='z', output_size=latent_size)
-        output = decoder(z)
+        output = decoder(z,Training)
         #loss = tf.reduce_mean(tf.square(tf.subtract(output, x)))
         cross_entropy = -1. * x * tf.log(output + 1e-10) - (1. - x) * tf.log(1. - output + 1e-10)
         loss = tf.reduce_sum(cross_entropy)
@@ -19,24 +19,24 @@ def AE(x, keep_prob, batch_size, latent_size, Training):
 
 def VAE(x, keep_prob, batch_size, latent_size, Training):
     with tf.variable_scope("VAE", reuse=tf.AUTO_REUSE):
-        flat = encoder(x)
+        flat = encoder(x,Training)
         z_mean = fullyConnected(flat, name='z_mean', output_size=latent_size, activation = 'linear')
         z_log_sigma_sq = fullyConnected(flat, name='z_log_sigma_sq', output_size=latent_size, activation = 'linear')
         z = variational(z_mean, z_log_sigma_sq, batch_size, latent_size)
-        output = decoder(z)
+        output = decoder(z,Training)
         loss, optimizer = create_loss_and_optimizer(x, output, z_log_sigma_sq, z_mean)
         loss_ext = loss
         return output, loss, loss_ext, optimizer, z    
     
-def VAE_genarate(x, keep_prob, batch_size, latent_size, Training):
+def VAE_test(x, keep_prob, batch_size, latent_size, Training):
     with tf.variable_scope("VAE", reuse=tf.AUTO_REUSE):
-        flat = encoder(x)
+        flat = encoder(x,Training)
         z_mean = fullyConnected(flat, name='z_mean', output_size=latent_size, activation = 'linear')
         z_log_sigma_sq = fullyConnected(flat, name='z_log_sigma_sq', output_size=latent_size, activation = 'linear')
-        output = decoder(z_mean)
+        output = decoder(z_mean,Training)
         return output
     
-def encoder(x):
+def encoder(x,Training):
     p1 = conv2d_norm(x, 'conv1', [5, 5, 1, 64], Training, [1, 1, 1, 1], 'SAME' ,activation = 'lrelu')
     pool1 = maxpool2d(p1,'pool1',kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
     p2 = conv2d_norm(pool1, 'conv2', [5, 5, 64, 128], Training, [1, 1, 1, 1], 'SAME' ,activation = 'lrelu')
@@ -48,7 +48,7 @@ def encoder(x):
     flat = tf.layers.flatten(pool4)
     return flat
 
-def decoder(z):
+def decoder(z,Training):
     fc1 = fullyConnected(z, name='fc1', output_size=4*4*1024)
     r1 = tf.reshape(fc1, shape=[-1,4,4,1024])
     dc1 = deconv2d_norm(r1, 'deconv1', [3,3], 512,Training, [2, 2], 'relu', 'SAME')
@@ -74,19 +74,4 @@ def vae_loss_cal(inputs, x_reconstr_mean, z_log_sigma_sq, z_mean, epsilon=1e-10)
     latent_loss = -0.5 * tf.reduce_sum(1.0 + z_log_sigma_sq - tf.square(z_mean) - tf.exp(z_log_sigma_sq), 1)
     loss = tf.reduce_mean(reconstr_loss + latent_loss)   # average over batch
     return loss
-
-
-def generate(self, z_mu=None):
-    """ Generate data by sampling from latent space.
-
-    If z_mu is not None, data for this point in latent space is
-    generated. Otherwise, z_mu is drawn from prior in latent 
-    space.        
-    """
-    if z_mu is None:
-        z_mu = np.random.normal(size=self.network_architecture["n_z"])
-    # Note: This maps to mean of distribution, we could alternatively
-    # sample from Gaussian distribution
-    return self.sess.run(self.x_reconstr_mean, 
-                         feed_dict={self.z: z_mu}
 

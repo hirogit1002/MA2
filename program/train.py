@@ -3,7 +3,6 @@ import tensorboard as tb
 import numpy as np
 import cv2
 import pandas as pd
-import matplotlib.pyplot as plt
 import os
 import sys
 import time
@@ -12,14 +11,14 @@ from model import*
 from imgproc import*
 
     
-def train_network(data, test_size, batch_size,init=True,latent_size =100, normalizarion =True,shp=[-1, 64, 64, 1], epochs=5, model_name='AE', logs_path = "./logs"):
-    models = {'AE':AE}
+def train_network(data, test_size, batch_size,init,latent_size, normalizarion,shp, epochs, model_name, logs_path):
+    models = {'AE':AE,'VAE':VAE}
     tf.reset_default_graph()
     perm = np.random.permutation(len(data))
     data = np.array(data[perm])
     train_data = np.array(data[:-test_size])
     test_data = np.array(data[-test_size:])
-    weight_path = '../../weigths/'+model_name + '.ckpt'
+    weight_path = '../weigths/'+model_name + '.ckpt'
     n = len(train_data)
     n_test = len(test_data)
     data_shape = shp
