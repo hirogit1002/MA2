@@ -34,7 +34,9 @@ def VAE_test(x, keep_prob, batch_size, latent_size, Training):
         z_mean = fullyConnected(flat, name='z_mean', output_size=latent_size, activation = 'linear')
         z_log_sigma_sq = fullyConnected(flat, name='z_log_sigma_sq', output_size=latent_size, activation = 'linear')
         output = decoder(z_mean,Training)
-        return output
+        loss, optimizer = create_loss_and_optimizer(x, output, z_log_sigma_sq, z_mean)
+        loss_ext = loss
+        return output, loss, loss_ext, optimizer, z_mean    
     
 def encoder(x,Training):
     p1 = conv2d_norm(x, 'conv1', [5, 5, 1, 64], Training, [1, 1, 1, 1], 'SAME' ,activation = 'lrelu')
