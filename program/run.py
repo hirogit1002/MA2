@@ -20,14 +20,27 @@ paths = np.array(glob.glob("../data/*.jpg"))
 paths_test = np.array(glob.glob("../data_test/*.jpg"))
 Train = args.train
 Test = args.test
+latent = args.latent
+
 if(Train*Test):
     Train = 0
     Test =1 
+    
+if((1-args.init) or Test):
+    print('Load latent setting')
+    latent_name = '../save/'+args.model+'_latent_setting.pickle'
+    with open(latent_name, 'rb') as f:
+        latent = pickle.load(f)
 
 if(Train):
     print('Train start')
-    y_value,out=train_network(paths, args.test_size, args.batch_size,args.init,args.latent, args.norm,[-1, 64, 64, 1], args.epochs, args.model,"../logs")
+    if(args.init):
+        print('Save latent setting')
+        latent_name = '../save/'+args.model+'_latent_setting.pickle'
+        with open(latent_name, 'wb') as f:
+            pickle.dump(latent, f)
+    y_value,out=train_network(paths, args.test_size, args.batch_size,args.init,latent, args.norm,[-1, 64, 64, 1], args.epochs, args.model,"../logs")
 
 if(Test):
     print('Validation start')
-    test_network(paths_test, args.latent, args.norm,[-1, 64, 64, 1], args.model)
+    test_network(paths_test, latent, args.norm,[-1, 64, 64, 1], args.model)
