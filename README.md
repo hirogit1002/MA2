@@ -15,20 +15,25 @@ Deep learning for feature extraction of image data. This program learns how to e
     $ git clone https://github.com/hirogit1002/MA2
 
 ## Quickstart Start
-Move to the main directory
+Move to the main directory.
+
     $ cd /MA2
+    
 ### Training
 Put the training Image data into data folder. Image data has to fulfill following requirement.
+
     -64x64 size
     -JPEG file
     -Croped by only face area
 
 Then move to program folder and run train.py.
+
     $ cd /MA2
     $ python3 run.py
 
 ### Test
 If you have already trained and simply will run the neural network, put the test Image data, which fulfills same requirement as training data, into data-test folder. And then
+
     $ cd /MA2
     $ python3 run.py -v 1
 
