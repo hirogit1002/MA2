@@ -38,12 +38,23 @@ If you have already trained and simply will run the neural network, put the test
     $ python3 run.py -v 1
 
 ## Run.py command line options
-    -'--train','-t', default=1, type=int,help='1: Do train, 0: Do not train')
-    -'--test','-v', default=0, type=int)
-    -'--test_size','-ts', default=10, type=int)
-    -'--batch_size','-b', default=10, type=int)
-    -'--model','-m', default= "AE", type=str)
-    -'--init','-i', default= 1, type=int)
-    -'--norm','-n', default= 1, type=int)
-    -'--latent','-l', default= 100, type=int)
-    -'--epochs','-e', default= 100, type=int)
+    -('--train','-t', default=1, type=int, help='1: Do train, 0: Do not train')
+    -('--test','-v', default=0, type=int, help='1: Do validate, 0: Do not validate')
+    -('--test_size','-ts', default=10, type=int, help='Number of test data during training')
+    -('--batch_size','-b', default=10, type=int, help='Setting batch size')
+    -('--model','-m', default= "AE", type=str, help='Choosing model type. AE:Autoencoder, VAE: Variational Autoencoder')
+    -('--init','-i', default= 1, type=int, help='1: init weight, 0: do not weight')
+    -('--norm','-n', default= 1, type=int, help='1: normalize data, 0: do not normalize data')
+    -('--latent','-l', default= 100, type=int, help='Size of latent variable(Dimension of feature vector)')
+    -('--epochs','-e', default= 100, type=int, help='Choose how many epochs)')
+    
+## Folders description
+In the MA2 folder there are following 6 folders.
+
+    -data: User puts traing data into this folder
+    -data_test: User puts test data into this folder
+    -logs: Log files for tensorboard will be contained 
+    -program: Main programs are here
+    -save: Reconstructed image and latent variables will be saved as .pickle file after running the Test.
+    -weights: Trained weights are saved here.
+    
