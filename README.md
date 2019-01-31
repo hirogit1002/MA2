@@ -24,7 +24,7 @@ Put the training Image data into data folder. Image data has to fulfill followin
 
     -64x64 size
     -JPEG file
-    -Croped by only face area
+    -Cropped by only face area
 
 Then move to program folder and run train.py.
 
