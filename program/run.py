@@ -5,8 +5,6 @@ from test import*
 
 
 parser = argparse.ArgumentParser(description='Running')
-parser.add_argument('--path','-d', default="../data/*.jpg", type=str)
-parser.add_argument('--path_test','-td', default="../data_test/*.jpg", type=str)
 parser.add_argument('--train','-t', default=1, type=int)
 parser.add_argument('--test','-v', default=0, type=int)
 parser.add_argument('--test_size','-ts', default=10, type=int)
@@ -18,13 +16,18 @@ parser.add_argument('--latent','-l', default= 100, type=int)
 parser.add_argument('--epochs','-e', default= 100, type=int)
 args = parser.parse_args()
 
-paths = np.array(glob.glob(args.path))
-paths_test = np.array(glob.glob(args.path_test))
+paths = np.array(glob.glob("../data/*.jpg"))
+paths_test = np.array(glob.glob("../data_test/*.jpg"))
+Train = args.train
+Test = args.test
+if(Train*Test):
+    Train = 0
+    Test =1 
 
-if(args.train):
+if(Train):
     print('Train start')
     y_value,out=train_network(paths, args.test_size, args.batch_size,args.init,args.latent, args.norm,[-1, 64, 64, 1], args.epochs, args.model,"../logs")
 
-if(args.test):
-    print('Test start')
+if(Test):
+    print('Validation start')
     test_network(paths_test, args.latent, args.norm,[-1, 64, 64, 1], args.model)
