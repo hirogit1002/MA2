@@ -3,18 +3,16 @@ Deep learning for feature extraction of image data. This program learns how to e
 
 ## Requirements
     -Python3
-    -numpy
-    -pandas
-    -pickle
-    -scipy
-    -gzip
+    -numpy 1.15.4
+    -pandas 0.23.4
+    -scipy 1.1.0
     -Tensorflow 1.12.0
     -OpenCV 3.4
 
 ## Installation
     $ git clone https://github.com/hirogit1002/MA2
 
-## Quickstart Start
+## Quickstart 
 Move to the main directory.
 
     $ cd /MA2
