@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import glob
 import pickle
-from scipy.cluster.vq import whiten
+#from scipy.cluster.vq import whiten
 
 def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
@@ -61,8 +61,8 @@ def normalization(img_flattten, const=10.):
     norm = (img_flattten-mean)/np.sqrt(var+const)
     return norm, mean, var
 
-def whitning(X):
-    return np.array([whiten(i) for i in X])
+#def whitning(X):
+#    return np.array([whiten(i) for i in X])
 
 
 def preprocess(X, patch_size,sig=False):
