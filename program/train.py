@@ -38,7 +38,7 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion,sh
     val_summary = tf.summary.merge_all(scope='validation')
 
     n_epochs = epochs
-    with tf.Session() as sess:
+    with tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
         if tf.gfile.Exists(logs_path):
             tf.gfile.DeleteRecursively(logs_path) # ./logdirが存在する場合削除
         file_writer = tf.summary.FileWriter(logs_path, sess.graph)
