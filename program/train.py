@@ -28,8 +28,7 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion,sh
     keep_prob = tf.placeholder(tf.float32)
     Batch_size = tf.placeholder(tf.int32)
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
-    with tf.device(device):
-        out, cost_trn, cost_val, optimizer, fv = models[model_name](x, keep_prob, Batch_size, latent_size, Training)
+    out, cost_trn, cost_val, optimizer, fv = models[model_name](x, keep_prob, Batch_size, latent_size, Training)
     with tf.name_scope('training'):
         tf.summary.scalar('loss', cost_trn)
     with tf.name_scope('validation'):
@@ -39,7 +38,7 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion,sh
     val_summary = tf.summary.merge_all(scope='validation')
 
     n_epochs = epochs
-    with tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
+    with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess: #allow_soft_placement=True, 
         if tf.gfile.Exists(logs_path):
             tf.gfile.DeleteRecursively(logs_path) # ./logdirが存在する場合削除
         file_writer = tf.summary.FileWriter(logs_path, sess.graph)
