@@ -31,8 +31,8 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion,sh
     if(device=='none'):
         out, cost_trn, cost_val, optimizer, fv = models[model_name](x, keep_prob, Batch_size, latent_size, Training)
     else:
-        with tf.device(device):
-            out, cost_trn, cost_val, optimizer, fv = models[model_name](x, keep_prob, Batch_size, latent_size, Training)
+        #with tf.device(device):
+        out, cost_trn, cost_val, optimizer, fv = models[model_name](x, keep_prob, Batch_size, latent_size, Training)
             
     print('Model made')
     with tf.name_scope('training'):
