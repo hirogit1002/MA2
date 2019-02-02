@@ -1,6 +1,5 @@
 import gzip
 import numpy as np
-import cv2
 import pandas as pd
 import glob
 import pickle
@@ -8,15 +7,6 @@ from scipy.cluster.vq import whiten
 
 def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
-
-def load_img_patch(path, save_path, k=0, patch_size = 64):
-    imgs = []
-    namelist_raw = glob.glob(path)
-    sortedlist = np.sort(np.array(namelist_raw))
-    for i in sortedlist:
-        img =cv2.cvtColor(cv2.imread(i, 1),cv2.COLOR_BGR2GRAY) 
-        k = img_patch(np.array(img), k, save_path, patch_size)
-    return k
 
 def img_patch_old(img, patch_size):
     patches = []

@@ -1,7 +1,8 @@
 import tensorflow as tf
 import tensorboard as tb 
 import numpy as np
-import cv2
+from PIL import Image, ImageFilter
+#import cv2
 import pandas as pd
 import os
 import sys
@@ -33,8 +34,9 @@ def test_network(data, latent_size, normalizarion =True,shp=[-1, 64, 64, 1], mod
         y_values = []
         zs = []
         for i in data:
-            imgs = np.array([cv2.cvtColor(cv2.imread(i),cv2.COLOR_BGR2GRAY)])
-            imgs = imgs[:,:,:,np.newaxis]
+            imgs = np.array(Image.open(i).convert('L'))
+            #imgs = np.array([cv2.cvtColor(cv2.imread(i),cv2.COLOR_BGR2GRAY)])
+            imgs = imgs[np.newaxis,:,:,np.newaxis]
             if (normalizarion):
                 imgs = imgs/255.
             print('Cost:', cost_val.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:n, Training:False}))

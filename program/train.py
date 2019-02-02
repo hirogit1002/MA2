@@ -1,7 +1,8 @@
 import tensorflow as tf
 import tensorboard as tb 
 import numpy as np
-import cv2
+from PIL import Image, ImageFilter
+#import cv2
 import pandas as pd
 import os
 import sys
@@ -56,7 +57,8 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion,sh
             train_data = np.random.permutation(train_data)
             for i in range(n_batches):
                 batch_x = train_data[i*batch_size:(i+1)*batch_size]
-                imgs = np.array([cv2.cvtColor(cv2.imread(i),cv2.COLOR_BGR2GRAY) for i in batch_x])
+                imgs = np.array([np.array(Image.open(i).convert('L')) for i in batch_x])
+                #imgs = np.array([cv2.cvtColor(cv2.imread(i),cv2.COLOR_BGR2GRAY) for i in batch_x])
                 imgs = imgs[:,:,:,np.newaxis]
                 if (normalizarion):
                     imgs = imgs/255.
@@ -73,7 +75,7 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion,sh
             # Display logs per epoch step
             print('Epoch', epoch+1, ' / ', n_epochs, 'cost:', avg_cost)
             print('')
-            test_imgs = np.array([cv2.cvtColor(cv2.imread(i),cv2.COLOR_BGR2GRAY) for i in test_data])
+            test_imgs = np.array([np.array(Image.open(i).convert('L')) for i in test_data])
             test_imgs = test_imgs[:,:,:,np.newaxis]
             if (normalizarion):
                 test_imgs = test_imgs/255.
