@@ -12,7 +12,7 @@ def AE(x, keep_prob, batch_size, latent_size, Training):
         output = decoder(z,Training)
         #loss = tf.reduce_mean(tf.square(tf.subtract(output, x)))
         #cross_entropy = -1. * x * tf.log(output + 1e-10) - (1. - x) * tf.log(1. - output + 1e-10)
-        cross_entropy =tf.substract( tf.multiply(tf.multiply(tf.constant([-1.]), x), tf.log(tf.add(output, tf.constant([1e-10])))), tf.multiply(tf.subtract(tf.constant([1.]), x), tf.log(tf.add(tf.subtract(tf.constant([1.]), output),tf.constant([1e-10])))))
+        cross_entropy =tf.subtract( tf.multiply(tf.multiply(tf.constant([-1.]), x), tf.log(tf.add(output, tf.constant([1e-10])))), tf.multiply(tf.subtract(tf.constant([1.]), x), tf.log(tf.add(tf.subtract(tf.constant([1.]), output),tf.constant([1e-10])))))
         loss = tf.reduce_sum(cross_entropy)
         loss_ext = loss
         optimizer = tf.train.AdamOptimizer(1e-4).minimize(loss)
