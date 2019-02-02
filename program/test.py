@@ -43,8 +43,9 @@ def test_network(data, latent_size, normalizarion =True,shp=[-1, 64, 64, 1], mod
             y_value = out.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:n, Training:False})
             z = fv.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:n, Training:False})
             y_values +=[y_value[0,:,:,0]]
-            zs +=[z]
+            zs +=[z[0]]
         y_values = np.array(y_values) 
+        zs = np.array(zs)
         sess.close()
     if (normalizarion):
         y_values = y_values*255
