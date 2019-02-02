@@ -27,7 +27,7 @@ def test_network(data, latent_size, normalizarion,shp, model_name, device):
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
     out, cost_trn, cost_val, optimizer, fv = models[model_name](x, keep_prob, Batch_size, latent_size, Training)
 
-    with tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
+    with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
         sess.run(tf.global_variables_initializer())
         # create log writer object
         saver = tf.train.Saver()
