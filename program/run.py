@@ -14,6 +14,7 @@ parser.add_argument('--init','-i', default= 1, type=int)
 parser.add_argument('--norm','-n', default= 1, type=int)
 parser.add_argument('--latent','-l', default= 100, type=int)
 parser.add_argument('--epochs','-e', default= 100, type=int)
+parser.add_argument('--device','-d', default= '/device:XLA_GPU:0', type=str)
 args = parser.parse_args()
 
 paths = np.array(glob.glob("../data/*.jpg"))
@@ -39,7 +40,7 @@ if(Train):
         latent_name = '../save/'+args.model+'_latent_setting.pickle'
         with open(latent_name, 'wb') as f:
             pickle.dump(latent, f)
-    y_value,out=train_network(paths, args.test_size, args.batch_size,args.init,latent, args.norm,[-1, 64, 64, 1], args.epochs, args.model,"../logs")
+    y_value,out=train_network(paths, args.test_size, args.batch_size,args.init,latent, args.norm,[-1, 64, 64, 1], args.epochs, args.model,"../logs",args.device)
 
 if(Test):
     print('Validation start')
