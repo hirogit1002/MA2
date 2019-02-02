@@ -34,6 +34,8 @@ If you have already trained and simply will run the neural network, put the test
     $ cd /MA2
     $ python3 run.py -v 1
 
+After running test programm "y_value.pickle" and "z.pickle" files will be created in save folder. "y_value.pickle" contains reconstructed images and "z.pickle" contains latent variables as numpy array.
+
 ## Run.py command line options
     -('--train','-t', default=1, type=int, help='1: Do train, 0: Do not train')
     -('--test','-v', default=0, type=int, help='1: Do validate, 0: Do not validate')
