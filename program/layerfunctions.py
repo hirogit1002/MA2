@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-import scipy.ndimage.filters as fi
+
 
 def conv2d(x, name, kshape, strides=[1, 1, 1, 1], pad='SAME' ,activation = 'relu'):
     actdict = {'relu':tf.nn.relu,'tanh':tf.nn.tanh, 'linear':tf.identity,'sigmoid':tf.nn.sigmoid,'lrelu':lrelu}
@@ -93,12 +93,3 @@ def substructnormal(x, Name, ch, ksize=5, div=1):
     normed = tf.subtract(x, mean)
     return normed
 
-def gkern(ch, kernlen, nsig):
-    """Returns a 2D Gaussian kernel array."""
-    # create nxn zeros.
-    inp = np.zeros((kernlen, kernlen))
-    # set element at the middle to one, a dirac delta
-    inp[kernlen//2, kernlen//2] = 1
-    # gaussian-smooth the dirac, resulting in a gaussian filter mask
-    gaus = fi.gaussian_filter(inp, nsig)[:,:,np.newaxis,np.newaxis]
-    return tf.cast(tf.Variable((np.ones((kernlen,kernlen,ch,ch),np.float32)*gaus), name='gkern'), tf.float32)
