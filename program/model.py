@@ -7,7 +7,7 @@ from layerfunctions import*
 
 def AE(x, keep_prob, batch_size, latent_size, Training):
     with tf.variable_scope("AE", reuse=tf.AUTO_REUSE):
-        with tf.device(device):
+        with tf.device('/gpu:2'):
             flat = encoder(x,Training)
             z = fullyConnected(flat, name='z', output_size=latent_size)
             output = decoder(z,Training)
