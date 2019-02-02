@@ -6,6 +6,7 @@ from layerfunctions import*
 
 
 def AE(x, keep_prob, batch_size, latent_size, Training):
+    print('now model')
     with tf.variable_scope("AE", reuse=tf.AUTO_REUSE):
         flat = encoder(x,Training)
         z = fullyConnected(flat, name='z', output_size=latent_size)
