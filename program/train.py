@@ -12,7 +12,7 @@ from model import*
 from imgproc import*
 
     
-def train_network(data, test_size, batch_size,init,latent_size, normalizarion,shp, epochs, model_name, logs_path):
+def train_network(data, test_size, batch_size,init,latent_size, normalizarion, epochs, model_name, logs_path, lr):
     models = {'AE':AE,'VAE':VAE}
     tf.reset_default_graph()
     perm = np.random.permutation(len(data))
@@ -22,13 +22,11 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion,sh
     weight_path = '../weigths/'+model_name + '.ckpt'
     n = len(train_data)
     n_test = len(test_data)
-    data_shape = shp
-    data_shape[0] = None
-    x = tf.placeholder(tf.float32, data_shape, name='InputData')
+    x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
     keep_prob = tf.placeholder(tf.float32)
     Batch_size = tf.placeholder(tf.int32)
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
-    out, cost_trn, cost_val, optimizer, fv = models[model_name](x, keep_prob, Batch_size, latent_size, Training)
+    out, cost_trn, cost_val, optimizer, fv = models[model_name](x, keep_prob, Batch_size, latent_size, Training,lr)
     with tf.name_scope('training'):
         tf.summary.scalar('loss', cost_trn)
     with tf.name_scope('validation'):

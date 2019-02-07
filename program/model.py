@@ -5,7 +5,7 @@ from layerfunctions import*
 
 
 
-def AE(x, keep_prob, batch_size, latent_size, Training):
+def AE(x, keep_prob, batch_size, latent_size, Training,lr):
     with tf.variable_scope("AE", reuse=tf.AUTO_REUSE):
         flat = encoder(x,Training)
         z = fullyConnected(flat, name='z', output_size=latent_size)
@@ -14,17 +14,17 @@ def AE(x, keep_prob, batch_size, latent_size, Training):
         #cross_entropy =tf.subtract( tf.multiply(tf.multiply(tf.constant([-1.]), x), tf.log(tf.add(output, tf.constant([1e-10])))), tf.multiply(tf.subtract(tf.constant([1.]), x), tf.log(tf.add(tf.subtract(tf.constant([1.]), output),tf.constant([1e-10])))))
         loss = tf.reduce_sum(cross_entropy)
         loss_ext = loss
-        optimizer = tf.train.AdamOptimizer(1e-4).minimize(loss)
+        optimizer = tf.train.AdamOptimizer(lr).minimize(loss)
         return output, loss, loss_ext, optimizer, z
 
-def VAE(x, keep_prob, batch_size, latent_size, Training):
+def VAE(x, keep_prob, batch_size, latent_size, Training,lr):
     with tf.variable_scope("VAE", reuse=tf.AUTO_REUSE):
         flat = encoder(x,Training)
         z_mean = fullyConnected(flat, name='z_mean', output_size=latent_size, activation = 'linear')
         z_log_sigma_sq = fullyConnected(flat, name='z_log_sigma_sq', output_size=latent_size, activation = 'linear')
         z = variational(z_mean, z_log_sigma_sq, batch_size, latent_size)
         output = decoder(z,Training)
-        loss, optimizer = create_loss_and_optimizer(x, output, z_log_sigma_sq, z_mean)
+        loss, optimizer = create_loss_and_optimizer(x, output, z_log_sigma_sq, z_mean, lr)
         loss_ext = loss
         return output, loss, loss_ext, optimizer, z    
     
@@ -73,11 +73,11 @@ def variational(z_mean, z_log_sigma_sq, batch_size, latent_size):
     z = tf.add(z_mean, tf.multiply(tf.sqrt(tf.exp(z_log_sigma_sq)), eps))
     return z 
 
-def create_loss_and_optimizer(inputs, x_reconstr_mean, z_log_sigma_sq, z_mean):
+def create_loss_and_optimizer(inputs, x_reconstr_mean, z_log_sigma_sq, z_mean,lr):
     inputs = tf.layers.flatten(inputs) 
     x_reconstr_mean = tf.layers.flatten(x_reconstr_mean) 
     loss = vae_loss_cal(inputs, x_reconstr_mean, z_log_sigma_sq, z_mean, epsilon=1e-10)
-    optimizer = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(loss)
+    optimizer = tf.train.AdamOptimizer(learning_rate=lr).minimize(loss)
     return loss, optimizer
 
 def vae_loss_cal(inputs, x_reconstr_mean, z_log_sigma_sq, z_mean, epsilon=1e-10):
