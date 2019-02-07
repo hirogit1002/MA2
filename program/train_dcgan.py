@@ -74,8 +74,9 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
                 if (normalizarion):
                     imgs = imgs/255.
                 # Run optimization op (backprop) and cost op (to get loss value)
-                _,train_d_loss = sess.run([dis_op, d_loss], feed_dict={x: imgs, Training:True})
-                _,train_g_loss = sess.run([gen_op, g_loss], feed_dict={z: sample_z(batch_size, latent_size), Training:True})
+                feed = {z: sample_z(batch_size, latent_size), x: imgs, Training:True}      
+                _,train_d_loss = sess.run([dis_op, d_loss], feed_dict=feed )
+                _,train_g_loss = sess.run([gen_op, g_loss], feed_dict=feed )
                 _,res_trn ,train_cost = sess.run([gen_op, trn_summary, g_loss], feed_dict={z: sample_z(batch_size, latent_size), Training:True})
                 sum_d_loss += (train_d_cost / n_batches)
                 sum_g_loss += (train_g_cost / n_batches)
@@ -93,9 +94,11 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
             test_imgs = test_imgs[:,:,:,np.newaxis]
             if (normalizarion):
                 test_imgs = test_imgs/255.
-            test_d_cost =sess.run([val_d_loss], feed_dict={x: test_imgs, Training:False})
-            test_g_cost =sess.run([val_g_loss], feed_dict={z: sample_z(n_test, latent_size), Training:False})
-            res_val,_=sess.run([val_summary, val_g_loss], feed_dict={x: test_imgs, Training:False})
+                
+            feed = {z: sample_z(n_test, latent_size), x: test_imgs, Training:False}  
+            test_d_cost = sess.run([val_d_loss], feed_dict = feed)
+            test_g_cost = sess.run([val_g_loss], feed_dict = feed)
+            res_val,_= sess.run([val_summary, val_g_loss], feed_dict = feed)
             print('D Cost:', test_d_cost/n_test,'G Cost:',test_g_cost/n_test)
             file_writer.add_summary( res_val, (epoch+1))
         print('Optimization Finished')
