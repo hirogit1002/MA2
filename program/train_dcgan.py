@@ -37,8 +37,8 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
     g_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='g_')
     
     # Optimizer
-    dis_op = tf.train.AdamOptimizer(learning_rate=lr).minimize(d_loss, var_list=d_vars)
-    gen_op = tf.train.AdamOptimizer(learning_rate=lr).minimize(g_loss, var_list=g_vars)
+    dis_op = tf.train.AdamOptimizer(learning_rate=lr).minimize(d_loss)#, var_list=d_vars)
+    gen_op = tf.train.AdamOptimizer(learning_rate=lr).minimize(g_loss)#, var_list=g_vars)
     
     with tf.name_scope('training'):
         tf.scalar_summary("g_loss", g_loss)
