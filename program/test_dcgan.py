@@ -41,4 +41,6 @@ def test_network_gan(test_size, latent_size, normalizarion, lr):
         pickle.dump(y_values, f)
     with open('../save/z_gan.pickle', 'wb') as f:
         pickle.dump(zs, f)
+        
+    print('Finished')
 
