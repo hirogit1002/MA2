@@ -28,7 +28,7 @@ def test_network_gan(test_size, latent_size, normalizarion, lr):
         zs = []
         for i in range(test_size):
             sampled = sample_z(1, latent_size)
-            feed = {z: sampled, x: test_imgs, Training:False}  
+            feed = {z: sampled, Training:False}  
             output, test_d_cost, test_g_cost = sess.run([generated], feed_dict = feed)
             print(output.shape)
             y_values +=[output[0,:,:,0]]
