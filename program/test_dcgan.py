@@ -30,8 +30,7 @@ def test_network_gan(test_size, latent_size, normalizarion, lr):
             sampled = sample_z(1, latent_size)
             feed = {z: sampled, Training:False}  
             output= sess.run([generated], feed_dict = feed)
-            print(output[0].shape)
-            y_values +=[output[0,:,:,0]]
+            y_values +=[output[0][0,:,:,0]]
             zs +=[sampled[0]]
         y_values = np.array(y_values) 
         zs = np.array(zs)
