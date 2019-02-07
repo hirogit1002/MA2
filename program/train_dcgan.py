@@ -96,8 +96,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
                 test_imgs = test_imgs/255.
                 
             feed = {z: sample_z(n_test, latent_size), x: test_imgs, Training:False}  
-            test_d_cost = sess.run([val_d_loss], feed_dict = feed)
-            test_g_cost = sess.run([val_g_loss], feed_dict = feed)
+            test_d_cost, test_g_cost = sess.run([val_d_loss,val_g_loss], feed_dict = feed)
             res_val,_= sess.run([val_summary, val_g_loss], feed_dict = feed)
             print('D Cost:', test_d_cost/n_test,'G Cost:',test_g_cost/n_test)
             file_writer.add_summary( res_val, (epoch+1))
