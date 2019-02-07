@@ -14,7 +14,6 @@ from imgproc import*
 
 
 def test_network(data, latent_size, normalizarion,shp, model_name,lr):
-    print('normalizarion',normalizarion)
     models = {'AE':AE,'VAE':VAE_test}
     data = np.array(data)
     data_shape = shp
