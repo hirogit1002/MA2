@@ -86,7 +86,8 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion, e
             saver.save(sess, weight_path)
 
             # Display logs per epoch step
-            print('Epoch', epoch+1, ' / ', epochs, 'cost:', avg_cost)
+            print('')
+            print('Epoch', epoch+1, ' / ', epochs, 'D Cost:', sum_d_loss/epochs, 'G Cost:', sum_g_loss/epochs)
             print('')
             test_imgs = np.array([np.array(Image.open(i).convert('L')) for i in test_data])
             test_imgs = test_imgs[:,:,:,np.newaxis]

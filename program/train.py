@@ -37,7 +37,6 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion,sh
     trn_summary = tf.summary.merge_all(scope='training')
     val_summary = tf.summary.merge_all(scope='validation')
 
-    n_epochs = epochs
     with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess: #allow_soft_placement=True, 
         if tf.gfile.Exists(logs_path):
             tf.gfile.DeleteRecursively(logs_path) # ./logdirが存在する場合削除
@@ -47,8 +46,7 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion,sh
         saver = tf.train.Saver()
         if (init==False):
             saver.restore(sess, weight_path)
-        for epoch in range(n_epochs):
-            avg_cost = 0
+        for epoch in range(epochs):
             sum_loss = 0
             n_batches = int(n / batch_size)
             # Loop over all batches
@@ -63,8 +61,7 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion,sh
                     imgs = imgs/255.
                 # Run optimization op (backprop) and cost op (to get loss value)
                 _,res_trn ,train_cost = sess.run([optimizer, trn_summary, cost_trn], feed_dict={x: imgs, keep_prob:0.75,Training:True, Batch_size:batch_size})
-                avg_cost += train_cost  / n_batches
-                sum_loss += train_cost
+                sum_loss += (train_cost / n_batches)
                 sys.stdout.write("\r%s" % "batch: {}/{}, loss: {}".format(counter+1, np.int(n/batch_size)+1, sum_loss/(i+1)))
                 sys.stdout.flush()
                 counter +=1
@@ -72,7 +69,8 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion,sh
             saver.save(sess, weight_path)
 
             # Display logs per epoch step
-            print('Epoch', epoch+1, ' / ', n_epochs, 'cost:', avg_cost)
+            print('')
+            print('Epoch', epoch+1, ' / ', epochs, 'Cost:', sum_loss/epochs)
             print('')
             test_imgs = np.array([np.array(Image.open(i).convert('L')) for i in test_data])
             test_imgs = test_imgs[:,:,:,np.newaxis]
