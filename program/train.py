@@ -70,14 +70,14 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion,sh
 
             # Display logs per epoch step
             print('')
-            print('Epoch', epoch+1, ' / ', epochs, 'Cost:', sum_loss/epochs)
+            print('Epoch', epoch+1, ' / ', epochs, 'Training Loss:', sum_loss/n_batches)
             print('')
             test_imgs = np.array([np.array(Image.open(i).convert('L')) for i in test_data])
             test_imgs = test_imgs[:,:,:,np.newaxis]
             if (normalizarion):
                 test_imgs = test_imgs/255.
             res_val, test_cost =sess.run([val_summary, cost_val], feed_dict={x: test_imgs, keep_prob:1.,Training:False, Batch_size:n_test})
-            print('Cost:', test_cost)
+            print('Validation Loss:', test_cost/n_test)
             file_writer.add_summary( res_val, (epoch+1))
         print('Optimization Finished')
         y_value = sess.run([out], feed_dict={x: test_imgs, keep_prob:1.,Training:False, Batch_size:n_test})

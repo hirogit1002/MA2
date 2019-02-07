@@ -40,9 +40,9 @@ def test_network(data, latent_size, normalizarion,shp, model_name):
             imgs = imgs[np.newaxis,:,:,np.newaxis]
             if (normalizarion):
                 imgs = imgs/255.
-            print('Cost:', cost_val.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:n, Training:False}))
-            y_value = out.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:n, Training:False})
-            z = fv.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:n, Training:False})
+            print('Loss:', cost_val.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:1, Training:False}))
+            y_value = out.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:1, Training:False})
+            z = fv.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:1, Training:False})
             y_values +=[y_value[0,:,:,0]]
             zs +=[z[0]]
         y_values = np.array(y_values) 
