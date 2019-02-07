@@ -11,8 +11,6 @@ from layerfunctions import*
 from model import*
 from imgproc import*
 
-def sample_z(batch_size, latent_size):
-    return np.random.uniform(-1., 1., size=[batch_size, latent_size])
     
 def train_network_gan(data, test_size, batch_size,init,latent_size, normalizarion, epochs, logs_path, lr):
     tf.reset_default_graph()

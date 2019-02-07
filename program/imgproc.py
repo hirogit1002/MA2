@@ -8,6 +8,9 @@ import pickle
 def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 
+def sample_z(batch_size, latent_size):
+    return np.random.uniform(-1., 1., size=[batch_size, latent_size])
+
 def img_patch_old(img, patch_size):
     patches = []
     img= np.array(img)
