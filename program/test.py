@@ -13,7 +13,7 @@ from model import*
 from imgproc import*
 
 
-def test_network(data, latent_size, normalizarion,shp, model_name):
+def test_network(data, latent_size, normalizarion,shp, model_name,lr):
     models = {'AE':AE,'VAE':VAE_test}
     data = np.array(data)
     data_shape = shp
@@ -25,7 +25,7 @@ def test_network(data, latent_size, normalizarion,shp, model_name):
     keep_prob = tf.placeholder(tf.float32)
     Batch_size = tf.placeholder(tf.int32)
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
-    out, cost_trn, cost_val, optimizer, fv = models[model_name](x, keep_prob, Batch_size, latent_size, Training,1.)
+    out, cost_trn, cost_val, optimizer, fv = models[model_name](x, keep_prob, Batch_size, latent_size, Training,lr)
 
     with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
         sess.run(tf.global_variables_initializer())
