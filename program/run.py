@@ -49,4 +49,10 @@ if(Train):
 
 if(Test):
     print('Validation start')
-    test_network(paths_test, latent, args.norm, args.model,lr)
+    if(args.model=='DCGAN'):
+        test_network_gan(args.test_size, latent, args.norm, lr)
+    else:      
+        test_network(paths_test, latent, args.norm, args.model,lr)
+    
+    
+    
