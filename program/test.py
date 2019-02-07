@@ -13,7 +13,7 @@ from model import*
 from imgproc import*
 
 
-def test_network(data, latent_size, normalizarion,shp, model_name, device):
+def test_network(data, latent_size, normalizarion,shp, model_name):
     models = {'AE':AE,'VAE':VAE_test}
     data = np.array(data)
     data_shape = shp

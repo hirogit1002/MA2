@@ -10,9 +10,8 @@ def AE(x, keep_prob, batch_size, latent_size, Training):
         flat = encoder(x,Training)
         z = fullyConnected(flat, name='z', output_size=latent_size)
         output = decoder(z,Training)
-        #loss = tf.reduce_mean(tf.square(tf.subtract(output, x)))
-        #cross_entropy = -1. * x * tf.log(output + 1e-10) - (1. - x) * tf.log(1. - output + 1e-10)
-        cross_entropy =tf.subtract( tf.multiply(tf.multiply(tf.constant([-1.]), x), tf.log(tf.add(output, tf.constant([1e-10])))), tf.multiply(tf.subtract(tf.constant([1.]), x), tf.log(tf.add(tf.subtract(tf.constant([1.]), output),tf.constant([1e-10])))))
+         cross_entropy = -1. * x * tf.log(output + 1e-10) - (1. - x) * tf.log(1. - output + 1e-10)
+        #cross_entropy =tf.subtract( tf.multiply(tf.multiply(tf.constant([-1.]), x), tf.log(tf.add(output, tf.constant([1e-10])))), tf.multiply(tf.subtract(tf.constant([1.]), x), tf.log(tf.add(tf.subtract(tf.constant([1.]), output),tf.constant([1e-10])))))
         loss = tf.reduce_sum(cross_entropy)
         loss_ext = loss
         optimizer = tf.train.AdamOptimizer(1e-4).minimize(loss)
@@ -59,6 +58,15 @@ def decoder(z,Training):
     dc3 = deconv2d_norm(dc2, 'deconv3', [5,5], 128,Training, [2, 2], 'relu', 'SAME')
     output = deconv2d_norm(dc3, 'deconv4', [5,5], 1,Training, [2, 2], 'sigmoid', 'SAME')
     return output
+
+def discriminator(x, Training, reuse=False):
+    with tf.variable_scope("discriminator") as scope:
+        if reuse:
+            scope.reuse_variables()
+        flat = encoder(x,Training)
+        fc_class = fullyConnected(flat, name='fc_class', output_size=1)
+        sig = tf.nn.sigmoid(fc_class)
+        return sig, fc_class
     
 def variational(z_mean, z_log_sigma_sq, batch_size, latent_size):
     eps = tf.random_normal([batch_size, latent_size], 0.0, 1.0, dtype=tf.float32)
@@ -77,4 +85,10 @@ def vae_loss_cal(inputs, x_reconstr_mean, z_log_sigma_sq, z_mean, epsilon=1e-10)
     latent_loss = -0.5 * tf.reduce_sum(1.0 + z_log_sigma_sq - tf.square(z_mean) - tf.exp(z_log_sigma_sq), 1)
     loss = tf.reduce_mean(reconstr_loss + latent_loss)   # average over batch
     return loss
+
+def loss_gan(D_logits,D_logits_):
+    loss_real = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=D_logits, labels=tf.ones_like(D_logits)))
+    loss_fake = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=D_logits_, labels=tf.zeros_like(D_logits_)))
+    g_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=D_logits_, labels=tf.ones_like(D_logits_)))
+    return loss_real, loss_fake, g_loss, loss_real, loss_fake, g_loss
 

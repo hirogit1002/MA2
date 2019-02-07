@@ -12,7 +12,7 @@ from model import*
 from imgproc import*
 
     
-def train_network(data, test_size, batch_size,init,latent_size, normalizarion,shp, epochs, model_name, logs_path, device):
+def train_network(data, test_size, batch_size,init,latent_size, normalizarion,shp, epochs, model_name, logs_path):
     models = {'AE':AE,'VAE':VAE}
     tf.reset_default_graph()
     perm = np.random.permutation(len(data))
