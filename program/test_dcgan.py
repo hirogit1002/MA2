@@ -12,9 +12,6 @@ from layerfunctions import*
 from model import*
 from imgproc import*
 
-def sample_z(batch_size, latent_size):
-    return np.random.uniform(-1., 1., size=[batch_size, latent_size])
-
 def test_network_gan(test_size, latent_size, normalizarion, lr):
     tf.reset_default_graph()
     perm = np.random.permutation(len(data))

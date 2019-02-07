@@ -3,7 +3,7 @@ from model import*
 from train import*
 from test import*
 from train_dcgan import*
-
+from test_dcgan import*
 
 parser = argparse.ArgumentParser(description='Running')
 parser.add_argument('--train','-t', default=1, type=int)
