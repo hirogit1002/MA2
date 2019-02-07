@@ -41,11 +41,11 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
     gen_op = tf.train.AdamOptimizer(learning_rate=lr).minimize(g_loss)#, var_list=g_vars)
     
     with tf.name_scope('training'):
-        tf.scalar_summary("g_loss", g_loss)
-        tf.scalar_summary("d_loss", d_loss)
+        tf.summary.scalar("g_loss", g_loss)
+        tf.summary.scalar("d_loss", d_loss)
     with tf.name_scope('validation'):
-        tf.scalar_summary("g_loss", val_g_loss)
-        tf.scalar_summary("d_loss", val_d_loss)
+        tf.summary.scalar("g_loss", val_g_loss)
+        tf.summary.scalar("d_loss", val_d_loss)
 
     trn_summary = tf.summary.merge_all(scope='training')
     val_summary = tf.summary.merge_all(scope='validation')
