@@ -94,10 +94,10 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion, e
             if (normalizarion):
                 test_imgs = test_imgs/255.
             test_d_cost =sess.run([val_d_loss], feed_dict={x: test_imgs, Training:False})
-            test_g_cost =sess.run([val_g_loss], feed_dict={z: sample_z(batch_size, latent_size), Training:False})
+            test_g_cost =sess.run([val_g_loss], feed_dict={z: sample_z(n_test, latent_size), Training:False})
             res_val,_=sess.run([val_summary, val_g_loss], feed_dict={x: test_imgs, Training:False})
-            print('D Cost:', test_d_cost,'G Cost:',test_g_cost)
+            print('D Cost:', test_d_cost/n_test,'G Cost:',test_g_cost/n_test)
             file_writer.add_summary( res_val, (epoch+1))
         print('Optimization Finished')
         sess.close()
-    return [],[]
+

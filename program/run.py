@@ -39,7 +39,7 @@ if(Train):
         latent_name = '../save/'+args.model+'_latent_setting.pickle'
         with open(latent_name, 'wb') as f:
             pickle.dump(latent, f)
-    y_value,out=train_network(paths, args.test_size, args.batch_size,args.init,latent, args.norm,[-1, 64, 64, 1], args.epochs, args.model,"../logs")
+    train_network(paths, args.test_size, args.batch_size,args.init,latent, args.norm,[-1, 64, 64, 1], args.epochs, args.model,"../logs")
 
 if(Test):
     print('Validation start')

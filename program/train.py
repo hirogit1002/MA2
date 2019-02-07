@@ -80,8 +80,6 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion,sh
             print('Validation Loss:', test_cost/n_test)
             file_writer.add_summary( res_val, (epoch+1))
         print('Optimization Finished')
-        y_value = sess.run([out], feed_dict={x: test_imgs, keep_prob:1.,Training:False, Batch_size:n_test})
         sess.close()
-        if (normalizarion):
-            y_value = y_value*255
-    return y_value,out
+
+
