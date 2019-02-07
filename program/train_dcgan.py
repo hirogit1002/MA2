@@ -78,8 +78,8 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
                 _,train_d_loss = sess.run([dis_op, d_loss], feed_dict=feed )
                 _,train_g_loss = sess.run([gen_op, g_loss], feed_dict=feed )
                 _,res_trn ,train_cost = sess.run([gen_op, trn_summary, g_loss], feed_dict=feed)
-                sum_d_loss += (train_d_cost / n_batches)
-                sum_g_loss += (train_g_cost / n_batches)
+                sum_d_loss += (train_d_loss / n_batches)
+                sum_g_loss += (train_g_loss/ n_batches)
                 sys.stdout.write("\r%s" % "batch: {}/{}, d_loss: {}, g_loss: {}".format(counter+1, np.int(n/batch_size)+1, sum_d_loss/(i+1), sum_g_loss/(i+1)))
                 sys.stdout.flush()
                 counter +=1
