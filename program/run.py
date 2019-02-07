@@ -15,7 +15,7 @@ parser.add_argument('--init','-i', default= 1, type=int)
 parser.add_argument('--norm','-n', default= 1, type=int)
 parser.add_argument('--latent','-l', default= 100, type=int)
 parser.add_argument('--epochs','-e', default= 100, type=int)
-parser.add_argument('--learning_late','-r', default= 0.004, type=float)
+parser.add_argument('--learning_late','-r', default= 1e-4, type=float)
 args = parser.parse_args()
 
 paths = np.array(glob.glob("../data/*.jpg"))
