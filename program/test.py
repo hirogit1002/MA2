@@ -14,6 +14,7 @@ from imgproc import*
 
 
 def test_network(data, latent_size, normalizarion,shp, model_name,lr):
+    print('normalizarion',normalizarion)
     models = {'AE':AE,'VAE':VAE_test}
     data = np.array(data)
     data_shape = shp
@@ -49,7 +50,7 @@ def test_network(data, latent_size, normalizarion,shp, model_name,lr):
         zs = np.array(zs)
         sess.close()
     if (normalizarion):
-        y_values = y_values*255
+        y_values = y_values*255.
     with open('../save/y_value.pickle', 'wb') as f:
         pickle.dump(y_values, f)
     with open('../save/z.pickle', 'wb') as f:

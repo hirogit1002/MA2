@@ -42,7 +42,7 @@ if(Train):
         latent_name = '../save/'+args.model+'_latent_setting.pickle'
         with open(latent_name, 'wb') as f:
             pickle.dump(latent, f)
-    if(args.model=='DGAN'):
+    if(args.model=='DCGAN'):
         train_network_gan(paths, args.test_size, args.batch_size,args.init,latent, args.norm, args.epochs,"../logs", lr)
     else:
         train_network(paths, args.test_size, args.batch_size,args.init,latent, args.norm, args.epochs, args.model,"../logs",lr)
