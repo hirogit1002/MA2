@@ -13,9 +13,9 @@ from model import*
 from imgproc import*
 
 def test_network_gan(test_size, latent_size, normalizarion, lr):
+    print('Test Size',test_size)
     tf.reset_default_graph()
     weight_path = '../weigths/'+'DCGAN' + '.ckpt'
-    n_test = test_size
     z = tf.placeholder(tf.float32, [None, latent_size], name='latent')
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
     generated = decoder(z,Training)
@@ -26,7 +26,7 @@ def test_network_gan(test_size, latent_size, normalizarion, lr):
         saver.restore(sess, weight_path)
         y_values = []
         zs = []
-        for i in data:
+        for i in range(test_size):
             sampled = sample_z(1, latent_size)
             feed = {z: sampled, x: test_imgs, Training:False}  
             output, test_d_cost, test_g_cost = sess.run([generated], feed_dict = feed)
