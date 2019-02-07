@@ -49,4 +49,4 @@ if(Train):
 
 if(Test):
     print('Validation start')
-    test_network(paths_test, latent, args.norm,[-1, 64, 64, 1], args.model,lr)
+    test_network(paths_test, latent, args.norm, args.model,lr)
