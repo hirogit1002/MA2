@@ -20,7 +20,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
     data = np.array(data[perm])
     train_data = np.array(data[:-test_size])
     test_data = np.array(data[-test_size:])
-    weight_path = '../weigths/'+model_name + '.ckpt'
+    weight_path = '../weigths/'+'DCGAN' + '.ckpt'
     n = len(train_data)
     n_test = len(test_data)
     x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
