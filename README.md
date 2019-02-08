@@ -2,7 +2,7 @@
 Deep learning for feature extraction of image data. This program learns to encode feature vector from image and decode image from the feature vector.
 You can choose a method from Autoencoder, Variational Autoencoder or DCGAN. For each method we use same encoder and decoder models.
 
-![encoder_decoder](https://github.com/hirogit1002/MA2/blob/master/model.png)
+![encoder_decoder](https://github.com/hirogit1002/MA2/blob/master/model1.png)
 
 ## Requirements
     -Python3
