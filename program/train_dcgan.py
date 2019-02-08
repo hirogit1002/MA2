@@ -36,6 +36,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
     d_vars = [var for var in t_vars if 'd_' in var.name]
     g_vars = [var for var in t_vars if 'g_' in var.name]
 
+    print(d_vars)
     
     # Optimizer
     dis_op = tf.train.AdamOptimizer(learning_rate=lr).minimize(d_loss, var_list=d_vars)
