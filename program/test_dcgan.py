@@ -18,7 +18,7 @@ def test_network_gan(test_size, latent_size, normalizarion, lr):
     weight_path = '../weigths/'+'DCGAN' + '.ckpt'
     z = tf.placeholder(tf.float32, [None, latent_size], name='latent')
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
-    generated = decoder(z,Training)
+    generated = decoder(z,Training, 'g_')
     with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
         sess.run(tf.global_variables_initializer())
         # create log writer object
