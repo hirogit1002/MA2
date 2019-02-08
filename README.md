@@ -1,5 +1,6 @@
 # Unsuprvised deep learning for face expression recognition v0.1.0.
 Deep learning for feature extraction of image data. This program learns how to encode feature vector from image and decode image from the feature vector.
+You can use chose models from Autoencoder, Variational Autoencoder or DCGAN.
 
 ## Requirements
     -Python3
@@ -41,7 +42,7 @@ After running test programm "y_value.pickle" and "z.pickle" files will be create
     -('--test','-v', default=0, type=int, help='1: Do validate, 0: Do not validate')
     -('--test_size','-ts', default=10, type=int, help='Number of test data during training')
     -('--batch_size','-b', default=10, type=int, help='Setting batch size')
-    -('--model','-m', default= "AE", type=str, help='Choosing model type. AE:Autoencoder, VAE: Variational Autoencoder')
+    -('--model','-m', default= "AE", type=str, help='Choosing model type. AE:Autoencoder, VAE: Variational Autoencoder, DCGAN: DCGAN')
     -('--init','-i', default= 1, type=int, help='1: init weight, 0: do not weight')
     -('--norm','-n', default= 1, type=int, help='1: normalize data, 0: do not normalize data')
     -('--latent','-l', default= 100, type=int, help='Size of latent variable(Dimension of feature vector)')
