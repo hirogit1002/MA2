@@ -1,6 +1,6 @@
 # Unsuprvised deep learning for face expression recognition v0.1.0.
-Deep learning for feature extraction of image data. This program learns how to encode feature vector from image and decode image from the feature vector.
-You can use chose models from Autoencoder, Variational Autoencoder or DCGAN.
+Deep learning for feature extraction of image data. This program learns to encode feature vector from image and decode image from the feature vector.
+You can choose models from Autoencoder, Variational Autoencoder or DCGAN.
 
 ## Requirements
     -Python3
