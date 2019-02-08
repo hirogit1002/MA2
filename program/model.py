@@ -38,33 +38,33 @@ def VAE_test(x, keep_prob, batch_size, latent_size, Training,lr):
         loss_ext = loss
         return output, loss, loss_ext, optimizer, z_mean    
     
-def encoder(x,Training):
-    p1 = conv2d_norm(x, 'conv1', [5, 5, 1, 64], Training, [1, 1, 1, 1], 'SAME' ,activation = 'lrelu')
-    pool1 = maxpool2d(p1,'pool1',kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
-    p2 = conv2d_norm(pool1, 'conv2', [5, 5, 64, 128], Training, [1, 1, 1, 1], 'SAME' ,activation = 'lrelu')
-    pool2 = maxpool2d(p2,'pool2',kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
-    p3 = conv2d_norm(pool2, 'conv3', [5, 5, 128, 256], Training, [1, 1, 1, 1], 'SAME' ,activation = 'lrelu')
-    pool3 = maxpool2d(p3,'pool3',kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
-    p4 = conv2d_norm(pool3, 'conv4', [3, 3, 256, 512], Training, [1, 1, 1, 1], 'SAME' ,activation = 'lrelu')
-    pool4 = maxpool2d(p4,'pool4',kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
+def encoder(x,Training, Name=''):
+    p1 = conv2d_norm(x, (Name+'conv1'), [5, 5, 1, 64], Training, [1, 1, 1, 1], 'SAME' ,activation = 'lrelu')
+    pool1 = maxpool2d(p1,(Name+'pool1'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
+    p2 = conv2d_norm(pool1, (Name+'conv2'), [5, 5, 64, 128], Training, [1, 1, 1, 1], 'SAME' ,activation = 'lrelu')
+    pool2 = maxpool2d(p2,(Name+'pool2'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
+    p3 = conv2d_norm(pool2, (Name+'conv3'), [5, 5, 128, 256], Training, [1, 1, 1, 1], 'SAME' ,activation = 'lrelu')
+    pool3 = maxpool2d(p3,(Name+'pool3'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
+    p4 = conv2d_norm(pool3, (Name+'conv4'), [3, 3, 256, 512], Training, [1, 1, 1, 1], 'SAME' ,activation = 'lrelu')
+    pool4 = maxpool2d(p4,(Name+'pool4'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
     flat = tf.layers.flatten(pool4)
     return flat
 
-def decoder(z,Training):
-    fc1 = fullyConnected(z, name='fc1', output_size=4*4*1024)
+def decoder(z,Training, Name=''):
+    fc1 = fullyConnected(z, name=(Name+'fc1'), output_size=4*4*1024)
     r1 = tf.reshape(fc1, shape=[-1,4,4,1024])
-    dc1 = deconv2d_norm(r1, 'deconv1', [3,3], 512,Training, [2, 2], 'relu', 'SAME')
-    dc2 = deconv2d_norm(dc1, 'deconv2', [5,5], 256,Training, [2, 2], 'relu', 'SAME')
-    dc3 = deconv2d_norm(dc2, 'deconv3', [5,5], 128,Training, [2, 2], 'relu', 'SAME')
-    output = deconv2d_norm(dc3, 'deconv4', [5,5], 1,Training, [2, 2], 'sigmoid', 'SAME')
+    dc1 = deconv2d_norm(r1, (Name+'deconv1'), [3,3], 512,Training, [2, 2], 'relu', 'SAME')
+    dc2 = deconv2d_norm(dc1, (Name+'deconv2'), [5,5], 256,Training, [2, 2], 'relu', 'SAME')
+    dc3 = deconv2d_norm(dc2, (Name+'deconv3'), [5,5], 128,Training, [2, 2], 'relu', 'SAME')
+    output = deconv2d_norm(dc3, (Name+'deconv4'), [5,5], 1,Training, [2, 2], 'sigmoid', 'SAME')
     return output
 
 def discriminator(x, Training, reuse=False):
     with tf.variable_scope("discriminator") as scope:
         if reuse:
             scope.reuse_variables()
-        flat = encoder(x,Training)
-        fc_class = fullyConnected(flat, name='fc_class', output_size=1)
+        flat = encoder(x,Training,'d_')
+        fc_class = fullyConnected(flat, name='d_fc_class', output_size=1)
         sig = tf.nn.sigmoid(fc_class)
         return sig, fc_class
     

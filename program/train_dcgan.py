@@ -24,7 +24,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
     x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
     z = tf.placeholder(tf.float32, [None, latent_size], name='latent')
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
-    generated = decoder(z,Training)
+    generated = decoder(z,Training, 'g_')
     sig, D_logits = discriminator(x,Training, reuse=False)
     sig_, D_logits_ = discriminator(generated, Training, reuse=True)
     loss_real, loss_fake, g_loss, val_loss_real, val_loss_fake, val_g_loss = loss_gan(D_logits,D_logits_)                    
@@ -36,7 +36,6 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
     d_vars = [var for var in t_vars if 'd_' in var.name]
     g_vars = [var for var in t_vars if 'g_' in var.name]
 
-    print(d_vars)
     
     # Optimizer
     dis_op = tf.train.AdamOptimizer(learning_rate=lr).minimize(d_loss, var_list=d_vars)
