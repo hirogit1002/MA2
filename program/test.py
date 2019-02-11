@@ -35,7 +35,7 @@ def test_network(data, latent_size, normalizarion, model_name,lr):
         for i in data:
             imgs = np.array(Image.open(i).convert('L'))
             if (normalizarion):
-                imgs = norm_intg(imgs)
+                imgs = norm_intg(imgs[np.newaxis,:])
             else:
                 imgs = imgs[np.newaxis,:,:,np.newaxis]
                 
