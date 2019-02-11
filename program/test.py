@@ -34,10 +34,11 @@ def test_network(data, latent_size, normalizarion, model_name,lr):
         zs = []
         for i in data:
             imgs = np.array(Image.open(i).convert('L'))
-            #imgs = np.array([cv2.cvtColor(cv2.imread(i),cv2.COLOR_BGR2GRAY)])
-            imgs = imgs[np.newaxis,:,:,np.newaxis]
             if (normalizarion):
-                imgs = imgs/255.
+                imgs = norm_intg(imgs)
+            else:
+                imgs = imgs[np.newaxis,:,:,np.newaxis]
+                
             print('Loss:', cost_val.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:1, Training:False}))
             y_value = out.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:1, Training:False})
             z = fv.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:1, Training:False})

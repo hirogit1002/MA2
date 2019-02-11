@@ -53,10 +53,10 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion, e
             for i in range(n_batches):
                 batch_x = train_data[i*batch_size:(i+1)*batch_size]
                 imgs = np.array([np.array(Image.open(i).convert('L')) for i in batch_x])
-                #imgs = np.array([cv2.cvtColor(cv2.imread(i),cv2.COLOR_BGR2GRAY) for i in batch_x])
-                imgs = imgs[:,:,:,np.newaxis]
                 if (normalizarion):
-                    imgs = imgs/255.
+                    imgs = norm_intg(imgs)
+                else:
+                    imgs = imgs[:,:,:,np.newaxis]
                 # Run optimization op (backprop) and cost op (to get loss value)
                 _,res_trn ,train_cost = sess.run([optimizer, trn_summary, cost_trn], feed_dict={x: imgs, keep_prob:0.75,Training:True, Batch_size:batch_size})
                 sum_loss += (train_cost / n_batches)
@@ -71,9 +71,10 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion, e
             print('Epoch', epoch+1, ' / ', epochs, 'Training Loss:', sum_loss/n_batches)
             print('')
             test_imgs = np.array([np.array(Image.open(i).convert('L')) for i in test_data])
-            test_imgs = test_imgs[:,:,:,np.newaxis]
             if (normalizarion):
-                test_imgs = test_imgs/255.
+                test_imgs = norm_intg(test_imgs)
+            else:
+                test_imgs =  test_imgs[:,:,:,np.newaxis]  
             res_val, test_cost =sess.run([val_summary, cost_val], feed_dict={x: test_imgs, keep_prob:1.,Training:False, Batch_size:n_test})
             print('Validation Loss:', test_cost/n_test)
             file_writer.add_summary( res_val, (epoch+1))

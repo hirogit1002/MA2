@@ -70,10 +70,10 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
             for i in range(n_batches):
                 batch_x = train_data[i*batch_size:(i+1)*batch_size]
                 imgs = np.array([np.array(Image.open(i).convert('L')) for i in batch_x])
-                #imgs = np.array([cv2.cvtColor(cv2.imread(i),cv2.COLOR_BGR2GRAY) for i in batch_x])
-                imgs = imgs[:,:,:,np.newaxis]
                 if (normalizarion):
-                    imgs = imgs/255.
+                    imgs = norm_intg(imgs)
+                else:
+                    imgs = imgs[:,:,:,np.newaxis]
                 # Run optimization op (backprop) and cost op (to get loss value)
                 feed = {z: sample_z(batch_size, latent_size), x: imgs, Training:True}      
                 _,train_d_loss = sess.run([dis_op, d_loss], feed_dict=feed )
@@ -92,10 +92,10 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
             print('Epoch', epoch+1, ' / ', epochs, 'D Cost:', sum_d_loss/epochs, 'G Cost:', sum_g_loss/epochs)
             print('')
             test_imgs = np.array([np.array(Image.open(i).convert('L')) for i in test_data])
-            test_imgs = test_imgs[:,:,:,np.newaxis]
             if (normalizarion):
-                test_imgs = test_imgs/255.
-                
+                test_imgs = norm_intg(test_imgs)
+            else:
+                test_imgs =  test_imgs[:,:,:,np.newaxis]                
             feed = {z: sample_z(n_test, latent_size), x: test_imgs, Training:False}  
             test_d_cost, test_g_cost = sess.run([val_d_loss,val_g_loss], feed_dict = feed)
             res_val,_= sess.run([val_summary, val_g_loss], feed_dict = feed)
