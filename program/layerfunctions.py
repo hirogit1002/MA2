@@ -30,8 +30,9 @@ def conv2d_norm(x, name, kshape, Training, strides=[1, 1, 1, 1], pad='SAME' ,act
     b = tf.get_variable(name='b_' + name, shape=[kshape[3]],initializer=tf.contrib.layers.xavier_initializer(uniform=False))
     out = tf.nn.conv2d(x,W,strides=strides, padding=pad)
     out = tf.nn.bias_add(out, b)
-    norm = tf.layers.batch_normalization(out,training=Training)
-    outnorm = actdict[activation](norm)
+    mean, variance = tf.nn.moments(out, [0, 1, 2])
+    bn = tf.nn.batch_normalization(out, mean, variance, None, None, 1e-5)
+    outnorm = actdict[activation](bn)
     return outnorm
 # ---------------------------------
 def deconv2d_norm(x, name, kshape, n_outputs,Training, strides=[1, 1],activation = 'relu',pad='SAME'):
