@@ -24,7 +24,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
     x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
     z = tf.placeholder(tf.float32, [None, latent_size], name='latent')
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
-    generated = decoder(z,Training, 'g_')
+    generated = decoder(z,Training, 'g_','tanh')
     sig, D_logits = discriminator(x,Training, reuse=False)
     sig_, D_logits_ = discriminator(generated, Training, reuse=True)
     loss_real, loss_fake, g_loss, val_loss_real, val_loss_fake, val_g_loss = loss_gan(D_logits,D_logits_)                    
@@ -71,7 +71,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
                 batch_x = train_data[i*batch_size:(i+1)*batch_size]
                 imgs = np.array([np.array(Image.open(i).convert('L')) for i in batch_x])
                 if (normalizarion):
-                    imgs = norm_intg(imgs)
+                    imgs = norm_intg(imgs,'tanh')
                 else:
                     imgs = imgs[:,:,:,np.newaxis]
                 # Run optimization op (backprop) and cost op (to get loss value)
@@ -93,7 +93,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
             print('')
             test_imgs = np.array([np.array(Image.open(i).convert('L')) for i in test_data])
             if (normalizarion):
-                test_imgs = norm_intg(test_imgs)
+                test_imgs = norm_intg(test_imgs,'tanh')
             else:
                 test_imgs =  test_imgs[:,:,:,np.newaxis]                
             feed = {z: sample_z(n_test, latent_size), x: test_imgs, Training:False}  

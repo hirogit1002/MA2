@@ -28,10 +28,13 @@ def normalization(img_flattten, const=10.):
     return norm, mean, var
 
 
-def norm_intg(imgs):
+def norm_intg(imgs,activate='sigmoid'):
     flats, pshp = flatten(imgs)
     norm, mean, var = normalization(flats, const=10.)
-    sig = sigmoid(norm)
+    if (activate=='sigmoid'):
+        sig = sigmoid(norm)
+    else:
+        sig = np.tanh(norm)
     return reshape(sig,pshp)
 
 
