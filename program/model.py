@@ -39,15 +39,15 @@ def VAE_test(x, keep_prob, batch_size, latent_size, Training,lr):
         return output, loss, loss_ext, optimizer, z_mean    
     
 def encoder(x,Training, Name=''):
-    p1 = conv2d_norm(x, (Name+'conv1'), [5, 5, 1, 64], Training, [1, 1, 1, 1], 'SAME' ,activation = 'lrelu')
-    pool1 = maxpool2d(p1,(Name+'pool1'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
-    p2 = conv2d_norm(pool1, (Name+'conv2'), [5, 5, 64, 128], Training, [1, 1, 1, 1], 'SAME' ,activation = 'lrelu')
-    pool2 = maxpool2d(p2,(Name+'pool2'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
-    p3 = conv2d_norm(pool2, (Name+'conv3'), [5, 5, 128, 256], Training, [1, 1, 1, 1], 'SAME' ,activation = 'lrelu')
-    pool3 = maxpool2d(p3,(Name+'pool3'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
-    p4 = conv2d_norm(pool3, (Name+'conv4'), [3, 3, 256, 512], Training, [1, 1, 1, 1], 'SAME' ,activation = 'lrelu')
-    pool4 = maxpool2d(p4,(Name+'pool4'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
-    flat = tf.layers.flatten(pool4)
+    p1 = conv2d_norm(x, (Name+'conv1'), [5, 5, 1, 64], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
+    #pool1 = maxpool2d(p1,(Name+'pool1'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
+    p2 = conv2d_norm(p1, (Name+'conv2'), [5, 5, 64, 128], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
+    #pool2 = maxpool2d(p2,(Name+'pool2'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
+    p3 = conv2d_norm(p2, (Name+'conv3'), [5, 5, 128, 256], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
+    #pool3 = maxpool2d(p3,(Name+'pool3'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
+    p4 = conv2d_norm(p3, (Name+'conv4'), [3, 3, 256, 512], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
+    #pool4 = maxpool2d(p4,(Name+'pool4'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
+    flat = tf.layers.flatten(p4)
     return flat
 
 def decoder(z,Training, Name='',actf_output='sigmoid'):
