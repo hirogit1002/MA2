@@ -64,7 +64,7 @@ def discriminator(x, Training, reuse=False):
         if reuse:
             scope.reuse_variables()
         flat = encoder(x,Training,'d_')
-        fc_class = fullyConnected(flat, name='d_fc_class', output_size=1)
+        fc_class = fullyConnected(flat, name='d_fc_class', output_size=1, activation = 'linear')
         sig = tf.nn.sigmoid(fc_class)
         return sig, fc_class
     
