@@ -21,7 +21,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
     weight_path = '../weigths/'+'DCGAN' + '.ckpt'
     n = len(train_data)
     n_test = len(test_data)
-    x = tf.placeholder(tf.float32, [None, 64, 64, 3], name='InputData')
+    x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
     z = tf.placeholder(tf.float32, [None, latent_size], name='latent')
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
     generated, gen_op, dis_op, d_loss, g_loss, val_d_loss, val_g_loss = DCGAN(x,z,Training, lr)

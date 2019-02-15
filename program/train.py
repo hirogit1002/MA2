@@ -22,7 +22,7 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion, e
     weight_path = '../weigths/'+model_name + '.ckpt'
     n = len(train_data)
     n_test = len(test_data)
-    x = tf.placeholder(tf.float32, [None, 64, 64, 3], name='InputData')
+    x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
     keep_prob = tf.placeholder(tf.float32)
     Batch_size = tf.placeholder(tf.int32)
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')

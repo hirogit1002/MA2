@@ -55,7 +55,7 @@ def DCGAN(x,z,Training, lr):
     
     
 def encoder(x,Training, Name=''):
-    p1 = conv2d_norm(x, (Name+'conv1'), [5, 5, 3, 64], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
+    p1 = conv2d_norm(x, (Name+'conv1'), [5, 5, 1, 64], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
     p2 = conv2d_norm(p1, (Name+'conv2'), [5, 5, 64, 128], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
     p3 = conv2d_norm(p2, (Name+'conv3'), [5, 5, 128, 256], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
     p4 = conv2d_norm(p3, (Name+'conv4'), [3, 3, 256, 512], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
@@ -68,7 +68,7 @@ def decoder(z,Training, Name='',actf_output='sigmoid'):
     dc1 = deconv2d_norm(r1, (Name+'deconv1'), [3,3], 512,Training, [2, 2], 'relu', 'SAME')
     dc2 = deconv2d_norm(dc1, (Name+'deconv2'), [5,5], 256,Training, [2, 2], 'relu', 'SAME')
     dc3 = deconv2d_norm(dc2, (Name+'deconv3'), [5,5], 128,Training, [2, 2], 'relu', 'SAME')
-    output = deconv2d_norm(dc3, (Name+'deconv4'), [5,5], 3,Training, [2, 2], actf_output, 'SAME')
+    output = deconv2d_norm(dc3, (Name+'deconv4'), [5,5], 1,Training, [2, 2], actf_output, 'SAME')
     return output
 
 
