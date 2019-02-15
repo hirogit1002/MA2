@@ -41,10 +41,10 @@ def VAE_test(x, keep_prob, batch_size, latent_size, Training,lr):
         flat = encoder(x,Training)
         z_mean = fullyConnected(flat, name='z_mean', output_size=latent_size, activation = 'linear')
         z_log_sigma_sq = fullyConnected(flat, name='z_log_sigma_sq', output_size=latent_size, activation = 'linear')
-        output = decoder(z_mean,Training)
+        output = decoder(z_mean,Training, batch_size)
         loss, optimizer = create_loss_and_optimizer(x, output, z_log_sigma_sq, z_mean,lr)
         loss_ext = loss
-        return output, loss, loss_ext, optimizer, z_mean    
+        return output, loss, optimizer, z_mean    
 
 def DCGAN(x,z,Training, Batch_size, lr,reuse=False):
     generated = generator(z, Training, Batch_size,reuse)
