@@ -30,7 +30,6 @@ def deconv2d(x, name, kshape, Training, batchsize, Strides=[1, 2, 2, 1], pad='SA
         # filter : [height, width, output_channels, in_channels]
         w = tf.get_variable('w', kshape, initializer=tf.random_normal_initializer(stddev=stddev))
         shp = x.get_shape()
-        print(shp)
         deconv = tf.nn.conv2d_transpose(x, w, output_shape=[batchsize,np.int(shp[1])*2,np.int(shp[2])*2,kshape[2]], strides=Strides, padding=pad)
         biases = tf.get_variable('biases', [kshape[2]], initializer=tf.constant_initializer(0.0))
         deconv = tf.nn.bias_add(deconv, biases)
@@ -43,7 +42,6 @@ def deconv2d_nrm(x, name, kshape, Training, batchsize, Strides=[1, 2, 2, 1], pad
         # filter : [height, width, output_channels, in_channels]
         w = tf.get_variable('w', kshape, initializer=tf.random_normal_initializer(stddev=stddev))
         shp = x.get_shape()
-        print(shp)
         deconv = tf.nn.conv2d_transpose(x, w, output_shape=[batchsize,np.int(shp[1])*2,np.int(shp[2])*2,kshape[2]], strides=Strides, padding=pad)
         biases = tf.get_variable('biases', [kshape[2]], initializer=tf.constant_initializer(0.0))
         deconv = tf.nn.bias_add(deconv, biases)

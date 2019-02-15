@@ -80,7 +80,7 @@ def decoder(z,Training, batchsize, Name='',actf_output='sigmoid'):
     dc0 = deconv2d_nrm(r1, (Name+'deconv0'), [3, 3, 512, 1024], Training, batchsize, [1, 2, 2, 1], 'SAME', 'relu')
     dc1 = deconv2d_nrm(dc0, (Name+'deconv1'), [3, 3, 256, 512], Training, batchsize, [1, 2, 2, 1], 'SAME', 'relu')
     dc2 = deconv2d_nrm(dc1, (Name+'deconv2'), [5, 5, 128, 256],Training, batchsize, [1, 2, 2, 1], 'SAME', 'relu')
-    output = deconv2d_nrm(dc2, (Name+'deconv3'), [5, 5, 1, 128],Training, batchsize, [1, 2, 2, 1], 'SAME', actf_output)
+    output = deconv2d(dc2, (Name+'deconv3'), [5, 5, 1, 128],Training, batchsize, [1, 2, 2, 1], 'SAME', actf_output)
     return output
 
 
