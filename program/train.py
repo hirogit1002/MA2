@@ -45,7 +45,11 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion, e
         saver = tf.train.Saver()
         if (init==False):
             saver.restore(sess, weight_path)
+        start_time = time.time()
+        epoch_time =0.
+        k = 1.
         for epoch in range(epochs):
+            epoch_start = time.time()
             sum_loss = 0
             n_batches = int(n / batch_size)
             # Loop over all batches
@@ -61,7 +65,7 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion, e
                 # Run optimization op (backprop) and cost op (to get loss value)
                 _,res_trn ,train_cost = sess.run([optimizer, trn_summary, cost_trn], feed_dict={x: imgs, keep_prob:0.75,Training:True, Batch_size:batch_size})
                 sum_loss += (train_cost / n_batches)
-                sys.stdout.write("\r%s" % "batch: {}/{}, loss: {}".format(counter+1, np.int(n/batch_size)+1, sum_loss/(i+1)))
+                sys.stdout.write("\r%s" % "batch: {}/{}, loss: {}, time: {}".format(counter+1, np.int(n/batch_size)+1, sum_loss/(i+1),(start_time-time.time())))
                 sys.stdout.flush()
                 counter +=1
             file_writer.add_summary(res_trn, (epoch+1))
@@ -79,7 +83,11 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion, e
             res_val, test_cost =sess.run([val_summary, cost_val], feed_dict={x: test_imgs, keep_prob:1.,Training:False, Batch_size:n_test})
             print('Validation Loss:', test_cost/n_test)
             file_writer.add_summary( res_val, (epoch+1))
-        print('Optimization Finished')
+            epoch_end = time.time()-epoch_start
+            epoch_time+=epoch_end
+            print('Time per epoch: ',(epoch_time/k),'s/epoch')
+            k+=1.
+        print('Optimization Finished with time: ',(time.time()-start_time))
         sess.close()
 
 
