@@ -8,7 +8,7 @@ def conv2d(x, name, kshape, Training, Strides=[1, 2, 2, 1], pad='SAME',activatio
         w = tf.get_variable('w', kshape, initializer=tf.truncated_normal_initializer(stddev=stddev))
         conv = tf.nn.conv2d(x, w, strides=Strides, padding='SAME')
         biases = tf.get_variable('biases', [kshape[3]], initializer=tf.constant_initializer(0.0))
-        conv = tf.reshape(tf.nn.bias_add(conv, biases), conv.get_shape())
+        conv = tf.nn.bias_add(conv, biases)
         outnorm = actdict[activation](conv)
         return outnorm
 
@@ -18,7 +18,7 @@ def conv2d_nrm(x, name, kshape, Training, Strides=[1, 2, 2, 1], pad='SAME',activ
         w = tf.get_variable('w', kshape, initializer=tf.truncated_normal_initializer(stddev=stddev))
         conv = tf.nn.conv2d(x, w, strides=Strides, padding='SAME')
         biases = tf.get_variable('biases', [kshape[3]], initializer=tf.constant_initializer(0.0))
-        conv = tf.reshape(tf.nn.bias_add(conv, biases), conv.get_shape())
+        conv = tf.nn.bias_add(conv, biases)
         bn = tf.contrib.layers.batch_norm(conv, decay=0.9, updates_collections=None, epsilon=1e-5, scale=True, is_training=Training, scope="batch_norm")
         outnorm = actdict[activation](bn)
         return outnorm
@@ -33,7 +33,7 @@ def deconv2d(x, name, kshape, Training, batchsize, Strides=[1, 2, 2, 1], pad='SA
         print(shp)
         deconv = tf.nn.conv2d_transpose(x, w, output_shape=[batchsize,np.int(shp[1])*2,np.int(shp[2])*2,kshape[2]], strides=Strides, padding=pad)
         biases = tf.get_variable('biases', [kshape[2]], initializer=tf.constant_initializer(0.0))
-        deconv = tf.reshape(tf.nn.bias_add(deconv, biases), deconv.get_shape())
+        deconv = tf.nn.bias_add(deconv, biases)
         outnorm = actdict[activation](deconv)
         return outnorm
 
@@ -46,7 +46,7 @@ def deconv2d_nrm(x, name, kshape, Training, batchsize, Strides=[1, 2, 2, 1], pad
         print(shp)
         deconv = tf.nn.conv2d_transpose(x, w, output_shape=[batchsize,np.int(shp[1])*2,np.int(shp[2])*2,kshape[2]], strides=Strides, padding=pad)
         biases = tf.get_variable('biases', [kshape[2]], initializer=tf.constant_initializer(0.0))
-        deconv = tf.reshape(tf.nn.bias_add(deconv, biases), deconv.get_shape())
+        deconv = tf.nn.bias_add(deconv, biases)
         bn = tf.contrib.layers.batch_norm(deconv, decay=0.9, updates_collections=None, epsilon=1e-5, scale=True, is_training=Training, scope="batch_norm")
         outnorm = actdict[activation](bn)
         return outnorm
