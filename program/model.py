@@ -11,7 +11,6 @@ def AE(x, keep_prob, batch_size, latent_size, Training,lr):
         z = fullyConnected(flat, name='z', output_size=latent_size)
         output = decoder(z,Training)
         cross_entropy = -1. * x * tf.log(output + 1e-10) - (1. - x) * tf.log(1. - output + 1e-10)
-        #cross_entropy =tf.subtract( tf.multiply(tf.multiply(tf.constant([-1.]), x), tf.log(tf.add(output, tf.constant([1e-10])))), tf.multiply(tf.subtract(tf.constant([1.]), x), tf.log(tf.add(tf.subtract(tf.constant([1.]), output),tf.constant([1e-10])))))
         loss = tf.reduce_sum(cross_entropy)
         loss_ext = loss
         optimizer = tf.train.AdamOptimizer(lr).minimize(loss)
@@ -37,16 +36,32 @@ def VAE_test(x, keep_prob, batch_size, latent_size, Training,lr):
         loss, optimizer = create_loss_and_optimizer(x, output, z_log_sigma_sq, z_mean,lr)
         loss_ext = loss
         return output, loss, loss_ext, optimizer, z_mean    
+
+def DCGAN():
+    x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
+    z = tf.placeholder(tf.float32, [None, latent_size], name='latent')
+    Training = tf.placeholder(dtype=tf.bool, name='LabelData')
+    generated = generator(z, Training)
+    sig, D_logits = discriminator(x,Training, reuse=False)
+    sig_, D_logits_ = discriminator(generated, Training, reuse=True)
+    loss_real, loss_fake, g_loss = loss_gan(D_logits,D_logits_)                    
+    d_loss = loss_real + loss_fake
+
+    t_vars = tf.trainable_variables()
+    d_vars = [var for var in t_vars if 'd_' in var.name]
+    g_vars = [var for var in t_vars if 'g_' in var.name]
+    
+    # Optimizer
+    dis_op = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.5).minimize(d_loss, var_list=d_vars)
+    gen_op = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.5).minimize(g_loss, var_list=g_vars)
+    return generated, gen_op, dis_op, d_loss, g_loss, d_loss, g_loss
+    
     
 def encoder(x,Training, Name=''):
     p1 = conv2d_norm(x, (Name+'conv1'), [5, 5, 1, 64], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
-    #pool1 = maxpool2d(p1,(Name+'pool1'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
     p2 = conv2d_norm(p1, (Name+'conv2'), [5, 5, 64, 128], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
-    #pool2 = maxpool2d(p2,(Name+'pool2'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
     p3 = conv2d_norm(p2, (Name+'conv3'), [5, 5, 128, 256], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
-    #pool3 = maxpool2d(p3,(Name+'pool3'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
     p4 = conv2d_norm(p3, (Name+'conv4'), [3, 3, 256, 512], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
-    #pool4 = maxpool2d(p4,(Name+'pool4'),kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1])
     flat = tf.layers.flatten(p4)
     return flat
 
@@ -58,6 +73,13 @@ def decoder(z,Training, Name='',actf_output='sigmoid'):
     dc3 = deconv2d_norm(dc2, (Name+'deconv3'), [5,5], 128,Training, [2, 2], 'relu', 'SAME')
     output = deconv2d_norm(dc3, (Name+'deconv4'), [5,5], 1,Training, [2, 2], actf_output, 'SAME')
     return output
+
+
+def generator(z, Training):
+    with tf.variable_scope("generator") as scope:
+        output = decoder(z,Training, 'g_','tanh')
+        return output
+
 
 def discriminator(x, Training, reuse=False):
     with tf.variable_scope("discriminator") as scope:
@@ -90,5 +112,5 @@ def loss_gan(D_logits,D_logits_):
     loss_real = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=D_logits, labels=tf.ones_like(D_logits)))
     loss_fake = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=D_logits_, labels=tf.zeros_like(D_logits_)))
     g_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=D_logits_, labels=tf.ones_like(D_logits_)))
-    return loss_real, loss_fake, g_loss, loss_real, loss_fake, g_loss
+    return loss_real, loss_fake, g_loss
 

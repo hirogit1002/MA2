@@ -21,25 +21,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
     weight_path = '../weigths/'+'DCGAN' + '.ckpt'
     n = len(train_data)
     n_test = len(test_data)
-    x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
-    z = tf.placeholder(tf.float32, [None, latent_size], name='latent')
-    Training = tf.placeholder(dtype=tf.bool, name='LabelData')
-    generated = decoder(z,Training, 'g_','tanh')
-    sig, D_logits = discriminator(x,Training, reuse=False)
-    sig_, D_logits_ = discriminator(generated, Training, reuse=True)
-    loss_real, loss_fake, g_loss, val_loss_real, val_loss_fake, val_g_loss = loss_gan(D_logits,D_logits_)                    
-    d_loss = loss_real + loss_fake
-    val_d_loss = val_loss_real + val_loss_fake
-
-    t_vars = tf.trainable_variables()
-
-    d_vars = [var for var in t_vars if 'd_' in var.name]
-    g_vars = [var for var in t_vars if 'g_' in var.name]
-
-    
-    # Optimizer
-    dis_op = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.5).minimize(d_loss, var_list=d_vars)
-    gen_op = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.5).minimize(g_loss, var_list=g_vars)
+    generated, gen_op, dis_op, d_loss, g_loss, val_d_loss, val_g_loss = DCGAN()
     
     with tf.name_scope('training'):
         tf.summary.scalar("g_loss", g_loss)
@@ -56,6 +38,10 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
             tf.gfile.DeleteRecursively(logs_path)
         file_writer = tf.summary.FileWriter(logs_path, sess.graph)
         sess.run(tf.global_variables_initializer())
+        try:
+            sess.run(tf.global_variables_initializer())
+        except:
+            sess.run(tf.initialize_all_variables())
         # create log writer object
         saver = tf.train.Saver()
         if (init==False):
