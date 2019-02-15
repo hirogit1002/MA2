@@ -49,9 +49,12 @@ def DCGAN(x,z,Training, Batch_size, lr,reuse=False):
     g_vars = [var for var in t_vars if 'g_' in var.name]
     
     # Optimizer
-    dis_op = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.5).minimize(d_loss, var_list=d_vars)
-    gen_op = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.5).minimize(g_loss, var_list=g_vars)
-    return generated, gen_op, dis_op, d_loss, g_loss
+    if(reuse):
+        return d_loss, g_loss
+    else:
+        dis_op = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.5).minimize(d_loss, var_list=d_vars)
+        gen_op = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.5).minimize(g_loss, var_list=g_vars)
+        return generated, gen_op, dis_op, d_loss, g_loss
     
     
 def encoder(x,Training, Name=''):
