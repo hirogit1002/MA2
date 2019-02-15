@@ -55,21 +55,31 @@ def DCGAN(x,z,Training, lr):
     
     
 def encoder(x,Training, Name=''):
-    p1 = conv2d_norm(x, (Name+'conv1'), [5, 5, 1, 64], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
-    p2 = conv2d_norm(p1, (Name+'conv2'), [5, 5, 64, 128], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
-    p3 = conv2d_norm(p2, (Name+'conv3'), [5, 5, 128, 256], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
-    p4 = conv2d_norm(p3, (Name+'conv4'), [3, 3, 256, 512], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
+    p1 = conv2d(x, (Name+'conv1'), [5, 5, 1, 64], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
+    p2 = conv2d_nrm(p1, (Name+'conv2'), [5, 5, 64, 128], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
+    p3 = conv2d_nrm(p2, (Name+'conv3'), [5, 5, 128, 256], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
+    p4 = conv2d_nrm(p3, (Name+'conv4'), [3, 3, 256, 512], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
     flat = tf.layers.flatten(p4)
     return flat
 
 def decoder(z,Training, Name='',actf_output='sigmoid'):
     fc1 = fullyConnected(z, name=(Name+'fc1'), output_size=4*4*1024)
     r1 = tf.reshape(fc1, shape=[-1,4,4,1024])
-    dc1 = deconv2d_norm(r1, (Name+'deconv1'), [3,3], 512,Training, [2, 2], 'relu', 'SAME')
-    dc2 = deconv2d_norm(dc1, (Name+'deconv2'), [5,5], 256,Training, [2, 2], 'relu', 'SAME')
-    dc3 = deconv2d_norm(dc2, (Name+'deconv3'), [5,5], 128,Training, [2, 2], 'relu', 'SAME')
-    output = deconv2d_norm(dc3, (Name+'deconv4'), [5,5], 1,Training, [2, 2], actf_output, 'SAME')
+    dc1 = deconv2d_nrm(r1, (Name+'deconv1'), [3, 3, 256, 512], Training, [1, 2, 2, 1], 'SAME', 'relu')
+    dc2 = deconv2d_nrm(dc1, (Name+'deconv2'), [5, 5, 128, 256],Training, [1, 2, 2, 1], 'SAME', 'relu')
+    dc3 = deconv2d_nrm(dc2, (Name+'deconv3'), [5, 5, 64, 128],Training, [1, 2, 2, 1], 'SAME', 'relu')
+    output = deconv2d(dc3, (Name+'deconv4'), [5, 5, 1, 64],Training, [1, 2, 2, 1], 'SAME', actf_output)
     return output
+
+
+#def decoder(z,Training, Name='',actf_output='sigmoid'):
+#    fc1 = fullyConnected(z, name=(Name+'fc1'), output_size=4*4*1024)
+#    r1 = tf.reshape(fc1, shape=[-1,4,4,1024])
+#    dc1 = deconv2d_norm(r1, (Name+'deconv1'), [3,3], 512,Training, [2, 2], 'relu', 'SAME')
+#    dc2 = deconv2d_norm(dc1, (Name+'deconv2'), [5,5], 256,Training, [2, 2], 'relu', 'SAME')
+#    dc3 = deconv2d_norm(dc2, (Name+'deconv3'), [5,5], 128,Training, [2, 2], 'relu', 'SAME')
+#    output = deconv2d_norm(dc3, (Name+'deconv4'), [5,5], 1,Training, [2, 2], actf_output, 'SAME')
+#    return output
 
 
 def generator(z, Training):
