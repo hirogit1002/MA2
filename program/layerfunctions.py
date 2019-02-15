@@ -50,33 +50,6 @@ def deconv2d_nrm(x, name, kshape, Training, batchsize, Strides=[1, 2, 2, 1], pad
         return outnorm
 
 
-
-def conv2d_norm(x, name, kshape, Training, strides=[1, 1, 1, 1], pad='SAME' ,activation = 'relu'):
-    actdict = {'relu':tf.nn.relu,'tanh':tf.nn.tanh, 'linear':tf.identity,'sigmoid':tf.nn.sigmoid,'lrelu':lrelu}
-    W = tf.get_variable(name='w_'+name, shape=kshape, initializer=tf.contrib.layers.xavier_initializer(uniform=False))
-    b = tf.get_variable(name='b_' + name, shape=[kshape[3]],initializer=tf.contrib.layers.xavier_initializer(uniform=False))
-    out = tf.nn.conv2d(x,W,strides=strides, padding=pad)
-    out = tf.nn.bias_add(out, b)
-    mean, variance = tf.nn.moments(out, [0, 1, 2])
-    bn = tf.nn.batch_normalization(out, mean, variance, None, None, 1e-5)
-    outnorm = actdict[activation](bn)
-    return outnorm
-# ---------------------------------
-def deconv2d_norm(x, name, kshape, n_outputs,Training, strides=[1, 1],activation = 'relu',pad='SAME'):
-    actdict = {'relu':tf.nn.relu,'tanh':tf.nn.tanh, 'linear':tf.identity,'sigmoid':tf.nn.sigmoid,'lrelu':lrelu}
-    out = tf.contrib.layers.conv2d_transpose(x,
-                                             num_outputs= n_outputs,
-                                             kernel_size=kshape,
-                                             stride=strides,
-                                             padding=pad,
-                                             weights_initializer=tf.contrib.layers.xavier_initializer_conv2d(uniform=False),
-                                             biases_initializer=tf.contrib.layers.xavier_initializer(uniform=False),
-                                             activation_fn=actdict['linear'])
-    
-    norm = tf.layers.batch_normalization(out,training=Training)
-    outnorm = actdict[activation](norm)  
-    return outnorm
-
 #   ---------------------------------
 def maxpool2d(x,name,kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1]):
     out = tf.nn.max_pool(x,ksize=kshape, strides=strides,padding='SAME')
