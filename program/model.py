@@ -9,7 +9,7 @@ def AE(x, keep_prob, batch_size, latent_size, Training,lr):
     with tf.variable_scope("AE", reuse=tf.AUTO_REUSE):
         flat = encoder(x,Training)
         z = fullyConnected(flat, name='z', output_size=latent_size)
-        output = decoder(z,Training)
+        output = decoder(z,Training, batch_size)
         cross_entropy = -1. * x * tf.log(output + 1e-10) - (1. - x) * tf.log(1. - output + 1e-10)
         loss = tf.reduce_sum(cross_entropy)
         loss_ext = loss
@@ -22,7 +22,7 @@ def VAE(x, keep_prob, batch_size, latent_size, Training,lr):
         z_mean = fullyConnected(flat, name='z_mean', output_size=latent_size, activation = 'linear')
         z_log_sigma_sq = fullyConnected(flat, name='z_log_sigma_sq', output_size=latent_size, activation = 'linear')
         z = variational(z_mean, z_log_sigma_sq, batch_size, latent_size)
-        output = decoder(z,Training)
+        output = decoder(z,Training, batch_size)
         loss, optimizer = create_loss_and_optimizer(x, output, z_log_sigma_sq, z_mean, lr)
         loss_ext = loss
         return output, loss, loss_ext, optimizer, z    
@@ -37,8 +37,8 @@ def VAE_test(x, keep_prob, batch_size, latent_size, Training,lr):
         loss_ext = loss
         return output, loss, loss_ext, optimizer, z_mean    
 
-def DCGAN(x,z,Training, lr):
-    generated = generator(z, Training)
+def DCGAN(x,z,Training, Batch_size, lr):
+    generated = generator(z, Training, Batch_size)
     sig, D_logits = discriminator(x,Training, reuse=False)
     sig_, D_logits_ = discriminator(generated, Training, reuse=True)
     loss_real, loss_fake, g_loss = loss_gan(D_logits,D_logits_)                    
@@ -62,13 +62,13 @@ def encoder(x,Training, Name=''):
     flat = tf.layers.flatten(p4)
     return flat
 
-def decoder(z,Training, Name='',actf_output='sigmoid'):
+def decoder(z,Training, batchsize, Name='',actf_output='sigmoid'):
     fc1 = fullyConnected(z, name=(Name+'fc1'), output_size=4*4*1024)
     r1 = tf.reshape(fc1, shape=[-1,4,4,1024])
-    dc0 = deconv2d_nrm(r1, (Name+'deconv0'), [3, 3, 512, 1024], Training, [1, 2, 2, 1], 'SAME', 'relu')
-    dc1 = deconv2d_nrm(r0, (Name+'deconv1'), [3, 3, 256, 512], Training, [1, 2, 2, 1], 'SAME', 'relu')
-    dc2 = deconv2d_nrm(dc1, (Name+'deconv2'), [5, 5, 128, 256],Training, [1, 2, 2, 1], 'SAME', 'relu')
-    output = deconv2d_nrm(dc2, (Name+'deconv3'), [5, 5, 1, 128],Training, [1, 2, 2, 1], 'SAME', actf_output)
+    dc0 = deconv2d_nrm(r1, (Name+'deconv0'), [3, 3, 512, 1024], Training, batchsize, [1, 2, 2, 1], 'SAME', 'relu')
+    dc1 = deconv2d_nrm(r0, (Name+'deconv1'), [3, 3, 256, 512], Training, batchsize, [1, 2, 2, 1], 'SAME', 'relu')
+    dc2 = deconv2d_nrm(dc1, (Name+'deconv2'), [5, 5, 128, 256],Training, batchsize, [1, 2, 2, 1], 'SAME', 'relu')
+    output = deconv2d_nrm(dc2, (Name+'deconv3'), [5, 5, 1, 128],Training, batchsize, [1, 2, 2, 1], 'SAME', actf_output)
     return output
 
 
@@ -82,9 +82,9 @@ def decoder(z,Training, Name='',actf_output='sigmoid'):
 #    return output
 
 
-def generator(z, Training):
+def generator(z, Training, batchsize):
     with tf.variable_scope("generator") as scope:
-        output = decoder(z,Training, 'g_','tanh')
+        output = decoder(z,Training, batchsize, 'g_','tanh')
         return output
 
 
