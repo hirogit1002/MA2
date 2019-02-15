@@ -65,10 +65,10 @@ def encoder(x,Training, Name=''):
 def decoder(z,Training, Name='',actf_output='sigmoid'):
     fc1 = fullyConnected(z, name=(Name+'fc1'), output_size=4*4*1024)
     r1 = tf.reshape(fc1, shape=[-1,4,4,1024])
-    dc1 = deconv2d_nrm(r1, (Name+'deconv1'), [3, 3, 256, 512], Training, [1, 2, 2, 1], 'SAME', 'relu')
+    dc0 = deconv2d_nrm(r1, (Name+'deconv0'), [3, 3, 512, 1024], Training, [1, 2, 2, 1], 'SAME', 'relu')
+    dc1 = deconv2d_nrm(r0, (Name+'deconv1'), [3, 3, 256, 512], Training, [1, 2, 2, 1], 'SAME', 'relu')
     dc2 = deconv2d_nrm(dc1, (Name+'deconv2'), [5, 5, 128, 256],Training, [1, 2, 2, 1], 'SAME', 'relu')
-    dc3 = deconv2d_nrm(dc2, (Name+'deconv3'), [5, 5, 64, 128],Training, [1, 2, 2, 1], 'SAME', 'relu')
-    output = deconv2d(dc3, (Name+'deconv4'), [5, 5, 1, 64],Training, [1, 2, 2, 1], 'SAME', actf_output)
+    output = deconv2d_nrm(dc2, (Name+'deconv3'), [5, 5, 1, 128],Training, [1, 2, 2, 1], 'SAME', actf_output)
     return output
 
 
