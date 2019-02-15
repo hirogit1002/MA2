@@ -44,7 +44,7 @@ def deconv2d_nrm(x, name, kshape, Training, Strides=[1, 2, 2, 1], pad='SAME',act
         w = tf.get_variable('w', kshape, initializer=tf.random_normal_initializer(stddev=stddev))
         shp = x.get_shape()
         print(shp)
-        deconv = tf.nn.conv2d_transpose(x, w, output_shape=[shp[1]*2,shp[2]*2,kshape[2]], strides=Strides, padding=pad)
+        deconv = tf.nn.conv2d_transpose(x, w, output_shape=[shp[0],shp[1]*2,shp[2]*2,kshape[2]], strides=Strides, padding=pad)
         biases = tf.get_variable('biases', [kshape[2]], initializer=tf.constant_initializer(0.0))
         deconv = tf.reshape(tf.nn.bias_add(deconv, biases), deconv.get_shape())
         bn = tf.contrib.layers.batch_norm(deconv, decay=0.9, updates_collections=None, epsilon=1e-5, scale=True, is_training=Training, scope="batch_norm")
