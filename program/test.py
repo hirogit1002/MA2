@@ -37,7 +37,7 @@ def test_network(data, latent_size, normalizarion, model_name,lr):
             if (normalizarion):
                 imgs = norm_intg(imgs[np.newaxis,:])
             else:
-                imgs = imgs[np.newaxis,:,:,np.newaxis]
+                imgs = imgs[np.newaxis,:,:,np.newaxis].astype(np.float32)
                 
             print('Loss:', cost_val.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:1, Training:False}))
             y_value = out.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:1, Training:False})

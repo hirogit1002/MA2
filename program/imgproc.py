@@ -30,7 +30,7 @@ def normalization(img_flattten, const=10.):
 
 def norm_intg(imgs,activate='sigmoid'):
     flats, pshp = flatten(imgs)
-    norm, mean, var = normalization(flats, const=10.)
+    norm, mean, var = normalization(flats.astype(np.float32), const=10.)
     if (activate=='sigmoid'):
         sig = sigmoid(norm)
     else:

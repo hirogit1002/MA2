@@ -56,7 +56,7 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion, e
                 if (normalizarion):
                     imgs = norm_intg(imgs)
                 else:
-                    imgs = imgs[:,:,:,np.newaxis]
+                    imgs = imgs[:,:,:,np.newaxis].astype(np.float32)
                 # Run optimization op (backprop) and cost op (to get loss value)
                 _,res_trn ,train_cost = sess.run([optimizer, trn_summary, cost_trn], feed_dict={x: imgs, keep_prob:0.75,Training:True, Batch_size:batch_size})
                 sum_loss += (train_cost / n_batches)
@@ -74,7 +74,7 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion, e
             if (normalizarion):
                 test_imgs = norm_intg(test_imgs)
             else:
-                test_imgs =  test_imgs[:,:,:,np.newaxis]  
+                test_imgs =  test_imgs[:,:,:,np.newaxis].astype(np.float32)  
             res_val, test_cost =sess.run([val_summary, cost_val], feed_dict={x: test_imgs, keep_prob:1.,Training:False, Batch_size:n_test})
             print('Validation Loss:', test_cost/n_test)
             file_writer.add_summary( res_val, (epoch+1))

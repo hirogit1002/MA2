@@ -62,7 +62,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
                 if (normalizarion):
                     imgs = norm_intg(imgs,'tanh')
                 else:
-                    imgs = imgs[:,:,:,np.newaxis]
+                    imgs = imgs[:,:,:,np.newaxis].astype(np.float32)
                 # Run optimization op (backprop) and cost op (to get loss value)
                 feed = {z: sample_z(batch_size, latent_size), x: imgs, Training:True}      
                 _,train_d_loss = sess.run([dis_op, d_loss], feed_dict=feed )
@@ -84,7 +84,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
             if (normalizarion):
                 test_imgs = norm_intg(test_imgs,'tanh')
             else:
-                test_imgs =  test_imgs[:,:,:,np.newaxis]                
+                test_imgs =  test_imgs[:,:,:,np.newaxis].astype(np.float32)                
             feed = {z: sample_z(n_test, latent_size), x: test_imgs, Training:False}  
             test_d_cost, test_g_cost = sess.run([val_d_loss,val_g_loss], feed_dict = feed)
             res_val,_= sess.run([val_summary, val_g_loss], feed_dict = feed)
