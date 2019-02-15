@@ -37,7 +37,7 @@ def VAE_test(x, keep_prob, batch_size, latent_size, Training,lr):
         loss_ext = loss
         return output, loss, loss_ext, optimizer, z_mean    
 
-def DCGAN(latent_size):
+def DCGAN(latent_size,lr):
     x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
     z = tf.placeholder(tf.float32, [None, latent_size], name='latent')
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')

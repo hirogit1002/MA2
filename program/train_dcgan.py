@@ -21,7 +21,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
     weight_path = '../weigths/'+'DCGAN' + '.ckpt'
     n = len(train_data)
     n_test = len(test_data)
-    generated, gen_op, dis_op, d_loss, g_loss, val_d_loss, val_g_loss = DCGAN(latent_size)
+    generated, gen_op, dis_op, d_loss, g_loss, val_d_loss, val_g_loss = DCGAN(latent_size,lr)
     
     with tf.name_scope('training'):
         tf.summary.scalar("g_loss", g_loss)
