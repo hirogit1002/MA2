@@ -84,16 +84,6 @@ def decoder(z,Training, batchsize, Name='',actf_output='sigmoid'):
     return output
 
 
-#def decoder(z,Training, Name='',actf_output='sigmoid'):
-#    fc1 = fullyConnected(z, name=(Name+'fc1'), output_size=4*4*1024)
-#    r1 = tf.reshape(fc1, shape=[-1,4,4,1024])
-#    dc1 = deconv2d_norm(r1, (Name+'deconv1'), [3,3], 512,Training, [2, 2], 'relu', 'SAME')
-#    dc2 = deconv2d_norm(dc1, (Name+'deconv2'), [5,5], 256,Training, [2, 2], 'relu', 'SAME')
-#    dc3 = deconv2d_norm(dc2, (Name+'deconv3'), [5,5], 128,Training, [2, 2], 'relu', 'SAME')
-#    output = deconv2d_norm(dc3, (Name+'deconv4'), [5,5], 1,Training, [2, 2], actf_output, 'SAME')
-#    return output
-
-
 def generator(z, Training, batchsize, reuse=False):
     with tf.variable_scope("generator") as scope:
         if (reuse):
