@@ -19,7 +19,7 @@ def test_network(data, latent_size, normalizarion, model_name,lr):
     n = len(data)
     weight_path = '../weigths/'+model_name + '.ckpt'
     sess = tf.InteractiveSession()
-    x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
+    x = tf.placeholder(tf.float32, [None, 64, 64, 3], name='InputData')
     keep_prob = tf.placeholder(tf.float32)
     Batch_size = tf.placeholder(tf.int32)
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
