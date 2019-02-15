@@ -38,9 +38,6 @@ def VAE_test(x, keep_prob, batch_size, latent_size, Training,lr):
         return output, loss, loss_ext, optimizer, z_mean    
 
 def DCGAN(x,z,Training, lr):
-    x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
-    z = tf.placeholder(tf.float32, [None, latent_size], name='latent')
-    Training = tf.placeholder(dtype=tf.bool, name='LabelData')
     generated = generator(z, Training)
     sig, D_logits = discriminator(x,Training, reuse=False)
     sig_, D_logits_ = discriminator(generated, Training, reuse=True)
