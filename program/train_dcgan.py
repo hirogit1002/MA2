@@ -25,8 +25,8 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
     z = tf.placeholder(tf.float32, [None, latent_size], name='latent')
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
     Batch_size = tf.placeholder(tf.int32)
-    generated, gen_op, dis_op, d_loss, g_loss, val_d_loss, val_g_loss = DCGAN(x,z,Training,Batch_size, lr)
-    
+    generated, gen_op, dis_op, d_loss, g_loss = DCGAN(x,z,Training,batch_size, lr)
+    _, _, _, val_d_loss, val_g_loss = DCGAN(x,z,Training,n_test, lr)
     with tf.name_scope('training'):
         tf.summary.scalar("g_loss", g_loss)
         tf.summary.scalar("d_loss", d_loss)
@@ -65,7 +65,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
                 else:
                     imgs = imgs[:,:,:,np.newaxis].astype(np.float32)
                 # Run optimization op (backprop) and cost op (to get loss value)
-                feed = {z: sample_z(batch_size, latent_size), x: imgs, Training:True, Batch_size: batch_size}      
+                feed = {z: sample_z(batch_size, latent_size), x: imgs, Training:True}      
                 _,train_d_loss = sess.run([dis_op, d_loss], feed_dict=feed )
                 _,train_g_loss = sess.run([gen_op, g_loss], feed_dict=feed )
                 _,res_trn ,train_cost = sess.run([gen_op, trn_summary, g_loss], feed_dict=feed)
@@ -86,7 +86,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
                 test_imgs = norm_intg(test_imgs,'tanh')
             else:
                 test_imgs =  test_imgs[:,:,:,np.newaxis].astype(np.float32)                
-            feed = {z: sample_z(n_test, latent_size), x: test_imgs, Training:False, Batch_size: batch_size}  
+            feed = {z: sample_z(n_test, latent_size), x: test_imgs, Training:False}  
             test_d_cost, test_g_cost = sess.run([val_d_loss,val_g_loss], feed_dict = feed)
             res_val,_= sess.run([val_summary, val_g_loss], feed_dict = feed)
             print('D Cost:', test_d_cost/n_test,'G Cost:',test_g_cost/n_test)
