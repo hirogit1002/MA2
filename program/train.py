@@ -26,7 +26,8 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion, e
     keep_prob = tf.placeholder(tf.float32)
     Batch_size = tf.placeholder(tf.int32)
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
-    out, cost_trn, cost_val, optimizer, fv = models[model_name](x, keep_prob, Batch_size, latent_size, Training,lr)
+    out, cost_trn, optimizer, fv = models[model_name](x, keep_prob, batch_size, latent_size, Training,lr)
+    out, cost_val, fv = models[model_name](x, keep_prob, n_test, latent_size, Training,lr,True)
     with tf.name_scope('training'):
         tf.summary.scalar('loss', cost_trn)
     with tf.name_scope('validation'):

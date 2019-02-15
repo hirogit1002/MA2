@@ -23,7 +23,7 @@ def test_network(data, latent_size, normalizarion, model_name,lr):
     keep_prob = tf.placeholder(tf.float32)
     Batch_size = tf.placeholder(tf.int32)
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
-    out, cost_trn, cost_val, optimizer, fv = models[model_name](x, keep_prob, Batch_size, latent_size, Training,lr)
+    out, cost_trn, cost_val, optimizer, fv = models[model_name](x, keep_prob, 1, latent_size, Training,lr)
 
     with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
         sess.run(tf.global_variables_initializer())
