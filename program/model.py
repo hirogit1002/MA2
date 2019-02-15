@@ -37,9 +37,9 @@ def VAE_test(x, keep_prob, batch_size, latent_size, Training,lr):
         loss_ext = loss
         return output, loss, loss_ext, optimizer, z_mean    
 
-def DCGAN(x,z,Training, Batch_size, lr):
-    generated = generator(z, Training, Batch_size)
-    sig, D_logits = discriminator(x,Training, reuse=False)
+def DCGAN(x,z,Training, Batch_size, lr,reuse=False):
+    generated = generator(z, Training, Batch_size,reuse)
+    sig, D_logits = discriminator(x,Training, reuse)
     sig_, D_logits_ = discriminator(generated, Training, reuse=True)
     loss_real, loss_fake, g_loss = loss_gan(D_logits,D_logits_)                    
     d_loss = loss_real + loss_fake
@@ -82,15 +82,17 @@ def decoder(z,Training, batchsize, Name='',actf_output='sigmoid'):
 #    return output
 
 
-def generator(z, Training, batchsize):
+def generator(z, Training, batchsize, reuse=False):
     with tf.variable_scope("generator") as scope:
+        if (reuse):
+            scope.reuse_variables()
         output = decoder(z,Training, batchsize, 'g_','tanh')
         return output
 
 
 def discriminator(x, Training, reuse=False):
     with tf.variable_scope("discriminator") as scope:
-        if reuse:
+        if (reuse):
             scope.reuse_variables()
         flat = encoder(x,Training,'d_')
         fc_class = fullyConnected(flat, name='d_fc_class', output_size=1, activation = 'linear')
