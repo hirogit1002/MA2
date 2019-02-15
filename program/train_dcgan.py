@@ -49,8 +49,12 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
         # create log writer object
         saver = tf.train.Saver()
         if (init==False):
-            saver.restore(sess, weight_path)
+            saver.restore(sess, weight_path)            
+        start_time = time.time()
+        epoch_time =0.
+        k = 1.
         for epoch in range(epochs):
+            epoch_start = time.time()
             sum_d_loss = 0
             sum_g_loss = 0
             n_batches = int(n / batch_size)
@@ -71,7 +75,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
                 _,res_trn ,train_cost = sess.run([gen_op, trn_summary, g_loss], feed_dict=feed)
                 sum_d_loss += (train_d_loss / n_batches)
                 sum_g_loss += (train_g_loss/ n_batches)
-                sys.stdout.write("\r%s" % "batch: {}/{}, d_loss: {}, g_loss: {}".format(counter+1, np.int(n/batch_size)+1, sum_d_loss/(i+1), sum_g_loss/(i+1)))
+                sys.stdout.write("\r%s" % "batch: {}/{}, d_loss: {}, g_loss: {}, time: {}".format(counter+1, np.int(n/batch_size)+1, sum_d_loss/(i+1), sum_g_loss/(i+1),(time.time()-start_time)))
                 sys.stdout.flush()
                 counter +=1
             file_writer.add_summary(res_trn, (epoch+1))
@@ -80,7 +84,6 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
             # Display logs per epoch step
             print('')
             print('Epoch', epoch+1, ' / ', epochs, 'D Cost:', sum_d_loss/epochs, 'G Cost:', sum_g_loss/epochs)
-            print('')
             test_imgs = np.array([np.array(Image.open(i).convert('L')) for i in test_data])
             if (normalizarion):
                 test_imgs = norm_intg(test_imgs,'tanh')
@@ -91,6 +94,11 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
             res_val,_= sess.run([val_summary, val_g_loss], feed_dict = feed)
             print('D Cost:', test_d_cost/n_test,'G Cost:',test_g_cost/n_test)
             file_writer.add_summary( res_val, (epoch+1))
-        print('Optimization Finished')
+            epoch_end = time.time()-epoch_start
+            epoch_time+=epoch_end
+            print('Time per epoch: ',(epoch_time/k),'s/epoch')
+            print('')
+            k+=1.
+        print('Optimization Finished with time: ',(time.time()-start_time))
         sess.close()
 
