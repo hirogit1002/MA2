@@ -18,8 +18,8 @@ parser.add_argument('--epochs','-e', default= 100, type=int)
 parser.add_argument('--learning_late','-r', default= 1e-4, type=float)
 args = parser.parse_args()
 
-paths = np.array(glob.glob("../data/*.jpg"))
-paths_test = np.array(glob.glob("../data_test/*.jpg"))
+paths = np.array(sorted(glob.glob("../data/*.jpg")))
+paths_test = np.array(sorted(glob.glob("../data_test/*.jpg")))
 Train = args.train
 Test = args.test
 latent = args.latent
