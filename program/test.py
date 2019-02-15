@@ -49,8 +49,11 @@ def test_network(data, latent_size, normalizarion, model_name,lr):
         sess.close()
     if (normalizarion):
         y_values = y_values*255.
-    with open('../save/y_value.pickle', 'wb') as f:
+        
+    path_y_value = '../save/y_value_'+model_name+'.pickle'
+    path_z = '../save/z_'+model_name+'.pickle'
+    with open(path_y_value, 'wb') as f:
         pickle.dump(y_values, f)
-    with open('../save/z.pickle', 'wb') as f:
+    with open(path_z , 'wb') as f:
         pickle.dump(zs, f)
 
