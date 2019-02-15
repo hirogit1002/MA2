@@ -74,7 +74,6 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion, e
             # Display logs per epoch step
             print('')
             print('Epoch', epoch+1, ' / ', epochs, 'Training Loss:', sum_loss/n_batches)
-            print('')
             test_imgs = np.array([np.array(Image.open(i).convert('L')) for i in test_data])
             if (normalizarion):
                 test_imgs = norm_intg(test_imgs)
@@ -82,6 +81,7 @@ def train_network(data, test_size, batch_size,init,latent_size, normalizarion, e
                 test_imgs =  test_imgs[:,:,:,np.newaxis].astype(np.float32)  
             res_val, test_cost =sess.run([val_summary, cost_val], feed_dict={x: test_imgs, keep_prob:1.,Training:False, Batch_size:n_test})
             print('Validation Loss:', test_cost/n_test)
+            print('')
             file_writer.add_summary( res_val, (epoch+1))
             epoch_end = time.time()-epoch_start
             epoch_time+=epoch_end
