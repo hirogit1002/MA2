@@ -26,7 +26,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
     Batch_size = tf.placeholder(tf.int32)
     generated, gen_op, dis_op, d_loss, g_loss = DCGAN(x,z,Training,batch_size, lr)
-    _, _, _, val_d_loss, val_g_loss = DCGAN(x,z,Training,n_test, lr)
+    _, _, _, val_d_loss, val_g_loss = DCGAN(x,z,Training,n_test, lr, reuse=True)
     with tf.name_scope('training'):
         tf.summary.scalar("g_loss", g_loss)
         tf.summary.scalar("d_loss", d_loss)
