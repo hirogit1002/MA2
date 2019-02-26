@@ -54,7 +54,6 @@ class SVM():
         for i in range(n):
             plt.subplot(h, 10, (i+1))
             plt.title((str(i+1)+' Label: '+self.emos_inv[int(self.y_test[i])]))
-            plt.title(str(i+1))
             plt.imshow(self.y_value[i],cmap='gray')
         plt.show()
         
