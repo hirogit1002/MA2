@@ -10,18 +10,20 @@ import pandas as pd
 import matplotlib.pyplot as plt
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-def split(n, vector_intg, y, test_size):
+def split(n, vector_intg, y, y_value, img ,test_size):
     n_test = int(n*0.3)
-    return vector_intg[:-n_test], vector_intg[-n_test:], y[:-n_test], y[-n_test:], n_test
+    return vector_intg[:-n_test], vector_intg[-n_test:], y[:-n_test], y[-n_test:], y_value[:-n_test], y_value[-n_test:],img[:-n_test], img[-n_test:], n_test
 
 class SVM():
     def __init__(self,path_vector,path_y_value,path_labels,Kernel='linear',Test_size=0.3):
         self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
         print('Data loaded')
+        self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
+        self.imgs = [np.array(Image.open(i).convert('L')) for i in self.imgs_path]
         self.vectors, self.y_value, self.y = self.load(path_vector,path_y_value,path_labels)
         self.n = len(self.vectors)
         self.perm = np.random.permutation(self.n)
-        self.X_train, self.X_test, self.y_train, self.y_test, self.n_test = split(self.n ,self.vectors[self.perm], self.y[self.perm], Test_size)
+        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test = split(self.n ,self.vectors[self.perm], self.y[self.perm], self.y_value[self.perm] ,self.imgs[self.perm], Test_size)
         print('Construct SVCs')
         self.model = SVC(kernel=Kernel, random_state=None,gamma='auto')
         print('Finish construction SVCs')
@@ -47,14 +49,18 @@ class SVM():
         plt.scatter(z_tsne[:, 0], z_tsne[:, 1])
         plt.show()
     
-    def imshow(self, size=(50,40)):
+    def imshow(self,plot='reconst', size=(50,40)):
         n=self.n_test
         h =-(-n//10)
+        if(plot=='reconst'):
+            value = y_value_test
+        else:
+            value = self.img_test
         fig = plt.figure(figsize=size)
         for i in range(n):
             plt.subplot(h, 10, (i+1))
             plt.title((str(i+1)+' Label: '+self.emos_inv[int(self.y_test[i])]))
-            plt.imshow(self.y_value[i],cmap='gray')
+            plt.imshow(self.y_value_test[i],cmap='gray')
         plt.show()
         
         
