@@ -55,7 +55,7 @@ class SVM():
         n=self.n_test
         h =-(-n//10)
         if(plot=='reconst'):
-            value = y_value_test
+            value = self.y_value_test
         else:
             value = self.img_test
         fig = plt.figure(figsize=size)
