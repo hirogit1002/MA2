@@ -66,7 +66,7 @@ class SVM():
         ax.scatter(fear[:, 0],fear[:, 1], c='green',marker='s', label='fear')
         ax.scatter(happy[:, 0],happy[:, 1], c='yellow',marker='o', label='happy')
         ax.scatter(sad[:, 0],sad[:, 1], c='blue',marker='s', label='sad')
-        ax.scatter(surprise[:, 0], surprise[:, 1], c='red',marker='.', label='sad')
+        ax.scatter(surprise[:, 0], surprise[:, 1], c='red',marker='.', label='surprise')
         ax.set_title('Distribution of emotion')
         ax.set_xlabel('x')
         ax.set_ylabel('y')
