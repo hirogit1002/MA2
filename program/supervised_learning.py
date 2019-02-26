@@ -64,5 +64,8 @@ class SVM():
             plt.title((str(i+1)+' Label: '+self.emos_inv[int(self.y_test[i])]))
             plt.imshow(value[i],cmap='gray')
         plt.show()
-        
+
+    def split_again(self, Test_size=0.3):
+        self.perm = np.random.permutation(self.n)
+        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test = split(self.n ,self.vectors[self.perm], self.y[self.perm], self.y_value[self.perm] ,self.imgs[self.perm], Test_size)
         
