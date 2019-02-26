@@ -18,7 +18,7 @@ class SVM():
     def __init__(self,path_vector,path_y_value,path_labels,Kernel='linear',Test_size=0.3):
         self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
         print('Data loaded')
-        self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg'))))
+        self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
         self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path]
         self.vectors, self.y_value, self.y = self.load(path_vector,path_y_value,path_labels)
         self.y_value = np.array(self.y_value)
