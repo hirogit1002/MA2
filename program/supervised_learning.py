@@ -14,7 +14,7 @@ def split(n, vector_intg, y, test_size):
     return vector_intg[:-n_test], vector_intg[-n_test:], y[:-n_test], y[-n_test:], n_test
 
 class SVM():
-    def __init__(self,Kernel='linear',path_vector,path_y_value,path_labels,Test_size=0.3):
+    def __init__(self,path_vector,path_y_value,path_labels,Kernel='linear',Test_size=0.3):
         print('Data loaded')
         self.vectors, self.y_value, self.y = self.load(path_vector,path_y_value,path_labels)
         self.n = len(self.vectors)
