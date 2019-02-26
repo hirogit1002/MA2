@@ -18,9 +18,11 @@ class SVM():
     def __init__(self,path_vector,path_y_value,path_labels,Kernel='linear',Test_size=0.3):
         self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
         print('Data loaded')
-        self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
-        self.imgs = [np.array(Image.open(i).convert('L')) for i in self.imgs_path]
+        self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg'))))
+        self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path]
         self.vectors, self.y_value, self.y = self.load(path_vector,path_y_value,path_labels)
+        self.y_value = np.array(self.y_value)
+        self.y = np.array(self.y[:,0])
         self.n = len(self.vectors)
         self.perm = np.random.permutation(self.n)
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test = split(self.n ,self.vectors[self.perm], self.y[self.perm], self.y_value[self.perm] ,self.imgs[self.perm], Test_size)
