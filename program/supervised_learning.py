@@ -63,7 +63,7 @@ class SVM():
         ax.scatter(anger[:, 0],anger[:, 1], c='red', marker='^', label='anger')
         ax.scatter(contempt[:, 0],contempt[:, 1], c='black',marker='x', label='contempt')
         ax.scatter(disgust[:, 0],disgust[:, 1], c='blue',marker='o', label='disgust')
-        ax.scatter(fear[:, 0],fear[:, 1], c='green',marker='s', label='fear)
+        ax.scatter(fear[:, 0],fear[:, 1], c='green',marker='s', label='fear')
         ax.scatter(happy[:, 0],happy[:, 1], c='yellow',marker='o', label='happy')
         ax.scatter(sad[:, 0],sad[:, 1], c='blue',marker='s', label='sad')
         ax.scatter(surprise[:, 0], surprise[:, 1], c='red',marker='.', label='sad')
