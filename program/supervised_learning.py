@@ -47,10 +47,10 @@ class SVM():
         plt.scatter(z_tsne[:, 0], z_tsne[:, 1])
         plt.show()
     
-    def imshow(self):
+    def imshow(self, size=(50,40)):
         n=self.n_test
         h =-(-n//10)
-        fig = plt.figure(figsize=(50,20))
+        fig = plt.figure(figsize=size)
         for i in range(n):
             plt.subplot(h, 10, (i+1))
             plt.title((str(i+1)+' Label: '+self.emos_inv[int(self.y_test[i])]))
