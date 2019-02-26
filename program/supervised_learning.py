@@ -4,6 +4,7 @@ from PIL import ImageFile
 from sklearn.svm import SVC
 from skimage.transform import resize
 from sklearn.manifold import TSNE
+import glob
 import pickle
 import pandas as pd
 import matplotlib.pyplot as plt
