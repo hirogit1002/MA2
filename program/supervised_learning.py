@@ -48,9 +48,32 @@ class SVM():
 
     def visualize(self):
         z_tsne = TSNE(n_components=2, random_state=0).fit_transform(self.vectors)
-        plt.scatter(z_tsne[:, 0], z_tsne[:, 1])
-        plt.show()
-    
+        #plt.scatter(z_tsne[:, 0], z_tsne[:, 1])
+        #plt.show()
+        anger = z_tsne[np.where(self.y==1.)[0]]
+        contempt = z_tsne[np.where(self.y==2.)[0]]
+        disgust = z_tsne[np.where(self.y==3.)[0]]
+        fear = z_tsne[np.where(self.y==4.)[0]]
+        happy = z_tsne[np.where(self.y==5.)[0]]
+        sad = z_tsne[np.where(self.y==6.)[0]]
+        surprise = z_tsne[np.where(self.y==7.)[0]]
+
+        fig = plt.figure()
+        ax = fig.add_subplot(1,1,1)
+        ax.scatter(anger[:, 0],anger[:, 1], c='red', marker='^', label='anger')
+        ax.scatter(contempt[:, 0],contempt[:, 1], c='black',marker='x', label='contempt')
+        ax.scatter(disgust[:, 0],disgust[:, 1], c='blue',marker='o', label='disgust')
+        ax.scatter(fear[:, 0],fear[:, 1], c='green',marker='s', label='fear)
+        ax.scatter(happy[:, 0],happy[:, 1], c='yellow',marker='o', label='happy')
+        ax.scatter(sad[:, 0],sad[:, 1], c='blue',marker='s', label='sad')
+        ax.scatter(surprise[:, 0], surprise[:, 1], c='red',marker='.', label='sad')
+        ax.set_title('Distribution of emotion')
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
+        ax.legend(loc='upper left')
+        fig.show()       
+        
+        
     def imshow(self,plot='reconst', size=(50,40)):
         n=self.n_test
         h =-(-n//10)
