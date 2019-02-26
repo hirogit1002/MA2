@@ -1,4 +1,6 @@
 from PIL import Image, ImageFilter
+from sklearn.decomposition import PCA
+from sklearn.decomposition import KernelPCA
 import numpy as np
 from PIL import ImageFile
 from sklearn.svm import SVC
@@ -46,10 +48,13 @@ class SVM():
         y = np.array([np.array(pd.read_csv(i,header=None)[0]) for i in path_label])
         return vectors,y_values ,y
 
-    def visualize(self,size=(20,20)):
-        z_tsne = TSNE(n_components=2, random_state=0).fit_transform(self.vectors)
-        #plt.scatter(z_tsne[:, 0], z_tsne[:, 1])
-        #plt.show()
+    def visualize(self, pca=True, size=(20,20)):
+        if(pca):
+            decomp = PCA(n_components=30).fit_transform(self.vectors)
+            z_tsne = TSNE(n_components=2, random_state=0).fit_transform(decomp)
+        else:
+            z_tsne = TSNE(n_components=2, random_state=0).fit_transform(self.vectors)
+
         anger = z_tsne[np.where(self.y==1.)[0]]
         contempt = z_tsne[np.where(self.y==2.)[0]]
         disgust = z_tsne[np.where(self.y==3.)[0]]
