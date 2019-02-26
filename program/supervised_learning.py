@@ -20,7 +20,7 @@ class SVM():
         self.vectors, self.y_value, self.y = self.load(path_vector,path_y_value,path_labels)
         self.n = len(self.vectors)
         self.perm = np.random.permutation(self.n)
-        self.X_train, self.X_test, self.y_train, self.y_test, self.n_test = split(self.vectors[self.perm], self.y[self.perm], Test_size)
+        self.X_train, self.X_test, self.y_train, self.y_test, self.n_test = split(self.n ,self.vectors[self.perm], self.y[self.perm], Test_size)
         print('Construct SVCs')
         self.model = SVC(kernel=Kernel, random_state=None,gamma='auto')
         print('Finish construction SVCs')
