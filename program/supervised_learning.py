@@ -37,7 +37,6 @@ class SVM():
             vectors = pickle.load(f)
         with open(path_y_value, 'rb') as f:
             y_values = pickle.load(f)
-        vectors = np.load(path_vector)
         path_label = np.array(sorted(glob.glob((path_labels+'*.txt'))))
         y = np.array([np.array(pd.read_csv(i,header=None)[0]) for i in path_label])
         return vectors,y_values ,y
