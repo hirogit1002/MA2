@@ -16,6 +16,7 @@ def split(n, vector_intg, y, test_size):
 
 class SVM():
     def __init__(self,path_vector,path_y_value,path_labels,Kernel='linear',Test_size=0.3):
+        self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
         print('Data loaded')
         self.vectors, self.y_value, self.y = self.load(path_vector,path_y_value,path_labels)
         self.n = len(self.vectors)
@@ -52,6 +53,7 @@ class SVM():
         fig = plt.figure(figsize=(50,20))
         for i in range(n):
             plt.subplot(h, 10, (i+1))
+            plt.title((str(i+1)+' Label: '+self.emos_inv[self.y_test[i]]))
             plt.title(str(i+1))
             plt.imshow(self.y_value[i],cmap='gray')
         plt.show()
