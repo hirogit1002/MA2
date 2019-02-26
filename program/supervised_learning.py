@@ -46,7 +46,7 @@ class SVM():
         y = np.array([np.array(pd.read_csv(i,header=None)[0]) for i in path_label])
         return vectors,y_values ,y
 
-    def visualize(self):
+    def visualize(self,size=(20,20)):
         z_tsne = TSNE(n_components=2, random_state=0).fit_transform(self.vectors)
         #plt.scatter(z_tsne[:, 0], z_tsne[:, 1])
         #plt.show()
@@ -58,7 +58,7 @@ class SVM():
         sad = z_tsne[np.where(self.y==6.)[0]]
         surprise = z_tsne[np.where(self.y==7.)[0]]
 
-        fig = plt.figure()
+        fig = plt.figure(figsize=size)
         ax = fig.add_subplot(1,1,1)
         ax.scatter(anger[:, 0],anger[:, 1], c='red', marker='^', label='anger')
         ax.scatter(contempt[:, 0],contempt[:, 1], c='black',marker='x', label='contempt')
