@@ -6,6 +6,7 @@ from PIL import ImageFile
 from sklearn.svm import SVC
 from skimage.transform import resize
 from sklearn.manifold import TSNE
+from layerfunctions import*
 import glob
 import pickle
 import pandas as pd
@@ -16,13 +17,35 @@ def split(n, vector_intg, y, y_value, img ,test_size):
     n_test = int(n*0.3)
     return vector_intg[:-n_test], vector_intg[-n_test:], y[:-n_test], y[-n_test:], y_value[:-n_test], y_value[-n_test:],img[:-n_test], img[-n_test:], n_test
 
+def load(self,path_vector,path_y_value,path_labels):
+    with open(path_vector, 'rb') as f:
+        vectors = pickle.load(f)
+    with open(path_y_value, 'rb') as f:
+        y_values = pickle.load(f)
+    path_label = np.array(sorted(glob.glob((path_labels))))
+    y = np.array([np.array(pd.read_csv(i,header=None)[0]) for i in path_label])
+    return vectors,y_values ,y
+
+
+class Finetuning():
+    def __init__(self,path_vector,path_y_value,path_labels,Kernel='linear',Test_size=0.3):
+        self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
+        self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
+        self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
+        self.vectors, self.y_value, self.y = self.load(path_vector,path_y_value,path_labels)
+        with tf.variable_scope("Finetuning") as scope:
+            if (reuse):
+                scope.reuse_variables()
+            fc1 = fullyConnected(flat, name='fc1', output_size=50)
+            fc2 = fullyConnected(fc1, name='fc2', output_size=classnum)
+
 class SVM():
     def __init__(self,path_vector,path_y_value,path_labels,Kernel='linear',Test_size=0.3):
         self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
         print('Data loaded')
         self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
         self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
-        self.vectors, self.y_value, self.y = self.load(path_vector,path_y_value,path_labels)
+        self.vectors, self.y_value, self.y = load(path_vector,path_y_value,path_labels)
         self.y_value = np.array(self.y_value)
         self.y = np.array(self.y[:,0])
         self.n = len(self.vectors)
