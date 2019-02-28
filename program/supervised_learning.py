@@ -39,7 +39,7 @@ def cv(vectors, y, y_value ,imgs, Test_size=0.3):
         y_value_Test.extend(y_value_test)
         img_Train.extend(img_train)
         img_Test.extend(img_test)
-        n_Test.extend(n_test)
+        n_Test.extend(np.array([n_test]))
         Perm.extend(perm)
     return np.array(X_Train), np.array(X_Test), np.array(y_Train), np.array(y_Test), (y_value_Train), np.array(y_value_Test), np.array(img_Train), np.array(img_Test), np.array(n_Test), np.array(Perm)
 
