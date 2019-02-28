@@ -122,7 +122,7 @@ class SVM():
         
         
     def imshow(self,plot='reconst', size=(50,40)):
-        n=self.n_test
+        n=self.n_test.sum()
         h =-(-n//10)
         if(plot=='reconst'):
             value = self.y_value_test
