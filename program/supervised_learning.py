@@ -24,7 +24,7 @@ def CV(model,num):
     maximum = 0.
     minimum = 100.
     avg = 0.
-    for i in range():
+    for i in range(num):
         model.cv_again()
         svm.fit()
         _, score = svm.predict()
