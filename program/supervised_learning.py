@@ -25,10 +25,10 @@ def cv(vectors, y, y_value ,imgs, Test_size=0.3):
     X_Train, X_Test, y_Train, y_Test, y_value_Train, y_value_Test, img_Train, img_Test, n_Test, Perm = [], [], [], [], [], [], [], [], [], []
     for i in idx:
         n = len(i)
-        vectors_emo = vectors[i]
-        y_emo = y[i]
-        y_value_emo = y_value[i]
-        imgs_emo = imgs[i]
+        vectors = vectors[i]
+        y = y[i]
+        y_value = y_value[i]
+        imgs= imgs[i]
         perm = np.random.permutation(n)
         X_train, X_test, y_train, y_test, y_value_train, y_value_test, img_train, img_test, n_test=split(n ,vectors[perm], y[perm], y_value[perm] ,imgs[perm], Test_size)
         X_Train.extend(X_train)
