@@ -36,6 +36,7 @@ def CV(model,num):
     print('Average: ', avg/num)
     print('Maximum: ', maximum)
     print('Minimum: ',minimum)
+    print('Standard Diviation: ',np.std(scores))
     return scores
 
 def cv(vectors, y, y_value ,imgs, Test_size=0.3):
@@ -77,7 +78,8 @@ class Finetuning():
         self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
         self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
         self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
-        self.vectors, self.y_value, self.y = self.load(path_vector,path_y_value,path_labels)
+        self.vectors, self.y_value, self.y = load(path_vector,path_y_value,path_labels)
+        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
         with tf.variable_scope("Finetuning") as scope:
             if (reuse):
                 scope.reuse_variables()
