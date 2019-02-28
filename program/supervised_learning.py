@@ -106,7 +106,6 @@ class SVM():
     
     def predict(self):
         score = self.model.score(X=self.X_test, y=self.y_test)
-        print(score)
         return self.model.predict(self.X_test), score
 
     def visualize(self, pca=True, size=(20,20)):
