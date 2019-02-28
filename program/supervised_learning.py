@@ -22,7 +22,7 @@ def split(n, vector_intg, y, y_value, img ,test_size):
 
 def cv(vectors, y, y_value ,imgs, Test_size=0.3):
     idx = [np.where(y==i)[0] for i in emos_idx]
-    X_Train, X_Test, y_Train, y_Test, y_value_Train, y_value_Test, img_Train, img_Test, n_Test, Perm = [], [], [], [], [], [], [], [], []
+    X_Train, X_Test, y_Train, y_Test, y_value_Train, y_value_Test, img_Train, img_Test, n_Test, Perm = [], [], [], [], [], [], [], [], [], []
     for i in idx:
         n = len(i)
         vectors_emo = vectors[i]
