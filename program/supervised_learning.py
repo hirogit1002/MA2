@@ -136,7 +136,7 @@ class SVM():
         plt.show()
         
         
-    def cv_again(self, Test_size=0.3)
+    def cv_again(self, Test_size=0.3):
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
         
     #def split_again(self, Test_size=0.3):
