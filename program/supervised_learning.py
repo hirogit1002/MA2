@@ -17,8 +17,7 @@ emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'sur
 emos_idx = [1,2,3,4,5,6,7]
 
 def split(n, vector_intg, y, y_value, img ,test_size):
-    n_test = int(n*0.3)
-    print(n_test)
+    n_test = int(n*test_size)
     return vector_intg[:-n_test], vector_intg[-n_test:], y[:-n_test], y[-n_test:], y_value[:-n_test], y_value[-n_test:],img[:-n_test], img[-n_test:], n_test
 
 def cv(vectors, y, y_value ,imgs, Test_size=0.3):
