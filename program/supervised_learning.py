@@ -76,8 +76,9 @@ class SVM():
         self.y_value = np.array(self.y_value)
         self.y = np.array(self.y[:,0])
         self.n = len(self.vectors)
-        self.perm = np.random.permutation(self.n)
-        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test = split(self.n ,self.vectors[self.perm], self.y[self.perm], self.y_value[self.perm] ,self.imgs[self.perm], Test_size)
+        #self.perm = np.random.permutation(self.n)
+        #self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test = split(self.n ,self.vectors[self.perm], self.y[self.perm], self.y_value[self.perm] ,self.imgs[self.perm], Test_size)
+        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
         print('Construct SVCs')
         self.model = SVC(kernel=Kernel, random_state=None,gamma='auto')
         print('Finish construction SVCs')
@@ -133,8 +134,12 @@ class SVM():
             plt.title((str(i+1)+' Label: '+self.emos_inv[int(self.y_test[i])]))
             plt.imshow(value[i],cmap='gray')
         plt.show()
-
-    def split_again(self, Test_size=0.3):
-        self.perm = np.random.permutation(self.n)
-        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test = split(self.n ,self.vectors[self.perm], self.y[self.perm], self.y_value[self.perm] ,self.imgs[self.perm], Test_size)
+        
+        
+    def cv_again(self, Test_size=0.3)
+        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
+        
+    #def split_again(self, Test_size=0.3):
+    #    self.perm = np.random.permutation(self.n)
+    #    self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test = split(self.n ,self.vectors[self.perm], self.y[self.perm], self.y_value[self.perm] ,self.imgs[self.perm], Test_size)
         
