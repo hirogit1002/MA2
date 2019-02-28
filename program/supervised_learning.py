@@ -13,9 +13,36 @@ import pandas as pd
 import matplotlib.pyplot as plt
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
+emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
+emos_idx = [1,2,3,4,5,6,7]
+
 def split(n, vector_intg, y, y_value, img ,test_size):
     n_test = int(n*0.3)
     return vector_intg[:-n_test], vector_intg[-n_test:], y[:-n_test], y[-n_test:], y_value[:-n_test], y_value[-n_test:],img[:-n_test], img[-n_test:], n_test
+
+def cv(vectors, y, y_value ,imgs, Test_size=0.3):
+    idx = [np.where(y==i)[0] for i in emos_idx]
+    X_Train, X_Test, y_Train, y_Test, y_value_Train, y_value_Test, img_Train, img_Test, n_Test, Perm = [], [], [], [], [], [], [], [], []
+    for i in idx:
+        n = len(i)
+        vectors_emo = vectors[i]
+        y_emo = y[i]
+        y_value_emo = y_value[i]
+        imgs_emo = imgs[i]
+        perm = np.random.permutation(n)
+        X_train, X_test, y_train, y_test, y_value_train, y_value_test, img_train, img_test, n_test=split(n ,vectors[perm], y[perm], y_value[perm] ,imgs[perm], Test_size)
+        X_Train.extend(X_train)
+        X_Test.extend(X_test)
+        y_Train.extend(y_train)
+        y_Test.extend(y_test)
+        y_value_Train.extend(y_value_train)
+        y_value_Test.extend(y_value_test)
+        img_Train.extend(img_train)
+        img_Test.extend(img_test)
+        n_Test.extend(n_test)
+        Perm.extend(perm)
+    return np.array(X_Train), np.array(X_Test), np.array(y_Train), np.array(y_Test), (y_value_Train), np.array(y_value_Test), np.array(img_Train), np.array(img_Test), np.array(n_Test), np.array(Perm)
+
 
 def load(path_vector,path_y_value,path_labels):
     with open(path_vector, 'rb') as f:
@@ -61,15 +88,6 @@ class SVM():
     def predict(self):
         print(self.model.score(X=self.X_test, y=self.y_test))
         return self.model.predict(self.X_test)
-        
-    def load(self,path_vector,path_y_value,path_labels):
-        with open(path_vector, 'rb') as f:
-            vectors = pickle.load(f)
-        with open(path_y_value, 'rb') as f:
-            y_values = pickle.load(f)
-        path_label = np.array(sorted(glob.glob((path_labels))))
-        y = np.array([np.array(pd.read_csv(i,header=None)[0]) for i in path_label])
-        return vectors,y_values ,y
 
     def visualize(self, pca=True, size=(20,20)):
         if(pca):
