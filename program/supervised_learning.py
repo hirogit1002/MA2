@@ -20,6 +20,21 @@ def split(n, vector_intg, y, y_value, img ,test_size):
     n_test = int(n*test_size)
     return vector_intg[:-n_test], vector_intg[-n_test:], y[:-n_test], y[-n_test:], y_value[:-n_test], y_value[-n_test:],img[:-n_test], img[-n_test:], n_test
 
+def CV(model,num):
+    maximum = 0.
+    minimum = 100.
+    avg = 0.
+    for i in range():
+        model.cv_again()
+        svm.fit()
+        _, score = svm.predict()
+        maximum = np.max(maximum,score)
+        minimum = np.min(minimum,score)
+        avg += score
+    print('Average: ', avg/num)
+    print('Maximum: ', maximum)
+    print('Minimum: ',minimum)
+
 def cv(vectors, y, y_value ,imgs, Test_size=0.3):
     idx = [np.where(y==i)[0] for i in emos_idx]
     X_Train, X_Test, y_Train, y_Test, y_value_Train, y_value_Test, img_Train, img_Test, n_Test, Perm = [], [], [], [], [], [], [], [], [], []
@@ -87,8 +102,9 @@ class SVM():
         self.model.fit(X=self.X_train, y=self.y_train)
     
     def predict(self):
-        print(self.model.score(X=self.X_test, y=self.y_test))
-        return self.model.predict(self.X_test)
+        score = self.model.score(X=self.X_test, y=self.y_test)
+        print(score)
+        return self.model.predict(self.X_test), score
 
     def visualize(self, pca=True, size=(20,20)):
         if(pca):
