@@ -17,7 +17,7 @@ def split(n, vector_intg, y, y_value, img ,test_size):
     n_test = int(n*0.3)
     return vector_intg[:-n_test], vector_intg[-n_test:], y[:-n_test], y[-n_test:], y_value[:-n_test], y_value[-n_test:],img[:-n_test], img[-n_test:], n_test
 
-def load(self,path_vector,path_y_value,path_labels):
+def load(path_vector,path_y_value,path_labels):
     with open(path_vector, 'rb') as f:
         vectors = pickle.load(f)
     with open(path_y_value, 'rb') as f:
