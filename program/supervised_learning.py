@@ -24,16 +24,19 @@ def CV(model,num):
     maximum = 0.
     minimum = 100.
     avg = 0.
+    scores =[]
     for i in range(num):
         model.cv_again()
         model.fit()
         _, score = model.predict()
-        maximum = np.max(maximum,score)
-        minimum = np.min(minimum,score)
+        maximum = max(maximum,score)
+        minimum = min(minimum,score)
         avg += score
+        scores +=[score]
     print('Average: ', avg/num)
     print('Maximum: ', maximum)
     print('Minimum: ',minimum)
+    return scores
 
 def cv(vectors, y, y_value ,imgs, Test_size=0.3):
     idx = [np.where(y==i)[0] for i in emos_idx]
