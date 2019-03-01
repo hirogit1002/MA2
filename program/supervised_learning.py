@@ -222,13 +222,13 @@ class SVM():
         else:
             z_tsne = TSNE(n_components=2, random_state=0).fit_transform(self.vectors)
 
-        anger = z_tsne[np.where(self.y==1.)[0]]
-        contempt = z_tsne[np.where(self.y==2.)[0]]
-        disgust = z_tsne[np.where(self.y==3.)[0]]
-        fear = z_tsne[np.where(self.y==4.)[0]]
-        happy = z_tsne[np.where(self.y==5.)[0]]
-        sad = z_tsne[np.where(self.y==6.)[0]]
-        surprise = z_tsne[np.where(self.y==7.)[0]]
+        anger = z_tsne[np.where(self.y==0.)[0]]
+        contempt = z_tsne[np.where(self.y==1.)[0]]
+        disgust = z_tsne[np.where(self.y==2.)[0]]
+        fear = z_tsne[np.where(self.y==3.)[0]]
+        happy = z_tsne[np.where(self.y==4.)[0]]
+        sad = z_tsne[np.where(self.y==5.)[0]]
+        surprise = z_tsne[np.where(self.y==6.)[0]]
 
         fig = plt.figure(figsize=size)
         ax = fig.add_subplot(1,1,1)
