@@ -66,22 +66,28 @@ def DCGAN(x,z,Training, Batch_size, lr,reuse=False):
         return generated, gen_op, dis_op, d_loss, g_loss
     
     
-def encoder(x,Training, Name=''):
-    p1 = conv2d(x, (Name+'conv1'), [5, 5, 1, 64], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
-    p2 = conv2d_nrm(p1, (Name+'conv2'), [5, 5, 64, 128], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
-    p3 = conv2d_nrm(p2, (Name+'conv3'), [5, 5, 128, 256], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
-    p4 = conv2d_nrm(p3, (Name+'conv4'), [3, 3, 256, 512], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
-    flat = tf.layers.flatten(p4)
-    return flat
+def encoder(x,Training, Name='',reuse=False):
+    with tf.variable_scope("Encoder") as scope:
+        if (reuse):
+            scope.reuse_variables()
+        p1 = conv2d(x, (Name+'conv1'), [5, 5, 1, 64], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
+        p2 = conv2d_nrm(p1, (Name+'conv2'), [5, 5, 64, 128], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
+        p3 = conv2d_nrm(p2, (Name+'conv3'), [5, 5, 128, 256], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
+        p4 = conv2d_nrm(p3, (Name+'conv4'), [3, 3, 256, 512], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
+        flat = tf.layers.flatten(p4)
+        return flat
 
-def decoder(z,Training, batchsize, Name='',actf_output='sigmoid'):
-    fc1 = fullyConnected(z, name=(Name+'fc1'), output_size=4*4*1024)
-    r1 = tf.reshape(fc1, shape=[-1,4,4,1024])
-    dc0 = deconv2d_nrm(r1, (Name+'deconv0'), [3, 3, 512, 1024], Training, batchsize, [1, 2, 2, 1], 'SAME', 'relu')
-    dc1 = deconv2d_nrm(dc0, (Name+'deconv1'), [3, 3, 256, 512], Training, batchsize, [1, 2, 2, 1], 'SAME', 'relu')
-    dc2 = deconv2d_nrm(dc1, (Name+'deconv2'), [5, 5, 128, 256],Training, batchsize, [1, 2, 2, 1], 'SAME', 'relu')
-    output = deconv2d(dc2, (Name+'deconv3'), [5, 5, 1, 128],Training, batchsize, [1, 2, 2, 1], 'SAME', actf_output)
-    return output
+def decoder(z,Training, batchsize, Name='',actf_output='sigmoid',reuse=False):
+    with tf.variable_scope("Decoder") as scope:
+        if (reuse):
+            scope.reuse_variables()
+        fc1 = fullyConnected(z, name=(Name+'fc1'), output_size=4*4*1024)
+        r1 = tf.reshape(fc1, shape=[-1,4,4,1024])
+        dc0 = deconv2d_nrm(r1, (Name+'deconv0'), [3, 3, 512, 1024], Training, batchsize, [1, 2, 2, 1], 'SAME', 'relu')
+        dc1 = deconv2d_nrm(dc0, (Name+'deconv1'), [3, 3, 256, 512], Training, batchsize, [1, 2, 2, 1], 'SAME', 'relu')
+        dc2 = deconv2d_nrm(dc1, (Name+'deconv2'), [5, 5, 128, 256],Training, batchsize, [1, 2, 2, 1], 'SAME', 'relu')
+        output = deconv2d(dc2, (Name+'deconv3'), [5, 5, 1, 128],Training, batchsize, [1, 2, 2, 1], 'SAME', actf_output)
+        return output
 
 
 def generator(z, Training, batchsize, reuse=False):
