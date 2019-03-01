@@ -147,7 +147,7 @@ class Finetuning():
                     # Run optimization op (backprop) and cost op (to get loss value)
                     _,res_trn,classes, z ,train_cost = sess_tra.run([self.optimizer,trn_summary , self.class_layer, self.z, self.loss], feed_dict={self.flat: batch_x, self.label:batch_y})
                     sum_loss += train_cost 
-                    sys.stdout.write("\r%s" % "batch: {}/{}, loss: {}, time: {}".format(counter+1, np.int(n/batch_size)+1, sum_loss/(i+1),(time.time()-start_time)))
+                    sys.stdout.write("\r%s" % "batch: {}/{}, loss: {}, time: {}".format(counter+1, np.int(n_train/batch_size)+1, sum_loss/(i+1),(time.time()-start_time)))
                     sys.stdout.flush()
                     counter +=1
                 file_writer.add_summary(res_trn, (epoch+1))
