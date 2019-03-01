@@ -84,14 +84,14 @@ class Finetuning():
         self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
         self.imgs = imgs = norm_intg(self.imgs)
         self.vectors, self.y_value, self.y = load(path_vector,path_y_value,path_labels)
-        self.y = self.y -1.
+        self.y = (self.y -1.).astype(np.int32)
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
         self.weight_path_ext = '../weigths/'+'DCGAN' + '.ckpt'
         self.weight_path_cls = '../weigths/'+'finetuning' + '.ckpt'
         x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
         flat = tf.placeholder(tf.float32, [None, 8192], name='InputData')
         Training = tf.placeholder(dtype=tf.bool, name='LabelData')
-        label = tf.placeholder(tf.float32, [None, 1], name='InputData')
+        label = tf.placeholder(tf.int32, [None, 1], name='InputData')
         self.encoder = encoder(x,Training, Name='d_')
         self.class_layer, self.z, self.loss, self.optimizer = self.Class_layer(flat, label, class_num, latent_size)
         self.vectors_train, self.vectors_test = extractor()
