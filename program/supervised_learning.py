@@ -196,7 +196,6 @@ class Finetuning():
 
 class SVM():
     def __init__(self,path_vector,path_y_value,path_labels,Kernel='linear',Test_size=0.3):
-        self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
         print('Data loaded')
         self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
         self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
@@ -257,7 +256,7 @@ class SVM():
         fig = plt.figure(figsize=size)
         for i in range(n):
             plt.subplot(h, 10, (i+1))
-            plt.title((str(i+1)+' Label: '+self.emos_inv[int(self.y_test[i])]))
+            plt.title((str(i+1)+' Label: '+emos_inv[int(self.y_test[i])]))
             plt.imshow(value[i],cmap='gray')
         plt.show()
         
