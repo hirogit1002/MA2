@@ -12,6 +12,7 @@ from imgproc import*
 import glob
 import pickle
 import pandas as pd
+import time
 import matplotlib.pyplot as plt
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
