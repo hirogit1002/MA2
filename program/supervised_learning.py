@@ -156,9 +156,9 @@ class Finetuning():
                     counter +=1
                 file_writer.add_summary(res_trn, (epoch+1))
             
-            saver.save(sess_tra, self.weight_path_cls)
-            print('')
-            print('Epoch', epoch+1, ' / ', epochs, 'Training Loss:', sum_loss/n_batches)
+                saver.save(sess_tra, self.weight_path_cls)
+                print('')
+                print('Epoch', epoch+1, ' / ', epochs, 'Training Loss:', sum_loss/n_batches)
 
             res_val,classes_val, z_val ,test_cost = sess_tra.run([val_summary , self.class_layer_val, self.z_val, self.loss_val], feed_dict={self.flat: self.vectors_test, self.label:self.y_test})
             print('Validation Loss:', test_cost/n_test)
