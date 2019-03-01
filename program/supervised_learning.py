@@ -18,7 +18,7 @@ import sys
 import matplotlib.pyplot as plt
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
+emos_inv = {0:'anger',1:'contempt',2:'disgust',3:'fear',4:'happy',5:'sad',6:'surprise'}
 emos_idx = [0,1,2,3,4,5,6]
 
 def split(n, vector_intg, y, y_value, img ,test_size):
