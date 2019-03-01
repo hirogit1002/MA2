@@ -95,19 +95,25 @@ class Finetuning():
         _1,_2, self.encoder = discriminator(self.x, self.Training, reuse=False)
         self.vectors_train, self.vectors_test = self.extractor()
         self.class_layer, self.z, self.loss, self.optimizer = self.Class_layer(self.flat, self.label, class_num, latent_size,lr)
+        self.class_layer_val, self.z_val, self.loss_val = self.Class_layer(self.flat, self.label, class_num, latent_size,lr,reuse=True)
         
-    def Class_layer(self,flat,y,class_num,latent_size,lr):  
+    def Class_layer(self,flat,y,class_num,latent_size,lr,reuse=False):  
         z = fullyConnected(flat, name='z_FT', output_size=latent_size, activation = 'relu')
         class_layer = fullyConnected(z, name='classifier', output_size=class_num, activation = 'linear')
         loss = tf.losses.sparse_softmax_cross_entropy(labels=y, logits=class_layer)
         optimizer = tf.train.AdamOptimizer(lr).minimize(loss)
-        return class_layer, z, loss, optimizer
+        if(reuse):
+            return class_layer, z, loss,
+        else:
+            optimizer = tf.train.AdamOptimizer(lr).minimize(loss)
+            return class_layer, z, loss, optimizer 
+ 
 
     def train(self, epochs=20, batch_size=10):
         with tf.name_scope('training_ft'):
-            tf.summary.scalar('loss', cost_trn)
+            tf.summary.scalar('loss', self.loss)
         with tf.name_scope('validation_ft'):
-            tf.summary.scalar('loss', cost_val)
+            tf.summary.scalar('loss', self.loss_val)
         trn_summary = tf.summary.merge_all(scope='training_ft')
         val_summary = tf.summary.merge_all(scope='validation_ft')
         with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess_tra:
@@ -143,7 +149,7 @@ class Finetuning():
             print('')
             print('Epoch', epoch+1, ' / ', epochs, 'Training Loss:', sum_loss/n_batches)
 
-            res_val,classes, z ,test_cost = sess_tra.run([val_summary , self.class_layer, self.z, self.loss], feed_dict={self.flat: self.vectors_test, self.label:self.y_test})
+            res_val,classes_val, z_val ,test_cost = sess_tra.run([val_summary , self.class_layer_val, self.z_val, self.loss_val], feed_dict={self.flat: self.vectors_test, self.label:self.y_test})
             print('Validation Loss:', test_cost/n_test)
             file_writer.add_summary( res_val, (epoch+1))
             epoch_end = time.time()-epoch_start
@@ -154,7 +160,7 @@ class Finetuning():
         print('Optimization Finished with time: ',(time.time()-start_time))
         sess_tra.close()
 
-        return classes, z ,test_cost
+        return classes_val, z_val ,test_cost
     
     def extractor(self):
         with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess_ext:
