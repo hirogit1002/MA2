@@ -78,7 +78,7 @@ def load(path_vector,path_y_value,path_labels):
 
 
 class Finetuning():
-    def __init__(self,path_vector,path_y_value,path_labels,Kernel='linear',Test_size=0.3,latent_size=100,class_num=7):
+    def __init__(self,path_vector,path_y_value,path_labels,Test_size=0.3,latent_size=100,class_num=7):
         self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
         self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
         self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
@@ -93,7 +93,7 @@ class Finetuning():
         Training = tf.placeholder(dtype=tf.bool, name='LabelData')
         label = tf.placeholder(tf.float32, [None, 1], name='InputData')
         self.encoder = encoder(x,Training, Name='d_')
-        self.class_layer, self.z, self.loss, self.optimizer = self.Class_layer(self, flat, label, class_num, latent_size)
+        self.class_layer, self.z, self.loss, self.optimizer = self.Class_layer(flat, label, class_num, latent_size)
         self.vectors_train, self.vectors_test = extractor()
         
         
