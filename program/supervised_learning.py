@@ -156,7 +156,7 @@ class Finetuning():
                     counter +=1
                 file_writer.add_summary(res_trn, (epoch+1))
             
-            saver.save(sess_tra, weight_path)
+            saver.save(sess_tra, self.weight_path_cls)
             print('')
             print('Epoch', epoch+1, ' / ', epochs, 'Training Loss:', sum_loss/n_batches)
 
