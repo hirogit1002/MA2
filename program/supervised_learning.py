@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
-emos_idx = [1,2,3,4,5,6,7]
+emos_idx = [0,1,2,3,4,5,6]
 
 def split(n, vector_intg, y, y_value, img ,test_size):
     n_test = int(n*test_size)
@@ -88,7 +88,7 @@ class Finetuning():
         self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
         self.imgs = imgs = norm_intg(self.imgs)
         self.vectors, self.y_value, self.y = load(path_vector,path_y_value,path_labels)
-        self.y = self.y.astype(np.int32)
+        self.y = (self.y -1.).astype(np.int32)
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
         self.weight_path_ext = '../weigths/'+'DCGAN' + '.ckpt'
         self.weight_path_cls = '../weigths/'+'finetuning' + '.ckpt'
@@ -202,7 +202,7 @@ class SVM():
         self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
         self.vectors, self.y_value, self.y = load(path_vector,path_y_value,path_labels)
         self.y_value = np.array(self.y_value)
-        self.y = np.array(self.y[:,0])
+        self.y = np.array(self.y[:,0])-1.
         self.n = len(self.vectors)
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
         print('Construct SVCs')
