@@ -160,14 +160,14 @@ class Finetuning():
                 print('')
                 print('Epoch', epoch+1, ' / ', epochs, 'Training Loss:', sum_loss/n_batches)
 
-            res_val,classes_val, z_val ,test_cost = sess_tra.run([val_summary , self.class_layer_val, self.z_val, self.loss_val], feed_dict={self.flat: self.vectors_test, self.label:self.y_test})
-            print('Validation Loss:', test_cost/n_test)
-            file_writer.add_summary( res_val, (epoch+1))
-            epoch_end = time.time()-epoch_start
-            epoch_time+=epoch_end
-            print('Time per epoch: ',(epoch_time/k),'s/epoch')
-            print('')
-            k+=1.
+                res_val,classes_val, z_val ,test_cost = sess_tra.run([val_summary , self.class_layer_val, self.z_val, self.loss_val], feed_dict={self.flat: self.vectors_test, self.label:self.y_test})
+                print('Validation Loss:', test_cost/n_test)
+                file_writer.add_summary( res_val, (epoch+1))
+                epoch_end = time.time()-epoch_start
+                epoch_time+=epoch_end
+                print('Time per epoch: ',(epoch_time/k),'s/epoch')
+                print('')
+                k+=1.
         print('Optimization Finished with time: ',(time.time()-start_time))
         sess_tra.close()
 
