@@ -83,6 +83,7 @@ def load(path_vector,path_y_value,path_labels):
 class Finetuning():
     def __init__(self,path_vector,path_y_value,path_labels,Test_size=0.3,latent_size=100,class_num=7,lr=1e-4):
         self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
+        self.logs_path = "../logs"
         self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
         self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
         self.imgs = imgs = norm_intg(self.imgs)
@@ -124,6 +125,9 @@ class Finetuning():
         trn_summary = tf.summary.merge_all(scope='training_ft')
         val_summary = tf.summary.merge_all(scope='validation_ft')
         with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess_tra:
+            if tf.gfile.Exists(self.logs_path):
+                tf.gfile.DeleteRecursively(self.logs_path)
+            file_writer = tf.summary.FileWriter(self.logs_path, sess_tra.graph)
             sess_tra.run(tf.global_variables_initializer())
             saver = tf.train.Saver()
             start_time = time.time()
