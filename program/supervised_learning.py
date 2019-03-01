@@ -97,16 +97,19 @@ class Finetuning():
         self.class_layer, self.z, self.loss, self.optimizer = self.Class_layer(self.flat, self.label, class_num, latent_size,lr)
         self.class_layer_val, self.z_val, self.loss_val = self.Class_layer(self.flat, self.label, class_num, latent_size,lr,reuse=True)
         
-    def Class_layer(self,flat,y,class_num,latent_size,lr,reuse=False):  
-        z = fullyConnected(flat, name='z_FT', output_size=latent_size, activation = 'relu')
-        class_layer = fullyConnected(z, name='classifier', output_size=class_num, activation = 'linear')
-        loss = tf.losses.sparse_softmax_cross_entropy(labels=y, logits=class_layer)
-        optimizer = tf.train.AdamOptimizer(lr).minimize(loss)
-        if(reuse):
-            return class_layer, z, loss,
-        else:
+    def Class_layer(self,flat,y,class_num,latent_size,lr,reuse=False):
+        with tf.variable_scope("Class_layer") as scope:
+            if (reuse):
+                scope.reuse_variables()
+            z = fullyConnected(flat, name='z_FT', output_size=latent_size, activation = 'relu')
+            class_layer = fullyConnected(z, name='classifier', output_size=class_num, activation = 'linear')
+            loss = tf.losses.sparse_softmax_cross_entropy(labels=y, logits=class_layer)
             optimizer = tf.train.AdamOptimizer(lr).minimize(loss)
-            return class_layer, z, loss, optimizer 
+            if(reuse):
+                return class_layer, z, loss,
+            else:
+                optimizer = tf.train.AdamOptimizer(lr).minimize(loss)
+                return class_layer, z, loss, optimizer 
  
 
     def train(self, epochs=20, batch_size=10):
