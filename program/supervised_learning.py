@@ -7,6 +7,8 @@ from sklearn.svm import SVC
 from skimage.transform import resize
 from sklearn.manifold import TSNE
 from layerfunctions import*
+from model import*
+from imgproc import*
 import glob
 import pickle
 import pandas as pd
@@ -76,17 +78,105 @@ def load(path_vector,path_y_value,path_labels):
 
 
 class Finetuning():
-    def __init__(self,path_vector,path_y_value,path_labels,Kernel='linear',Test_size=0.3):
+    def __init__(self,path_vector,path_y_value,path_labels,Kernel='linear',Test_size=0.3,latent_size=100,class_num=7):
         self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
         self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
         self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
+        self.imgs = imgs = norm_intg(self.imgs)
         self.vectors, self.y_value, self.y = load(path_vector,path_y_value,path_labels)
+        self.y = self.y -1.
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
-        with tf.variable_scope("Finetuning") as scope:
-            if (reuse):
-                scope.reuse_variables()
-            fc1 = fullyConnected(flat, name='fc1', output_size=50)
-            fc2 = fullyConnected(fc1, name='fc2', output_size=classnum)
+        self.weight_path_ext = '../weigths/'+'DCGAN' + '.ckpt'
+        self.weight_path_cls = '../weigths/'+'finetuning' + '.ckpt'
+        x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
+        flat = tf.placeholder(tf.float32, [None, 8192], name='InputData')
+        Training = tf.placeholder(dtype=tf.bool, name='LabelData')
+        label = tf.placeholder(tf.float32, [None, 1], name='InputData')
+        self.encoder = encoder(x,Training, Name='d_')
+        self.class_layer, self.z, self.loss, self.optimizer = self.Class_layer(self, flat, label, class_num, latent_size)
+        self.vectors_train, self.vectors_test = extractor()
+        
+        
+    def Class_layer(self,flat,y,class_num,latent_size):  
+        z = fullyConnected(flat, name='z_FT', output_size=latent_size, activation = 'relu')
+        class_layer = fullyConnected(z, name='classifier', output_size=class_num, activation = 'linear')
+        loss = tf.losses.sparse_softmax_cross_entropy(labels=y, logits=class_layer)
+        optimizer = tf.train.AdamOptimizer(lr).minimize(loss)
+        return class_layer, z, loss, optimizer
+
+    def train(self, epochs=20, batch_size=10):
+        with tf.name_scope('training_ft'):
+            tf.summary.scalar('loss', cost_trn)
+        with tf.name_scope('validation_ft'):
+            tf.summary.scalar('loss', cost_val)
+        trn_summary = tf.summary.merge_all(scope='training_ft')
+        val_summary = tf.summary.merge_all(scope='validation_ft')
+        with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess_tra:
+            sess_tra.run(tf.global_variables_initializer())
+            saver = tf.train.Saver()
+            start_time = time.time()
+            epoch_time =0.
+            k = 1.
+            n_train=len(self.vectors_train)
+            n_test=len(self.vectors_test)
+            for epoch in range(epochs):
+                epoch_start = time.time()
+                sum_loss = 0
+                n_batches = int(n / batch_size)
+                # Loop over all batches
+                counter = 0
+                perm = np.random.permutation(n_train)
+                train_data = self.vectors_train[perm]
+                train_y = self.y_train[perm]
+                for i in range(n_batches):
+                    batch_x = train_data[i*batch_size:(i+1)*batch_size]
+                    batch_y = train_y[i*batch_size:(i+1)*batch_size]
+
+                    # Run optimization op (backprop) and cost op (to get loss value)
+                    _,res_trn,classes, z ,train_cost = sess_tra.run([self.optimizer,trn_summary , self.class_layer, self.z, self.loss], feed_dict={flat: batch_x, label:batch_y})
+                    sum_loss += train_cost 
+                    sys.stdout.write("\r%s" % "batch: {}/{}, loss: {}, time: {}".format(counter+1, np.int(n/batch_size)+1, sum_loss/(i+1),(time.time()-start_time)))
+                    sys.stdout.flush()
+                    counter +=1
+                file_writer.add_summary(res_trn, (epoch+1))
+            
+            saver.save(sess_tra, weight_path)
+            print('')
+            print('Epoch', epoch+1, ' / ', epochs, 'Training Loss:', sum_loss/n_batches)
+
+            res_val,classes, z ,test_cost = sess_tra.run([val_summary , self.class_layer, self.z, self.loss], feed_dict={flat: self.vectors_test, label:self.y_test})
+            print('Validation Loss:', test_cost/n_test)
+            file_writer.add_summary( res_val, (epoch+1))
+            epoch_end = time.time()-epoch_start
+            epoch_time+=epoch_end
+            print('Time per epoch: ',(epoch_time/k),'s/epoch')
+            print('')
+            k+=1.
+        print('Optimization Finished with time: ',(time.time()-start_time))
+        sess_tra.close()
+
+        return classes, z ,test_cost
+    
+    def extractor(self):
+        with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess_ext:
+            sess_ext.run(tf.global_variables_initializer())
+            saver = tf.train.Saver()
+            saver.restore(sess_ext, self.weight_path_ext)
+            vectors_train = []
+            vectors_test = []
+            for i in self.img_train:
+                img = i[np.newaxis,:]
+                vector = self.encoder.eval(feed_dict={x: img, Training:False})
+                vectors_train +=[vector]
+            for i in self.img_test:
+                img = i[np.newaxis,:]
+                vector = self.encoder.eval(feed_dict={x: img, Training:False})
+                vectors_test +=[vector]
+            vectors_train = np.array(vectors_train)
+            vectors_test = np.array(vectors_test)
+            sess_ext.close()
+        return vectors_train, vectors_test
+    
 
 class SVM():
     def __init__(self,path_vector,path_y_value,path_labels,Kernel='linear',Test_size=0.3):
