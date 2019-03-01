@@ -78,7 +78,7 @@ def load(path_vector,path_y_value,path_labels):
 
 
 class Finetuning():
-    def __init__(self,path_vector,path_y_value,path_labels,Test_size=0.3,latent_size=100,class_num=7):
+    def __init__(self,path_vector,path_y_value,path_labels,Test_size=0.3,latent_size=100,class_num=7,lr=1e-4):
         self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
         self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
         self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
@@ -93,11 +93,11 @@ class Finetuning():
         Training = tf.placeholder(dtype=tf.bool, name='LabelData')
         label = tf.placeholder(tf.int32, [None, 1], name='InputData')
         self.encoder = encoder(x,Training, Name='d_')
-        self.class_layer, self.z, self.loss, self.optimizer = self.Class_layer(flat, label, class_num, latent_size)
+        self.class_layer, self.z, self.loss, self.optimizer = self.Class_layer(flat, label, class_num, latent_size,lr)
         self.vectors_train, self.vectors_test = extractor()
         
         
-    def Class_layer(self,flat,y,class_num,latent_size):  
+    def Class_layer(self,flat,y,class_num,latent_size,lr):  
         z = fullyConnected(flat, name='z_FT', output_size=latent_size, activation = 'relu')
         class_layer = fullyConnected(z, name='classifier', output_size=class_num, activation = 'linear')
         loss = tf.losses.sparse_softmax_cross_entropy(labels=y, logits=class_layer)
