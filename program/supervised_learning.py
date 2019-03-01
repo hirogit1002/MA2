@@ -131,7 +131,7 @@ class Finetuning():
             for epoch in range(epochs):
                 epoch_start = time.time()
                 sum_loss = 0
-                n_batches = int(n / batch_size)
+                n_batches = int(n_train / batch_size)
                 # Loop over all batches
                 counter = 0
                 perm = np.random.permutation(n_train)
