@@ -95,6 +95,7 @@ class Finetuning():
         self.label = tf.placeholder(tf.int32, [None, 1], name='InputData')
         _1,_2, self.encoder = discriminator(self.x, self.Training, reuse=False)
         self.vectors_train, self.vectors_test = self.extractor()
+        self.vectors_train, self.vectors_test = self.vectors_train[:,0,:], self.vectors_test[:,0,:]
         self.class_layer, self.z, self.loss, self.optimizer = self.Class_layer(self.flat, self.label, class_num, latent_size,lr)
         self.class_layer_val, self.z_val, self.loss_val = self.Class_layer(self.flat, self.label, class_num, latent_size,lr,reuse=True)
         
