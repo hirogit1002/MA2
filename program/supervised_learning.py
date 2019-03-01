@@ -88,15 +88,13 @@ class Finetuning():
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
         self.weight_path_ext = '../weigths/'+'DCGAN' + '.ckpt'
         self.weight_path_cls = '../weigths/'+'finetuning' + '.ckpt'
-        x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
-        flat = tf.placeholder(tf.float32, [None, 8192], name='InputData')
-        Training = tf.placeholder(dtype=tf.bool, name='LabelData')
-        label = tf.placeholder(tf.int32, [None, 1], name='InputData')
-        _1,_2, self.encoder = discriminator(x, Training, reuse=False)
+        self.x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
+        self.flat = tf.placeholder(tf.float32, [None, 8192], name='InputData')
+        self.Training = tf.placeholder(dtype=tf.bool, name='LabelData')
+        self.label = tf.placeholder(tf.int32, [None, 1], name='InputData')
+        _1,_2, self.encoder = discriminator(self.x, self.Training, reuse=False)
         self.vectors_train, self.vectors_test = self.extractor()
         self.class_layer, self.z, self.loss, self.optimizer = self.Class_layer(flat, label, class_num, latent_size,lr)
-
-        
         
     def Class_layer(self,flat,y,class_num,latent_size,lr):  
         z = fullyConnected(flat, name='z_FT', output_size=latent_size, activation = 'relu')
@@ -134,7 +132,7 @@ class Finetuning():
                     batch_y = train_y[i*batch_size:(i+1)*batch_size]
 
                     # Run optimization op (backprop) and cost op (to get loss value)
-                    _,res_trn,classes, z ,train_cost = sess_tra.run([self.optimizer,trn_summary , self.class_layer, self.z, self.loss], feed_dict={flat: batch_x, label:batch_y})
+                    _,res_trn,classes, z ,train_cost = sess_tra.run([self.optimizer,trn_summary , self.class_layer, self.z, self.loss], feed_dict={self.flat: batch_x, self.label:batch_y})
                     sum_loss += train_cost 
                     sys.stdout.write("\r%s" % "batch: {}/{}, loss: {}, time: {}".format(counter+1, np.int(n/batch_size)+1, sum_loss/(i+1),(time.time()-start_time)))
                     sys.stdout.flush()
@@ -145,7 +143,7 @@ class Finetuning():
             print('')
             print('Epoch', epoch+1, ' / ', epochs, 'Training Loss:', sum_loss/n_batches)
 
-            res_val,classes, z ,test_cost = sess_tra.run([val_summary , self.class_layer, self.z, self.loss], feed_dict={flat: self.vectors_test, label:self.y_test})
+            res_val,classes, z ,test_cost = sess_tra.run([val_summary , self.class_layer, self.z, self.loss], feed_dict={self.flat: self.vectors_test, self.label:self.y_test})
             print('Validation Loss:', test_cost/n_test)
             file_writer.add_summary( res_val, (epoch+1))
             epoch_end = time.time()-epoch_start
@@ -167,11 +165,11 @@ class Finetuning():
             vectors_test = []
             for i in self.img_train:
                 img = i[np.newaxis,:]
-                vector = self.encoder.eval(feed_dict={x: img, Training:False})
+                vector = self.encoder.eval(feed_dict={self.x: img, self.Training:False})
                 vectors_train +=[vector]
             for i in self.img_test:
                 img = i[np.newaxis,:]
-                vector = self.encoder.eval(feed_dict={x: img, Training:False})
+                vector = self.encoder.eval(feed_dict={self.x: img, self.Training:False})
                 vectors_test +=[vector]
             vectors_train = np.array(vectors_train)
             vectors_test = np.array(vectors_test)
