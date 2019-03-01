@@ -92,9 +92,9 @@ class Finetuning():
         flat = tf.placeholder(tf.float32, [None, 8192], name='InputData')
         Training = tf.placeholder(dtype=tf.bool, name='LabelData')
         label = tf.placeholder(tf.int32, [None, 1], name='InputData')
-        _,_, self.encoder = discriminator(x, Training, reuse=False)
+        _1,_2, self.encoder = discriminator(x, Training, reuse=False)
         self.class_layer, self.z, self.loss, self.optimizer = self.Class_layer(flat, label, class_num, latent_size,lr)
-        self.vectors_train, self.vectors_test = self.extractor(self.encoder)
+        self.vectors_train, self.vectors_test = self.extractor()
         
         
     def Class_layer(self,flat,y,class_num,latent_size,lr):  
@@ -157,8 +157,7 @@ class Finetuning():
 
         return classes, z ,test_cost
     
-    def extractor(self,encoder):
-        self.encoder = encoder
+    def extractor(self):
         with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess_ext:
             sess_ext.run(tf.global_variables_initializer())
             saver = tf.train.Saver()
