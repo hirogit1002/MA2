@@ -20,13 +20,14 @@ def split(n, vector_intg, y, y_value, img ,test_size):
     n_test = int(n*test_size)
     return vector_intg[:-n_test], vector_intg[-n_test:], y[:-n_test], y[-n_test:], y_value[:-n_test], y_value[-n_test:],img[:-n_test], img[-n_test:], n_test
 
-def CV(model,num):
+
+def CV(model,num, test_size=0.3):
     maximum = 0.
     minimum = 100.
     avg = 0.
     scores =[]
     for i in range(num):
-        model.cv_again()
+        model.cv_again(Test_size=test_size)
         model.fit()
         _, score = model.predict()
         maximum = max(maximum,score)
@@ -38,6 +39,7 @@ def CV(model,num):
     print('Minimum: ',minimum)
     print('Standard Diviation: ',np.std(scores))
     return scores
+
 
 def cv(vectors, y, y_value ,imgs, Test_size=0.3):
     idx = [np.where(y==i)[0] for i in emos_idx]
