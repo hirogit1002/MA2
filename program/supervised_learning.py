@@ -179,8 +179,13 @@ class Finetuning():
                 k+=1.
         print('Optimization Finished with time: ',(time.time()-start_time))
         sess_tra.close()
-
+        self.classes_val = classes_val
         return classes_val, z_val ,test_cost
+    
+    def predict(self):
+        pred = np.argmax(self.classes_val,axis=1)
+        return (pred.astype(np.int32)==self.y_test[:,0]).sum()/len(pred)
+    
     
     def extractor(self):
         with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess_ext:
