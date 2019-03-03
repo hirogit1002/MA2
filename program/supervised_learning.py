@@ -185,7 +185,7 @@ class Finetuning():
     
     def predict(self):
         pred = np.argmax(self.classes_val,axis=1)
-        return (pred.astype(np.int32)==self.y_test[:,0]).sum()/len(pred)
+        return pred,(pred.astype(np.int32)==self.y_test[:,0]).sum()/len(pred)
     
     
     def extractor(self):
