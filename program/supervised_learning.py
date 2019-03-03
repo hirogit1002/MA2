@@ -195,7 +195,9 @@ class Finetuning():
             vectors_test = np.array(vectors_test)
             sess_ext.close()
         return vectors_train, vectors_test
-    
+        
+    def cv_again(self, Test_size=0.3):
+        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size) 
 
 class SVM():
     def __init__(self,path_vector,path_y_value,path_labels,Kernel='linear',Test_size=0.3):
