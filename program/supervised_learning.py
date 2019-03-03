@@ -211,7 +211,7 @@ class Finetuning():
     def cv_again(self,Test_size):
         self.Test_size = Test_size
         vectors = np.append(self.vectors_train,self.vectors_test,axis=0)
-        label = np.append(self.y_train,self. y_test,axis=0)[:,0]
+        label = np.append(self.y_train,self. y_test,axis=0)
         n = len(label)
         n_test = int(n*Test_size)
         self.vectors_train, self.vectors_test =vectors[:-n_test], vectors[-n_test:]
