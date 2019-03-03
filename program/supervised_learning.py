@@ -82,6 +82,7 @@ def load(path_vector,path_y_value,path_labels):
 
 class Finetuning():
     def __init__(self,path_vector,path_y_value,path_labels,Test_size=0.3,latent_size=100,class_num=7,lr=1e-4,dim=8192,no_extract=False):
+        self.configure()
         self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
         self.logs_path = "../logs"
         self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
@@ -119,8 +120,13 @@ class Finetuning():
                 optimizer = tf.train.AdamOptimizer(lr).minimize(loss)
                 return class_layer, z, loss, optimizer 
  
+    def configure(self, epochs=20, batch_size=10):
+        self.epochs = epochs
+        self.batch_size = batch_size
 
-    def train(self, epochs=20, batch_size=10):
+    def fit(self, epochs=20, batch_size=10):
+        epochs=self.epochs 
+        batch_size=self.batch_size
         with tf.name_scope('training_ft'):
             tf.summary.scalar('loss', self.loss)
         with tf.name_scope('validation_ft'):
