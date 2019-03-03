@@ -81,7 +81,7 @@ def load(path_vector,path_y_value,path_labels):
 
 
 class Finetuning():
-    def __init__(self,path_vector,path_y_value,path_labels,Test_size=0.3,latent_size=100,class_num=7,lr=1e-4):
+    def __init__(self,path_vector,path_y_value,path_labels,Test_size=0.3,latent_size=100,class_num=7,lr=1e-4,dim=8192):
         self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
         self.logs_path = "../logs"
         self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
@@ -93,9 +93,9 @@ class Finetuning():
         self.weight_path_ext = '../weigths/'+'DCGAN' + '.ckpt'
         self.weight_path_cls = '../weigths/'+'finetuning' + '.ckpt'
         self.x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
-        self.flat = tf.placeholder(tf.float32, [None, 8192], name='InputData')
-        self.Training = tf.placeholder(dtype=tf.bool, name='LabelData')
-        self.label = tf.placeholder(tf.int32, [None, 1], name='InputData')
+        self.flat = tf.placeholder(tf.float32, [None, dim], name='feature')
+        self.Training = tf.placeholder(dtype=tf.bool, name='Training')
+        self.label = tf.placeholder(tf.int32, [None, 1], name='label')
         _1,_2, self.encoder = discriminator(self.x, self.Training, reuse=False)
         self.vectors_train, self.vectors_test = self.extractor()
         self.vectors_train, self.vectors_test = self.vectors_train[:,0,:], self.vectors_test[:,0,:]
