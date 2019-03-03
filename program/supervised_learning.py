@@ -81,7 +81,7 @@ def load(path_vector,path_y_value,path_labels):
 
 
 class Finetuning():
-    def __init__(self,path_vector,path_y_value,path_labels,Test_size=0.3,latent_size=100,class_num=7,lr=1e-4,dim=8192):
+    def __init__(self,path_vector,path_y_value,path_labels,Test_size=0.3,latent_size=100,class_num=7,lr=1e-4,dim=8192,no_extract=False):
         self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
         self.logs_path = "../logs"
         self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
@@ -99,8 +99,11 @@ class Finetuning():
         _1,_2, self.encoder = discriminator(self.x, self.Training, reuse=False)
         self.vectors_train, self.vectors_test = self.extractor()
         self.vectors_train, self.vectors_test = self.vectors_train[:,0,:], self.vectors_test[:,0,:]
+        if(no_extract):
+            self.vectors_train, self.vectors_test = self.X_train, self.X_test
         self.class_layer, self.z, self.loss, self.optimizer = self.Class_layer(self.flat, self.label, class_num, latent_size,lr)
         self.class_layer_val, self.z_val, self.loss_val = self.Class_layer(self.flat, self.label, class_num, latent_size,lr,reuse=True)
+        
         
     def Class_layer(self,flat,y,class_num,latent_size,lr,reuse=False):
         with tf.variable_scope("Class_layer") as scope:
