@@ -214,7 +214,7 @@ class Finetuning():
         label = np.append(self.y_train,self. y_test,axis=0)[:,0]
         n = len(label)
         n_test = int(n*Test_size)
-        self.vectors_train, self.vectors_test =vector[:-n_test], vector[-n_test:]
+        self.vectors_train, self.vectors_test =vectors[:-n_test], vectors[-n_test:]
         self.y_train, self.y_test= label[:-n_test],label[-n_test:]
 
 class SVM():
