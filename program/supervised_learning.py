@@ -81,7 +81,7 @@ def load(path_vector,path_y_value,path_labels):
 
 
 class Finetuning():
-    def __init__(self,path_vector,path_y_value,path_labels,Test_size=0.3,latent_size=100,class_num=7,lr=1e-4,dim=8192,no_extract=False):
+    def __init__(self,path_vector,path_y_value,path_labels,latent_size=100,class_num=7,lr=1e-4,dim=8192,no_extract=False):
         self.configure()
         self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
         self.logs_path = "../logs"
@@ -90,7 +90,7 @@ class Finetuning():
         self.imgs = imgs = norm_intg(self.imgs)
         self.vectors, self.y_value, self.y = load(path_vector,path_y_value,path_labels)
         self.y = (self.y -1.).astype(np.int32)
-        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
+        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, self.Test_size)
         self.weight_path_ext = '../weigths/'+'DCGAN' + '.ckpt'
         self.weight_path_cls = '../weigths/'+'finetuning' + '.ckpt'
         self.x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
@@ -120,7 +120,8 @@ class Finetuning():
                 optimizer = tf.train.AdamOptimizer(lr).minimize(loss)
                 return class_layer, z, loss, optimizer 
  
-    def configure(self, epochs=20, batch_size=10):
+    def configure(self, epochs=20, batch_size=10,test_size=0.3):
+        self.Test_size = test_size
         self.epochs = epochs
         self.batch_size = batch_size
 
@@ -206,7 +207,15 @@ class Finetuning():
             vectors_test = np.array(vectors_test)
             sess_ext.close()
         return vectors_train, vectors_test
-        
+    
+    def cv_again(self,Test_size):
+        self.Test_size = Test_size
+        vectors = np.append(self.vectors_train,self.vectors_test,axis=0)
+        label = np.append(self.y_train,self. y_test,axis=0)[:,0]
+        n = len(label)
+        n_test = int(n*Test_size)
+        self.vectors_train, self.vectors_test =vector[:-n_test], vector[-n_test:]
+        self.y_train, self.y_test= label[:-n_test],label[-n_test:]
 
 class SVM():
     def __init__(self,path_vector,path_y_value,path_labels,Kernel='linear',Test_size=0.3):
