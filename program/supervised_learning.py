@@ -124,7 +124,7 @@ class Finetuning():
         self.epochs = epochs
         self.batch_size = batch_size
 
-    def fit(self, epochs=20, batch_size=10):
+    def fit(self):
         epochs=self.epochs 
         batch_size=self.batch_size
         with tf.name_scope('training_ft'):
