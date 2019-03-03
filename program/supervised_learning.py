@@ -87,7 +87,7 @@ class Finetuning():
         self.logs_path = "../logs"
         self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
         self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
-        self.imgs = imgs = norm_intg(self.imgs)
+        self.imgs = imgs = norm_intg(self.imgs,'tanh')
         self.vectors, self.y_value, self.y = load(path_vector,path_y_value,path_labels)
         self.y = (self.y -1.).astype(np.int32)
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, self.Test_size)
