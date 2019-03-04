@@ -223,7 +223,6 @@ class SVM():
         self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
         self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
         self.vectors, self.y_value, self.y = load(path_vector,path_y_value,path_labels)
-        print(self.vectors.shape)
         self.y_value = np.array(self.y_value)
         self.y = np.array(self.y[:,0])-1.
         self.n = len(self.vectors)
