@@ -10,12 +10,6 @@ import os
 import sys
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-def load_labels(path_labels):
-    path_label = np.array(sorted(glob.glob((path_labels))))
-    y = np.array([np.array(pd.read_csv(i,header=None)[0]) for i in path_label])
-    return y
-
-
 def extractor(imgs,weight_path_ext):
     x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
     Training = tf.placeholder(dtype=tf.bool, name='Training')
@@ -34,13 +28,12 @@ def extractor(imgs,weight_path_ext):
     return vectors
 
 weight_path_ext = '../weigths/'+'DCGAN' + '.ckpt'
-path_labels='../labels/*.txt'
 imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
 imgs = np.array([np.array(Image.open(i).convert('L')) for i in imgs_path])
 imgs = norm_intg(imgs,'tanh')
-y = load_labels(path_labels)
 vectors = extractor(imgs,weight_path_ext)
+print(vectors.shape)
 print(vectors)
-print(y)
+
 
 
