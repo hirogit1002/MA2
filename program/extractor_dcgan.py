@@ -1,21 +1,13 @@
 from PIL import Image, ImageFilter
-from sklearn.decomposition import PCA
-from sklearn.decomposition import KernelPCA
 import numpy as np
 from PIL import ImageFile
-from sklearn.svm import SVC
-from skimage.transform import resize
-from sklearn.manifold import TSNE
-from layerfunctions import*
 from model import*
 from imgproc import*
 import glob
 import pickle
 import pandas as pd
-import time
 import os
 import sys
-import matplotlib.pyplot as plt
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 def load_labels(path_labels):
