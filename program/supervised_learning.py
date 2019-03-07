@@ -242,7 +242,7 @@ class SVM():
 
     def evaluate(self):
         for i in set(self.y_test):
-            average_precision = average_precision_score(self.bis[int(i)], self.value[:,str(i)])
+            average_precision = average_precision_score(self.bis[int(i)], self.value[:,int(i)])
             print(emos_inv[str(i)],': Average precision-recall score: {0:0.2f}'.format(average_precision))
         
         
