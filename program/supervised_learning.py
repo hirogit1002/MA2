@@ -16,6 +16,9 @@ import time
 import os
 import sys
 import matplotlib.pyplot as plt
+from sklearn.metrics import precision_recall_curve
+from sklearn.metrics import average_precision_score
+from sklearn.utils.fixes import signature
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 emos_inv = {0:'anger',1:'contempt',2:'disgust',3:'fear',4:'happy',5:'sad',6:'surprise'}
@@ -227,15 +230,28 @@ class SVM():
         self.y = np.array(self.y[:,0])-1.
         self.n = len(self.vectors)
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
+        print('Construct binary labels')
+        self.bis = []
+        for i in set(self.y_test):
+            bi=np.zeros(len(self.y_test),np.int)
+            bi[np.where(self.y_test==i)[0]] =1
+            self.bis+=[bi]
         print('Construct SVCs')
         self.model = SVC(kernel=Kernel, random_state=None,gamma='auto')
         print('Finish construction SVCs')
+
+    def evaluate(self):
+        for i in set(self.y_test):
+            average_precision = average_precision_score(self.bis[int(i)], self.value[:,str(i)])
+            print(emos_inv[str(i)],': Average precision-recall score: {0:0.2f}'.format(average_precision))
+        
         
     def fit(self):
         self.model.fit(X=self.X_train, y=self.y_train)
     
     def predict(self):
         score = self.model.score(X=self.X_test, y=self.y_test)
+        self.value = self.model.decision_function(self.X_test)
         return self.model.predict(self.X_test), score
 
     def visualize(self, pca=True, size=(20,20)):

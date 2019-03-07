@@ -32,9 +32,8 @@ imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
 imgs = np.array([np.array(Image.open(i).convert('L')) for i in imgs_path])
 imgs = norm_intg(imgs,'tanh')
 vectors = extractor(imgs,weight_path_ext)
-print(vectors.shape)
 vectors= vectors[:,0,:]
-print(vectors.shape)
+
 
 with open('../save/dcgan_vector.pickle', 'wb') as f:
     pickle.dump(vectors, f)
