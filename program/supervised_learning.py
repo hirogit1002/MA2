@@ -247,6 +247,7 @@ class SVM():
         precision = dict()
         recall = dict()
         average_precision = dict()
+        self.bis = []
         for i in set(self.y):
             bi=np.zeros(len(self.y_test),np.int)
             bi[np.where(self.y_test==i)[0]] =1
