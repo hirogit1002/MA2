@@ -19,10 +19,13 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import average_precision_score
 from sklearn.utils.fixes import signature
+from itertools import cycle
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 emos_inv = {0:'anger',1:'contempt',2:'disgust',3:'fear',4:'happy',5:'sad',6:'surprise'}
 emos_idx = [0,1,2,3,4,5,6]
+colors = cycle(['navy', 'turquoise', 'darkorange', 'cornflowerblue', 'teal','black','red'])
+
 
 def split(n, vector_intg, y, y_value, img ,test_size):
     n_test = int(n*test_size)
@@ -240,11 +243,43 @@ class SVM():
         self.model = SVC(kernel=Kernel, random_state=None,gamma='auto')
         print('Finish construction SVCs')
 
+    #def evaluate(self):
+    #    for i in set(self.y_test):
+    #        average_precision = average_precision_score(self.bis[int(i)], self.value[:,int(i)])
+    #        print(emos_inv[int(i)],': Average precision-recall score: {0:0.2f}'.format(average_precision))
+
     def evaluate(self):
-        for i in set(self.y_test):
-            average_precision = average_precision_score(self.bis[int(i)], self.value[:,int(i)])
-            print(emos_inv[int(i)],': Average precision-recall score: {0:0.2f}'.format(average_precision))
-        
+        precision = dict()
+        recall = dict()
+        average_precision = dict()
+        for i in range(len(set(self.y_test))):
+            precision[i], recall[i], _ = precision_recall_curve(self.bis[i],self.value[:, i])
+            average_precision[i] = average_precision_score(self.bis[i], self.value[:, i])
+        plt.figure(figsize=(7, 8))
+        f_scores = np.linspace(0.2, 0.8, num=4)
+        lines = []
+        labels = []
+        for f_score in f_scores:
+            x = np.linspace(0.01, 1)
+            y = f_score * x / (2 * x - f_score)
+            l, = plt.plot(x[y >= 0], y[y >= 0], color='gray', alpha=0.2)
+            plt.annotate('f1={0:0.1f}'.format(f_score), xy=(0.9, y[45] + 0.02))
+        lines.append(l)
+        labels.append('iso-f1 curves')
+        for i, color in zip(range(len(set(self.y_test))), colors):
+            l, = plt.plot(recall[i], precision[i], color=color, lw=2)
+            lines.append(l)
+            labels.append('Precision-recall for class {0} (AP = {1:0.2f})'''.format(i, average_precision[i]))
+        fig = plt.gcf()
+        fig.subplots_adjust(bottom=0.25)
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('Recall')
+        plt.ylabel('Precision')
+        plt.title('Extension of Precision-Recall curve to multi-class')
+        plt.legend(lines, labels, loc=(1.1, 0.5), prop=dict(size=14))
+        plt.show()
+    
         
     def fit(self):
         self.model.fit(X=self.X_train, y=self.y_train)
