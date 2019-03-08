@@ -15,7 +15,7 @@ from imgproc import*
 def test_network_gan(test_size, latent_size, normalizarion, lr):
     print('Test Size',test_size)
     tf.reset_default_graph()
-    weight_path = '../weigths/'+'DCGAN' + '.ckpt'
+    weight_path = '../weigths/'+'DCGAN'+'_'+str(latent_size) + '.ckpt'
     z = tf.placeholder(tf.float32, [None, latent_size], name='latent')
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
     generated = generator(z, Training,1)

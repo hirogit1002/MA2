@@ -17,7 +17,7 @@ def test_network(data, latent_size, normalizarion, model_name,lr):
     models = {'AE':AE,'VAE':VAE_test}
     data = np.array(data)
     n = len(data)
-    weight_path = '../weigths/'+model_name + '.ckpt'
+    weight_path = '../weigths/'+model_name +'_'+str(latent_size)+ '.ckpt'
     sess = tf.InteractiveSession()
     x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
     keep_prob = tf.placeholder(tf.float32)
