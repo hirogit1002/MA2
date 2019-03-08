@@ -56,7 +56,7 @@ def CV(model,num, test_size=0.3):
     return scores, perm
 
 
-def cv(vectors, y, y_value ,imgs, Test_size=0.3):
+def cv(vectors, y, y_value ,imgs, Test_size=0.3,perm=[]):
     idx = [np.where(y==i)[0] for i in emos_idx]
     X_Train, X_Test, y_Train, y_Test, y_value_Train, y_value_Test, img_Train, img_Test, n_Test, Perm = [], [], [], [], [], [], [], [], [], []
     for i in idx:
@@ -65,7 +65,8 @@ def cv(vectors, y, y_value ,imgs, Test_size=0.3):
         y_emo = y[i]
         y_value_emo = y_value[i]
         imgs_emo = imgs[i]
-        perm = np.random.permutation(n)
+        if(len(perm)==0):
+            perm = np.random.permutation(n)
         X_train, X_test, y_train, y_test, y_value_train, y_value_test, img_train, img_test, n_test=split(n ,vectors_emo[perm], y_emo[perm], y_value_emo[perm] ,imgs_emo[perm], Test_size)
         X_Train.extend(X_train)
         X_Test.extend(X_test)
@@ -334,6 +335,6 @@ class SVM():
         plt.show()
         
         
-    def cv_again(self, Test_size=0.3):
-        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
+    def cv_again(self, Test_size=0.3, Perm=[]):
+        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size, perm=Perm)
         
