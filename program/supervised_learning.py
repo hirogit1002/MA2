@@ -268,7 +268,7 @@ class SVM():
         for i, color in zip(range(len(set(self.y_test))), colors):
             l, = plt.plot(recall[i], precision[i], color=color, lw=2)
             lines.append(l)
-            labels.append('Precision-recall for class: {0} (AP = {1:0.2f})'''.format(i, average_precision[i]))
+            labels.append('Precision-recall for class: {0} (AP = {1:0.2f})'''.format(emos_inv[i], average_precision[i]))
         fig = plt.gcf()
         fig.subplots_adjust(bottom=0.25)
         plt.xlim([0.0, 1.0])
