@@ -37,10 +37,14 @@ def CV(model,num, test_size=0.3):
     minimum = 100.
     avg = 0.
     scores =[]
+    perm = []
     for i in range(num):
         model.cv_again(Test_size=test_size)
         model.fit()
         _, score = model.predict()
+        idx = np.argmax([score,maximum])
+        if(idx):
+        	perm = model.perm
         maximum = max(maximum,score)
         minimum = min(minimum,score)
         avg += score
