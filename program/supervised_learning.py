@@ -247,12 +247,12 @@ class SVM():
         precision = dict()
         recall = dict()
         average_precision = dict()
-        for i in set(self.y_test):
+        for i in set(self.y):
             bi=np.zeros(len(self.y_test),np.int)
             bi[np.where(self.y_test==i)[0]] =1
             self.bis+=[bi]
         print('Construct SVCs')
-        for i in range(len(set(self.y_test))):
+        for i in range(len(set(self.y))):
             precision[i], recall[i], _ = precision_recall_curve(self.bis[i],self.value[:, i])
             average_precision[i] = average_precision_score(self.bis[i], self.value[:, i])
         plt.figure(figsize=(7, 8))
@@ -266,7 +266,7 @@ class SVM():
             plt.annotate('f1={0:0.1f}'.format(f_score), xy=(0.9, y[45] + 0.02))
         lines.append(l)
         labels.append('iso-f1 curves')
-        for i, color in zip(range(len(set(self.y_test))), colors):
+        for i, color in zip(range(len(set(self.y))), colors):
             l, = plt.plot(recall[i], precision[i], color=color, lw=2)
             lines.append(l)
             labels.append('Precision-recall for class: {0} (AP = {1:0.2f})'''.format(emos_inv[i], average_precision[i]))
