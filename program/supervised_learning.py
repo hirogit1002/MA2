@@ -27,8 +27,10 @@ emos_idx = [0,1,2,3,4,5,6]
 colors = cycle(['navy', 'turquoise', 'darkorange', 'cornflowerblue', 'teal','black','red'])
 
 
-def split(n, vector_intg, y, y_value, img ,test_size):
+def split(n, vector_intg, y, y_value, img ,test_size,N_test=0):
     n_test = int(n*test_size)
+    if(n_test>0):
+        n_test = N_test
     return vector_intg[:-n_test], vector_intg[-n_test:], y[:-n_test], y[-n_test:], y_value[:-n_test], y_value[-n_test:],img[:-n_test], img[-n_test:], n_test
 
 
@@ -338,7 +340,7 @@ class SVM():
     def split_again(self,perm):
         n = len(self.y)
         Test_size = self.n_test/n
-        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test=split(n, self.vectors[perm], self.y[perm], self.y_value[perm], self.imgs[perm] , Test_size)
+        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test=split(n, self.vectors[perm], self.y[perm], self.y_value[perm], self.imgs[perm] , Test_size,self.n_test)
     
     def cv_again(self, Test_size=0.3):
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
