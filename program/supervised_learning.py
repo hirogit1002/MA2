@@ -335,8 +335,8 @@ class SVM():
             plt.imshow(value[i],cmap='gray')
         plt.show()
         
-    def split_again(self,perm,Test_size):
-        n = len(self.y)
+    def split_again(self,perm):
+        Test_size = self.n_test/len(self.y)
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test=split(n, self.vectors[perm], self.y[perm], self.y_value[perm], self.imgs[perm] , Test_size)
     
     def cv_again(self, Test_size=0.3):
