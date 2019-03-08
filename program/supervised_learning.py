@@ -239,10 +239,6 @@ class SVM():
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
         print('Construct binary labels')
         self.bis = []
-        for i in set(self.y_test):
-            bi=np.zeros(len(self.y_test),np.int)
-            bi[np.where(self.y_test==i)[0]] =1
-            self.bis+=[bi]
         print('Construct SVCs')
         self.model = SVC(kernel=Kernel, random_state=None,gamma='auto')
         print('Finish construction SVCs')
@@ -251,6 +247,11 @@ class SVM():
         precision = dict()
         recall = dict()
         average_precision = dict()
+        for i in set(self.y_test):
+            bi=np.zeros(len(self.y_test),np.int)
+            bi[np.where(self.y_test==i)[0]] =1
+            self.bis+=[bi]
+        print('Construct SVCs')
         for i in range(len(set(self.y_test))):
             precision[i], recall[i], _ = precision_recall_curve(self.bis[i],self.value[:, i])
             average_precision[i] = average_precision_score(self.bis[i], self.value[:, i])
