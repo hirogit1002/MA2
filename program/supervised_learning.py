@@ -44,7 +44,7 @@ def CV(model,num, test_size=0.3):
         _, score = model.predict()
         idx = np.argmax([score,maximum])
         if(idx):
-        	perm = model.perm
+            perm = model.perm
         maximum = max(maximum,score)
         minimum = min(minimum,score)
         avg += score
@@ -53,7 +53,7 @@ def CV(model,num, test_size=0.3):
     print('Maximum: ', maximum)
     print('Minimum: ',minimum)
     print('Standard Diviation: ',np.std(scores))
-    return scores
+    return scores, perm
 
 
 def cv(vectors, y, y_value ,imgs, Test_size=0.3):
@@ -247,11 +247,6 @@ class SVM():
         self.model = SVC(kernel=Kernel, random_state=None,gamma='auto')
         print('Finish construction SVCs')
 
-    #def evaluate(self):
-    #    for i in set(self.y_test):
-    #        average_precision = average_precision_score(self.bis[int(i)], self.value[:,int(i)])
-    #        print(emos_inv[int(i)],': Average precision-recall score: {0:0.2f}'.format(average_precision))
-
     def evaluate(self):
         precision = dict()
         recall = dict()
@@ -273,7 +268,7 @@ class SVM():
         for i, color in zip(range(len(set(self.y_test))), colors):
             l, = plt.plot(recall[i], precision[i], color=color, lw=2)
             lines.append(l)
-            labels.append('Precision-recall for class {0} (AP = {1:0.2f})'''.format(i, average_precision[i]))
+            labels.append('Precision-recall for class: ', emos_inv[i] ,' (AP = {1:0.2f})'''.format(average_precision[i]))
         fig = plt.gcf()
         fig.subplots_adjust(bottom=0.25)
         plt.xlim([0.0, 1.0])
