@@ -50,8 +50,8 @@ def test_network(data, latent_size, normalizarion, model_name,lr):
     if (normalizarion):
         y_values = y_values*255.
         
-    path_y_value = '../save/y_value_'+model_name+'.pickle'
-    path_z = '../save/z_'+model_name+'.pickle'
+    path_y_value = '../save/y_value_'+model_name+'_'+str(latent_size)+'.pickle'
+    path_z = '../save/z_'+model_name+'_'+str(latent_size)+'.pickle'
     with open(path_y_value, 'wb') as f:
         pickle.dump(y_values, f)
     with open(path_z , 'wb') as f:

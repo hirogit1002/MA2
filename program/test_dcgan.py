@@ -37,9 +37,9 @@ def test_network_gan(test_size, latent_size, normalizarion, lr):
         sess.close()
     #if (normalizarion):
     #    y_values = y_values*255.
-    with open('../save/y_value_gan.pickle', 'wb') as f:
+    with open(('../save/y_value_gan_'+str(latent_size)+'.pickle'), 'wb') as f:
         pickle.dump(y_values, f)
-    with open('../save/z_gan.pickle', 'wb') as f:
+    with open(('../save/z_gan_'+str(latent_size)+'.pickle'), 'wb') as f:
         pickle.dump(zs, f)
         
     print('Finished')
