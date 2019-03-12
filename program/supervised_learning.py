@@ -288,7 +288,7 @@ class SVM():
         true = [emos_inv[i] for i in self.y_test.astype(np.int)]
         pred = [emos_inv[i] for i in self.pred.astype(np.int)]
         #labels = emos
-        labels = sorted(list(set(y_true)))
+        labels = sorted(list(set(true)))
         cmx_data = confusion_matrix(true, pred, labels=labels)
         df_cmx = pd.DataFrame(cmx_data, index=labels, columns=labels)
         plt.figure(figsize = (10,7))
