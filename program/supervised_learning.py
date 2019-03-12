@@ -26,6 +26,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 emos_inv = {0:'anger',1:'contempt',2:'disgust',3:'fear',4:'happy',5:'sad',6:'surprise'}
 emos_idx = [0,1,2,3,4,5,6]
+emos = ['anger','contempt','disgust','fear','happy','sad','surprise']
 colors = cycle(['navy', 'turquoise', 'darkorange', 'cornflowerblue', 'teal','black','red'])
 
 
@@ -284,7 +285,7 @@ class SVM():
         plt.show()
 
     def cmat(self):
-        labels = sorted(list(set(self.y_test)))
+        labels = emos
         cmx_data = confusion_matrix(self.y_test, self.pred, labels=labels)
         df_cmx = pd.DataFrame(cmx_data, index=labels, columns=labels)
         plt.figure(figsize = (10,7))
