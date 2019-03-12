@@ -285,9 +285,11 @@ class SVM():
         plt.show()
 
     def cmat(self):
-        labels = sorted(list(set(self.y_test)))
-        cmx_data = confusion_matrix(self.y_test, self.pred, labels=labels)
-        df_cmx = pd.DataFrame(cmx_data, index=emos, columns=emos)
+        true = [emos_inv[i] for i in self.y_test.astype(np.int)]
+        pred = [emos_inv[i] for i in self.pred.astype(np.int)]
+        labels = emos
+        cmx_data = confusion_matrix(true, pred, labels=labels)
+        df_cmx = pd.DataFrame(cmx_data, index=labels, columns=labels)
         plt.figure(figsize = (10,7))
         sns.heatmap(df_cmx, annot=True)
         plt.show()
