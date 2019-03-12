@@ -12,6 +12,7 @@ from imgproc import*
 import glob
 import pickle
 import pandas as pd
+import seaborn as sns
 import time
 import os
 import sys
@@ -19,6 +20,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import average_precision_score
 from sklearn.utils.fixes import signature
+from sklearn.metrics import confusion_matrix
 from itertools import cycle
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -280,7 +282,14 @@ class SVM():
         plt.title('Extension of Precision-Recall curve to multi-class')
         plt.legend(lines, labels, loc=(1.1, 0.5), prop=dict(size=14))
         plt.show()
-    
+
+    def cmat(self):
+        labels = sorted(list(set(self.y_test)))
+        cmx_data = confusion_matrix(self.y_test, self.pred, labels=labels)
+        df_cmx = pd.DataFrame(cmx_data, index=labels, columns=labels)
+        plt.figure(figsize = (10,7))
+        sns.heatmap(df_cmx, annot=True)
+        plt.show()
         
     def fit(self):
         self.model.fit(X=self.X_train, y=self.y_train)
@@ -288,7 +297,8 @@ class SVM():
     def predict(self):
         score = self.model.score(X=self.X_test, y=self.y_test)
         self.value = self.model.decision_function(self.X_test)
-        return self.model.predict(self.X_test), score
+        self.pred = self.model.predict(self.X_test)
+        return self.pred, score
 
     def visualize(self, pca=True, size=(20,20)):
         if(pca):
