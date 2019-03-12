@@ -290,6 +290,7 @@ class SVM():
         #labels = emos
         labels = sorted(list(set(true)))
         cmx_data = confusion_matrix(true, pred, labels=labels)
+        cmx_data =cmx_data/cmx_data.sum(1)[:,np.newaxis]
         df_cmx = pd.DataFrame(cmx_data, index=labels, columns=labels)
         plt.figure(figsize = (10,7))
         sns.heatmap(df_cmx, annot=True)
