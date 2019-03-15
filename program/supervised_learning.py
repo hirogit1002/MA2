@@ -237,7 +237,7 @@ class SVM():
         self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
         self.vectors, self.y_value, self.y = load(path_vector,path_y_value,path_labels)
         self.y_value = np.array(self.y_value)
-        self.idx_without_contempt = np.where(self.y_value!=2)[0]
+        self.idx_without_contempt = np.where(self.y!=2)[0]
         self.vectors, self.y, self.y_value ,self.imgs = self.vectors[self.idx_without_contempt], self.y[self.idx_without_contempt], self.y_value[self.idx_without_contempt], self.imgs[self.idx_without_contempt]
         self.y[np.where(self.y_value==7)[0]] = 2
         self.y = np.array(self.y[:,0])-1.
