@@ -24,10 +24,10 @@ from sklearn.metrics import confusion_matrix
 from itertools import cycle
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-emos_inv = {0:'anger',1:'surprise',2:'disgust',3:'fear',4:'happy',5:'sad'}
-emos_idx = [0,1,2,3,4,5]
-emos = ['anger','surprise','disgust','fear','happy','sad']
-colors = cycle(['navy', 'turquoise', 'darkorange', 'cornflowerblue', 'teal','black'])
+emos_inv = {0:'anger',1:'contempt',2:'disgust',3:'fear',4:'happy',5:'sad',6:'surprise'}
+emos_idx = [0,1,2,3,4,5,6]
+emos = ['anger','contempt','disgust','fear','happy','sad','surprise']
+colors = cycle(['navy', 'turquoise', 'darkorange', 'cornflowerblue', 'teal','black','red'])
 
 
 def split(n, vector_intg, y, y_value, img ,test_size):
@@ -237,9 +237,6 @@ class SVM():
         self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
         self.vectors, self.y_value, self.y = load(path_vector,path_y_value,path_labels)
         self.y_value = np.array(self.y_value)
-        self.idx_without_contempt = np.where(self.y_value!=2)[0]
-        self.vectors, self.y, self.y_value ,self.imgs = self.vectors[self.idx_without_contempt], self.y[self.idx_without_contempt], self.y_value[self.idx_without_contempt], self.imgs[self.idx_without_contempt]
-        self.y[np.where(self.y_value==7)[0]] = 2
         self.y = np.array(self.y[:,0])-1.
         self.n = len(self.vectors)
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
@@ -316,15 +313,17 @@ class SVM():
             z_tsne = TSNE(n_components=2, random_state=0).fit_transform(self.vectors)
 
         anger = z_tsne[np.where(self.y==0.)[0]]
+        contempt = z_tsne[np.where(self.y==1.)[0]]
         disgust = z_tsne[np.where(self.y==2.)[0]]
         fear = z_tsne[np.where(self.y==3.)[0]]
         happy = z_tsne[np.where(self.y==4.)[0]]
         sad = z_tsne[np.where(self.y==5.)[0]]
-        surprise = z_tsne[np.where(self.y==1.)[0]]
+        surprise = z_tsne[np.where(self.y==6.)[0]]
 
         fig = plt.figure(figsize=size)
         ax = fig.add_subplot(1,1,1)
         ax.scatter(anger[:, 0],anger[:, 1], c='red', marker='^', label='anger')
+        ax.scatter(contempt[:, 0],contempt[:, 1], c='black',marker='x', label='contempt')
         ax.scatter(disgust[:, 0],disgust[:, 1], c='blue',marker='o', label='disgust')
         ax.scatter(fear[:, 0],fear[:, 1], c='green',marker='s', label='fear')
         ax.scatter(happy[:, 0],happy[:, 1], c='yellow',marker='o', label='happy')
