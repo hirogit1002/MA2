@@ -239,7 +239,7 @@ class SVM():
         self.y_value = np.array(self.y_value)
         self.idx_without_contempt = np.where(self.y!=2)[0]
         self.vectors, self.y, self.y_value ,self.imgs = self.vectors[self.idx_without_contempt], self.y[self.idx_without_contempt], self.y_value[self.idx_without_contempt], self.imgs[self.idx_without_contempt]
-        self.y[np.where(self.y_value==7)[0]] = 2
+        self.y[np.where(self.y==7)[0]] = 2
         self.y = np.array(self.y[:,0])-1.
         self.n = len(self.vectors)
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
