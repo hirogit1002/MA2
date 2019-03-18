@@ -2,7 +2,6 @@ import tensorflow as tf
 import tensorboard as tb 
 import numpy as np
 from PIL import Image, ImageFilter
-#import cv2
 import pandas as pd
 import os
 import sys
@@ -11,6 +10,7 @@ import pickle
 from layerfunctions import*
 from model import*
 from imgproc import*
+from extractor_dcgan import*
 
 def test_network_gan(test_size, latent_size, normalizarion, lr):
     print('Test Size',test_size)
@@ -35,12 +35,13 @@ def test_network_gan(test_size, latent_size, normalizarion, lr):
         y_values = np.array(y_values) 
         zs = np.array(zs)
         sess.close()
-    #if (normalizarion):
-    #    y_values = y_values*255.
+    print("Save represented data")
     with open(('../save/y_value_gan_'+str(latent_size)+'.pickle'), 'wb') as f:
         pickle.dump(y_values, f)
+    print("Save latent variable")
     with open(('../save/z_gan_'+str(latent_size)+'.pickle'), 'wb') as f:
         pickle.dump(zs, f)
-        
+    print("Extract feature vectors")
+    extractor(latent_size,Reuse=False)
     print('Finished')
 

@@ -5,9 +5,6 @@ from model import*
 from imgproc import*
 import glob
 import pickle
-import pandas as pd
-import os
-import sys
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 def extractor(latent_size,Reuse=False):
