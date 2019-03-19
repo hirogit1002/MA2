@@ -42,6 +42,7 @@ def CV(model,num, test_size=0.3):
     scores =[]
     perm = []
     AmAP = []
+    AAPs = np.zeros(6)
     for i in range(num):
         model.cv_again(Test_size=test_size)
         model.fit()
@@ -55,6 +56,7 @@ def CV(model,num, test_size=0.3):
         avg += score
         scores +=[score]
         AmAP += [mAP]
+        AAPs += np.array(APs)
     print('Accuracy')
     print('Average: ', avg/num)
     print('Maximum: ', maximum)
@@ -62,6 +64,7 @@ def CV(model,num, test_size=0.3):
     print('Standard Diviation: ',np.std(scores))
     print('Average mAP: ',np.mean(AmAP))
     print('Standard Diviation(mAP): ',np.std(AmAP))
+    print('Average AP: ',AAPs/num)
     return scores, perm
 
 
