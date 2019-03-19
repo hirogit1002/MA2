@@ -273,18 +273,20 @@ class SVM():
             plt.annotate('f1={0:0.1f}'.format(f_score), xy=(0.9, y[45] + 0.02))
         lines.append(l)
         labels.append('iso-f1 curves')
+        mAP = 0.
         for i, color in zip(range(len(set(self.y))), colors):
             l, = plt.plot(recall[i], precision[i], color=color, lw=2)
             lines.append(l)
             labels.append('Precision-recall for class: {0} (AP = {1:0.2f})'''.format(emos_inv[i], average_precision[i]))
+            mAP+= average_precision[i]
+        mAP = mAP/6.
         fig = plt.gcf()
         fig.subplots_adjust(bottom=0.25)
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
         plt.xlabel('Recall')
         plt.ylabel('Precision')
-        print(np.array([i for i in average_precision]))
-        ttl = 'Precision-Recall curve with mAP = ' + str(np.mean(np.array([i for i in average_precision])))
+        ttl = 'Precision-Recall curve with mAP = ' + str(mAP)
         plt.title(ttl)
         plt.legend(lines, labels, loc=(1.1, 0.5), prop=dict(size=14))
         plt.show()
