@@ -41,7 +41,7 @@ def CV(model,num, test_size=0.3):
     avg = 0.
     scores =[]
     perm = []
-    AmAP = 0
+    AmAP = []
     for i in range(num):
         model.cv_again(Test_size=test_size)
         model.fit()
@@ -54,13 +54,14 @@ def CV(model,num, test_size=0.3):
         minimum = min(minimum,score)
         avg += score
         scores +=[score]
-        AmAP += mAP
+        AmAP += [mAP]
     print('Accuracy')
     print('Average: ', avg/num)
     print('Maximum: ', maximum)
     print('Minimum: ',minimum)
     print('Standard Diviation: ',np.std(scores))
-    print('Average mAP: ',AmAP/num)
+    print('Average mAP: ',np.mean(AmAP))
+    print('Standard Diviation(mAP): ',np.std(AmAP))
     return scores, perm
 
 
@@ -263,7 +264,6 @@ class SVM():
             bi=np.zeros(len(self.y_test),np.int)
             bi[np.where(self.y_test==i)[0]] =1
             self.bis+=[bi]
-        print('Construct SVCs')
         for i in range(len(set(self.y))):
             precision[i], recall[i], _ = precision_recall_curve(self.bis[i],self.value[:, i])
             average_precision[i] = average_precision_score(self.bis[i], self.value[:, i])  
