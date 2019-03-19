@@ -283,7 +283,8 @@ class SVM():
         plt.ylim([0.0, 1.05])
         plt.xlabel('Recall')
         plt.ylabel('Precision')
-        plt.title('Extension of Precision-Recall curve to multi-class')
+        ttl = 'Precision-Recall curve with mAP = ' + str(np.mean(np.array(average_precision)))
+        plt.title(ttl)
         plt.legend(lines, labels, loc=(1.1, 0.5), prop=dict(size=14))
         plt.show()
 
