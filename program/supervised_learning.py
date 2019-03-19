@@ -41,10 +41,12 @@ def CV(model,num, test_size=0.3):
     avg = 0.
     scores =[]
     perm = []
+    AmAP = 0
     for i in range(num):
         model.cv_again(Test_size=test_size)
         model.fit()
         _, score = model.predict()
+        mAP, APs = model.evaluate(plot=True)
         idx = np.argmax([score,maximum])
         if(idx):
             perm = model.perm
@@ -52,10 +54,13 @@ def CV(model,num, test_size=0.3):
         minimum = min(minimum,score)
         avg += score
         scores +=[score]
+        AmAP += mAP
+    print('Accuracy')
     print('Average: ', avg/num)
     print('Maximum: ', maximum)
     print('Minimum: ',minimum)
     print('Standard Diviation: ',np.std(scores))
+    print('Average mAP: ',Average/num)
     return scores, perm
 
 
