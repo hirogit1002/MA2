@@ -261,24 +261,26 @@ class SVM():
         print('Construct SVCs')
         for i in range(len(set(self.y))):
             precision[i], recall[i], _ = precision_recall_curve(self.bis[i],self.value[:, i])
-            average_precision[i] = average_precision_score(self.bis[i], self.value[:, i])
-        plt.figure(figsize=(7, 8))
-        f_scores = np.linspace(0.2, 0.8, num=4)
-        lines = []
-        labels = []
-        for f_score in f_scores:
-            x = np.linspace(0.01, 1)
-            y = f_score * x / (2 * x - f_score)
-            l, = plt.plot(x[y >= 0], y[y >= 0], color='gray', alpha=0.2)
-            plt.annotate('f1={0:0.1f}'.format(f_score), xy=(0.9, y[45] + 0.02))
-        lines.append(l)
-        labels.append('iso-f1 curves')
+            average_precision[i] = average_precision_score(self.bis[i], self.value[:, i])  
+        if(plot):
+            plt.figure(figsize=(7, 8))
+            f_scores = np.linspace(0.2, 0.8, num=4)
+            lines = []
+            labels = []
+            for f_score in f_scores:
+                x = np.linspace(0.01, 1)
+                y = f_score * x / (2 * x - f_score)
+                l, = plt.plot(x[y >= 0], y[y >= 0], color='gray', alpha=0.2)
+                plt.annotate('f1={0:0.1f}'.format(f_score), xy=(0.9, y[45] + 0.02))
+            lines.append(l)
+            labels.append('iso-f1 curves')
         mAP = 0.
         APs = []
         for i, color in zip(range(len(set(self.y))), colors):
-            l, = plt.plot(recall[i], precision[i], color=color, lw=2)
-            lines.append(l)
-            labels.append('Precision-recall for class: {0} (AP = {1:0.2f})'''.format(emos_inv[i], average_precision[i]))
+            if(plot):
+                l, = plt.plot(recall[i], precision[i], color=color, lw=2)
+                lines.append(l)
+                labels.append('Precision-recall for class: {0} (AP = {1:0.2f})'''.format(emos_inv[i], average_precision[i]))
             APs+=[average_precision[i]]
             mAP+= average_precision[i]
         mAP = mAP/6.
