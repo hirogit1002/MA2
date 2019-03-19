@@ -64,6 +64,7 @@ def CV(model,num, test_size=0.3):
     print('Standard Diviation: ',np.std(scores))
     print('Average mAP: ',np.mean(AmAP))
     print('Standard Diviation(mAP): ',np.std(AmAP))
+    print('Emotions',emos)
     print('Average AP: ',AAPs/num)
     return scores, perm
 
