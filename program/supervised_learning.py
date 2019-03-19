@@ -249,7 +249,7 @@ class SVM():
         self.model = SVC(kernel=Kernel, random_state=None,gamma='auto')
         print('Finish construction SVCs')
 
-    def evaluate(self):
+    def evaluate(self,plot=True):
         precision = dict()
         recall = dict()
         average_precision = dict()
@@ -274,22 +274,27 @@ class SVM():
         lines.append(l)
         labels.append('iso-f1 curves')
         mAP = 0.
+        APs = []
         for i, color in zip(range(len(set(self.y))), colors):
             l, = plt.plot(recall[i], precision[i], color=color, lw=2)
             lines.append(l)
             labels.append('Precision-recall for class: {0} (AP = {1:0.2f})'''.format(emos_inv[i], average_precision[i]))
+            APs+=[average_precision[i]]
             mAP+= average_precision[i]
         mAP = mAP/6.
-        fig = plt.gcf()
-        fig.subplots_adjust(bottom=0.25)
-        plt.xlim([0.0, 1.0])
-        plt.ylim([0.0, 1.05])
-        plt.xlabel('Recall')
-        plt.ylabel('Precision')
-        ttl = 'Precision-Recall curve with mAP = ' + str(mAP)
-        plt.title(ttl)
-        plt.legend(lines, labels, loc=(1.1, 0.5), prop=dict(size=14))
-        plt.show()
+        APs = np.array(APs)
+        if(plot):
+            fig = plt.gcf()
+            fig.subplots_adjust(bottom=0.25)
+            plt.xlim([0.0, 1.0])
+            plt.ylim([0.0, 1.05])
+            plt.xlabel('Recall')
+            plt.ylabel('Precision')
+            ttl = 'Precision-Recall curve with mAP = ' + str(mAP)
+            plt.title(ttl)
+            plt.legend(lines, labels, loc=(1.1, 0.5), prop=dict(size=14))
+            plt.show()
+        return mAP, APs
 
     def cmat(self):
         true = [emos_inv[i] for i in self.y_test.astype(np.int)]
