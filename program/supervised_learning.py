@@ -46,7 +46,7 @@ def CV(model,num, test_size=0.3):
         model.cv_again(Test_size=test_size)
         model.fit()
         _, score = model.predict()
-        mAP, APs = model.evaluate(plot=True)
+        mAP, APs = model.evaluate(plot=False)
         idx = np.argmax([score,maximum])
         if(idx):
             perm = model.perm
@@ -60,7 +60,7 @@ def CV(model,num, test_size=0.3):
     print('Maximum: ', maximum)
     print('Minimum: ',minimum)
     print('Standard Diviation: ',np.std(scores))
-    print('Average mAP: ',Average/num)
+    print('Average mAP: ',AmAP/num)
     return scores, perm
 
 
