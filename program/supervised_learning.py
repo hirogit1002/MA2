@@ -421,7 +421,7 @@ class SVM():
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
         
     def CV_kfold(self,k=5, emo_num=6,test_size=0.3):
-        X_Train, X_Test, y_Train, y_Test, y_value_Train, y_value_Test, img_Train, img_Test, n_Test, Perm = cv_kfold(self.vectors, self.y, self.y_value ,imgs, k)
+        X_Train, X_Test, y_Train, y_Test, y_value_Train, y_value_Test, img_Train, img_Test, n_Test, Perm = cv_kfold(self.vectors, self.y, self.y_value ,self.imgs, k)
         maximum = 0.
         minimum = 100.
         avg = 0.
