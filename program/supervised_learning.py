@@ -21,6 +21,7 @@ from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import average_precision_score
 from sklearn.utils.fixes import signature
 from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import KFold
 from itertools import cycle
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -91,6 +92,46 @@ def cv(vectors, y, y_value ,imgs, Test_size=0.3):
         n_Test.extend(np.array([n_test]))
         Perm.extend(perm)
     return np.array(X_Train), np.array(X_Test), np.array(y_Train), np.array(y_Test), np.array(y_value_Train), np.array(y_value_Test), np.array(img_Train), np.array(img_Test), np.array(n_Test), np.array(Perm)
+
+
+def cv_kfold(vectors, y, y_value ,imgs, k,emo_num=6):
+    def append(a,k,emo_num):
+        leers = []
+        for i in range(k):
+            leer = np.array([])
+            for j in range(emo_num):
+                leer =np.append(leer,a[j*5+i])
+            print(leer)
+            leers +=[leer]  
+        return leers
+    idx = [np.where(y==i)[0] for i in emos_idx]
+    X_Train, X_Test, y_Train, y_Test, y_value_Train, y_value_Test, img_Train, img_Test, n_Test, Perm = [], [], [], [], [], [], [], [], [], []
+    for i in idx:
+        n = len(i)
+        vectors_emo = vectors[i]
+        y_emo = y[i]
+        y_value_emo = y_value[i]
+        imgs_emo = imgs[i]
+        perm = np.random.permutation(n)
+        kf = KFold(n_splits=k)
+        kf.get_n_splits(perm)
+        for train_index, test_index in kf.split(perm):
+            train_idx, test_idx = np.array(train_index), np.array(test_index)
+            perm_train= perm[train_idx]
+            perm_test= perm[test_idx]
+            X_Train +=[vectors_emo[perm_train]]
+            y_Train +=[y_emo[perm_train]]
+            y_value_Train += [y_value_emo[perm_train]]
+            img_Train += [imgs_emo[perm_train]]
+            X_Test += [vectors_emo[perm_test]]
+            y_Test += [y_emo[perm_test]]
+            y_value_Test += [y_value_emo[perm_test]]
+            img_Test += [imgs_emo[perm_test]]
+            n_Test += [len(test_index)]
+            Perm += [perm[train_index]] 
+    return append(X_Train,k,emo_num), append(X_Test,k,emo_num), append(y_Train,k,emo_num), append(y_Test,k,emo_num), append(y_value_Train,k,emo_num), append(y_value_Test,k,emo_num), append(img_Train,k,emo_num), append(img_Test,k,emo_num), append(n_Test,k,emo_num), append(Perm,k,emo_num)
+
+
 
 
 def load(path_vector,path_y_value,path_labels):
@@ -378,4 +419,39 @@ class SVM():
     
     def cv_again(self, Test_size=0.3):
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
+        
+    def CV_kfold(self,k=5, emo_num=6,test_size=0.3):
+        X_Train, X_Test, y_Train, y_Test, y_value_Train, y_value_Test, img_Train, img_Test, n_Test, Perm = cv_kfold(self.vectors, self.y, self.y_value ,imgs, k)
+        maximum = 0.
+        minimum = 100.
+        avg = 0.
+        scores =[]
+        perm = []
+        AmAP = []
+        AAPs = np.zeros(emo_num)
+        for i in range(k):
+            self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = X_Train[i], X_Test[i], y_Train[i], y_Test[i], y_value_Train[i], y_value_Test[i], img_Train[i], img_Test[i], n_Test[i], Perm[i]
+            self.fit()
+            _, score = self.predict()
+            mAP, APs = self.evaluate(plot=False)
+            idx = np.argmax([score,maximum])
+            if(idx):
+                perm = model.perm
+            maximum = max(maximum,score)
+            minimum = min(minimum,score)
+            avg += score
+            scores +=[score]
+            AmAP += [mAP]
+            AAPs += np.array(APs)
+        print('Accuracy')
+        print('Average: ', avg/k)
+        print('Maximum: ', maximum)
+        print('Minimum: ',minimum)
+        print('Standard Diviation: ',np.std(scores))
+        print('Average mAP: ',np.mean(AmAP))
+        print('Standard Diviation(mAP): ',np.std(AmAP))
+        print('Emotions',emos)
+        print('Average AP: ',AAPs/k)
+        return scores, perm
+
         
