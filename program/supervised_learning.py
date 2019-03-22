@@ -422,14 +422,14 @@ class SVM():
         for i in range(k):
             trn_idx = kfd_trn_idx[i]
             tst_idx = kfd_tst_idx[i]
-            self.X_train = X_Train[trn_idx]
-            self.X_test = X_Test[tst_idx]
-            self.y_train = y_Train[trn_idx]
-            self.y_test = y_Test[tst_idx]
-            self.y_value_train = y_value_Train[trn_idx]
-            self.y_value_test = y_value_Test[tst_idx]
-            self.img_train = img_Train[trn_idx]
-            self.img_test = img_Test[tst_idx]
+            self.X_train = X_train[trn_idx]
+            self.X_test = X_test[tst_idx]
+            self.y_train = y_train[trn_idx]
+            self.y_test = y_test[tst_idx]
+            self.y_value_train = y_value_train[trn_idx]
+            self.y_value_test = y_value_test[tst_idx]
+            self.img_train = img_train[trn_idx]
+            self.img_test = img_test[tst_idx]
             self.fit()
             _, score = self.predict()
             mAP, APs = self.evaluate(plot=False)
