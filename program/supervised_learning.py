@@ -110,9 +110,10 @@ def cv_kfold(y, k,emo_num):
         perm = np.random.permutation(n)
         kf = KFold(n_splits=k)
         kf.get_n_splits(perm)
-        for train_idx, test_idx in kf.split(perm):
-            kfd_trn_idx += [i[train_idx]]
-            kfd_tst_idx += [i[test_idx]]
+        shfld = i[perm]
+        for train_idx, test_idx in kf.split(shfld):
+            kfd_trn_idx += [shfld [train_idx]]
+            kfd_tst_idx += [shfld [test_idx]]
     return append(kfd_trn_idx,k,emo_num), append(kfd_tst_idx,k,emo_num)
 
 
