@@ -431,7 +431,7 @@ class SVM():
             mAP, APs = self.evaluate(plot=False)
             idx = np.argmax([score,maximum])
             if(idx):
-                perm = model.perm
+                perm = (trn_idx,tst_idx)
             maximum = max(maximum,score)
             minimum = min(minimum,score)
             avg += score
