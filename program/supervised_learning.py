@@ -100,7 +100,7 @@ def cv_kfold(y, k,emo_num):
         for i in range(k):
             leer = np.array([])
             for j in range(emo_num):
-                leer =np.append(leer,a[j*5+i])
+                leer =np.append(leer,a[j*k+i])
             leers +=[leer]  
         return leers
     kfd_trn_idx, kfd_tst_idx = [], []
