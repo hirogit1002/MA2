@@ -414,7 +414,7 @@ class SVM():
         vectors = np.array(self.vectors)
         y = np.array(self.y)
         y_value = np.array(self.y_value)
-        imgs_train = np.array(self.imgs)
+        imgs = np.array(self.imgs)
         for i in range(k):
             trn_idx = np.array(kfd_trn_idx[i],np.int)
             tst_idx = np.array(kfd_tst_idx[i],np.int)
