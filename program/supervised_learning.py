@@ -94,44 +94,26 @@ def cv(vectors, y, y_value ,imgs, Test_size=0.3):
     return np.array(X_Train), np.array(X_Test), np.array(y_Train), np.array(y_Test), np.array(y_value_Train), np.array(y_value_Test), np.array(img_Train), np.array(img_Test), np.array(n_Test), np.array(Perm)
 
 
-def cv_kfold(vectors, y, y_value ,imgs, k,emo_num=6):
+def cv_kfold(y, k,emo_num):
     def append(a,k,emo_num):
         leers = []
         for i in range(k):
             leer = np.array([])
             for j in range(emo_num):
                 leer =np.append(leer,a[j*5+i])
-            print(leer)
             leers +=[leer]  
         return leers
+    kfd_trn_idx, kfd_tst_idx = [], []
     idx = [np.where(y==i)[0] for i in emos_idx]
-    X_Train, X_Test, y_Train, y_Test, y_value_Train, y_value_Test, img_Train, img_Test, n_Test, Perm = [], [], [], [], [], [], [], [], [], []
     for i in idx:
         n = len(i)
-        vectors_emo = vectors[i]
-        y_emo = y[i]
-        y_value_emo = y_value[i]
-        imgs_emo = imgs[i]
         perm = np.random.permutation(n)
         kf = KFold(n_splits=k)
         kf.get_n_splits(perm)
-        for train_index, test_index in kf.split(perm):
-            train_idx, test_idx = np.array(train_index), np.array(test_index)
-            perm_train= perm[train_idx]
-            perm_test= perm[test_idx]
-            X_Train +=[vectors_emo[perm_train]]
-            y_Train +=[y_emo[perm_train]]
-            y_value_Train += [y_value_emo[perm_train]]
-            img_Train += [imgs_emo[perm_train]]
-            X_Test += [vectors_emo[perm_test]]
-            y_Test += [y_emo[perm_test]]
-            y_value_Test += [y_value_emo[perm_test]]
-            img_Test += [imgs_emo[perm_test]]
-            n_Test += [len(test_index)]
-            Perm += [perm[train_index]] 
-    return append(X_Train,k,emo_num), append(X_Test,k,emo_num), append(y_Train,k,emo_num), append(y_Test,k,emo_num), append(y_value_Train,k,emo_num), append(y_value_Test,k,emo_num), append(img_Train,k,emo_num), append(img_Test,k,emo_num), append(n_Test,k,emo_num), append(Perm,k,emo_num)
-
-
+        for train_idx, test_idx in kf.split(perm):
+            kfd_trn_idx += [i[train_idx]]
+            kfd_tst_idx += [i[test_idx]]
+    return append(kfd_trn_idx,k,emo_num), append(kfd_tst_idx,k,emo_num)
 
 
 def load(path_vector,path_y_value,path_labels):
@@ -420,8 +402,8 @@ class SVM():
     def cv_again(self, Test_size=0.3):
         self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
         
-    def CV_kfold(self,k=5, emo_num=6,test_size=0.3):
-        X_Train, X_Test, y_Train, y_Test, y_value_Train, y_value_Test, img_Train, img_Test, n_Test, Perm = cv_kfold(self.vectors, self.y, self.y_value ,self.imgs, k)
+    def CV_kfold(self,k=5, emo_num=6):
+        kfd_trn_idx, kfd_tst_idx = cv_kfold(self.y, k,emo_num)
         maximum = 0.
         minimum = 100.
         avg = 0.
@@ -429,8 +411,25 @@ class SVM():
         perm = []
         AmAP = []
         AAPs = np.zeros(emo_num)
+        X_train = np.array(self.X_train)
+        X_test = np.array(self.X_test)
+        X_train = np.array(self.y_train)
+        y_test = np.array(self.y_test)
+        y_value_train = np.array(self.y_value_train)
+        y_value_test = np.array(self.y_value_test)
+        img_train = np.array(self.img_train)
+        img_test = np.array(self.img_test)
         for i in range(k):
-            self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = X_Train[i], X_Test[i], y_Train[i], y_Test[i], y_value_Train[i], y_value_Test[i], img_Train[i], img_Test[i], n_Test[i], Perm[i]
+            trn_idx = kfd_trn_idx[i]
+            tst_idx = kfd_tst_idx[i]
+            self.X_train = X_Train[trn_idx]
+            self.X_test = X_Test[tst_idx]
+            self.y_train = y_Train[trn_idx]
+            self.y_test = y_Test[tst_idx]
+            self.y_value_train = y_value_Train[trn_idx]
+            self.y_value_test = y_value_Test[tst_idx]
+            self.img_train = img_Train[trn_idx]
+            self.img_test = img_Test[tst_idx]
             self.fit()
             _, score = self.predict()
             mAP, APs = self.evaluate(plot=False)
