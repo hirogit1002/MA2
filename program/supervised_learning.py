@@ -420,8 +420,8 @@ class SVM():
         img_train = np.array(self.img_train)
         img_test = np.array(self.img_test)
         for i in range(k):
-            trn_idx = kfd_trn_idx[i]
-            tst_idx = kfd_tst_idx[i]
+            trn_idx = np.array(kfd_trn_idx[i])
+            tst_idx = np.array(kfd_tst_idx[i])
             self.X_train = X_train[trn_idx]
             self.X_test = X_test[tst_idx]
             self.y_train = y_train[trn_idx]
