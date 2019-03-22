@@ -411,25 +411,21 @@ class SVM():
         perm = []
         AmAP = []
         AAPs = np.zeros(emo_num)
-        X_train = np.array(self.X_train)
-        X_test = np.array(self.X_test)
-        X_train = np.array(self.y_train)
-        y_test = np.array(self.y_test)
-        y_value_train = np.array(self.y_value_train)
-        y_value_test = np.array(self.y_value_test)
-        img_train = np.array(self.img_train)
-        img_test = np.array(self.img_test)
+        vectors = np.array(self.vectors)
+        y = np.array(self.y)
+        y_value = np.array(self.y_value)
+        imgs_train = np.array(self.imgs)
         for i in range(k):
             trn_idx = np.array(kfd_trn_idx[i],np.int)
             tst_idx = np.array(kfd_tst_idx[i],np.int)
-            self.X_train = X_train[trn_idx]
-            self.X_test = X_test[tst_idx]
-            self.y_train = y_train[trn_idx]
-            self.y_test = y_test[tst_idx]
-            self.y_value_train = y_value_train[trn_idx]
-            self.y_value_test = y_value_test[tst_idx]
-            self.img_train = img_train[trn_idx]
-            self.img_test = img_test[tst_idx]
+            self.X_train = vectors[trn_idx]
+            self.X_test = vectors[tst_idx]
+            self.y_train = y[trn_idx]
+            self.y_test = y[tst_idx]
+            self.y_value_train = y_value[trn_idx]
+            self.y_value_test = y_value[tst_idx]
+            self.img_train = imgs[trn_idx]
+            self.img_test = imgs[tst_idx]
             self.fit()
             _, score = self.predict()
             mAP, APs = self.evaluate(plot=False)
