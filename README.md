@@ -17,7 +17,7 @@ You can choose a method from Autoencoder, Variational Autoencoder or DCGAN. For 
 ## Quickstart 
 Move to the main directory.
 
-    $ cd /MA2
+    $ cd MA2
     
 ### Training
 Put the training Image data into data folder. Image data has to fulfill following requirement.
