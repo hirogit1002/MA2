@@ -26,6 +26,7 @@ from itertools import cycle
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 emos_inv = {0:'anger',1:'surprise',2:'disgust',3:'fear',4:'happy',5:'sad'}
+emos_dict = {'anger':0,'surprise':1,'disgust':2,'fear':3,'happy':4,'sad':5}
 emos_idx = [0,1,2,3,4,5]
 emos = ['anger','surprise','disgust','fear','happy','sad']
 colors = cycle(['navy', 'turquoise', 'darkorange', 'cornflowerblue', 'teal','black'])
@@ -126,6 +127,28 @@ def load(path_vector,path_y_value,path_labels):
     y = np.array([np.array(pd.read_csv(i,header=None)[0]) for i in path_label])
     return vectors,y_values ,y
 
+def imshow_all(path_vector, path_y_value, path_labels, emo='happy',plot='reconst', size=(50,40)):
+    imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
+    imgs = np.array([np.array(Image.open(i).convert('L')) for i in imgs_path])
+    vectors, y_value, y = load(path_vector, path_y_value, path_labels)
+    idx_without_contempt = np.where(y!=2)[0]
+    vectors, y, y_value, imgs = vectors[idx_without_contempt], y[idx_without_contempt], y_value[idx_without_contempt], imgs[idx_without_contempt]
+    y[np.where(self.y==7)[0]] = 2
+    y = np.array(y[:,0])-1
+    emo_id = emos_dict[emo]
+    plot_idx = np.where(y=emo_id)[0]
+    n=len(plot_idx)
+    h =-(-n//10)
+    if(plot=='reconst'):
+        value = y_value[emo_id]
+    else:
+        value = imgs[emo_id]
+    fig = plt.figure(figsize=size)
+    for i in range(n):
+        plt.subplot(h, 10, (i+1))
+        plt.title((str(i+1)+' Label: '+emo))
+        plt.imshow(value[i],cmap='gray')
+    plt.show()
 
 class Finetuning():
     def __init__(self,path_vector,path_y_value,path_labels,latent_size=100,class_num=7,lr=1e-4,dim=8192,no_extract=False):
