@@ -133,7 +133,7 @@ def imshow_all(path_vector, path_y_value, path_labels, emo='happy',plot='reconst
     vectors, y_value, y = load(path_vector, path_y_value, path_labels)
     idx_without_contempt = np.where(y!=2)[0]
     vectors, y, y_value, imgs = vectors[idx_without_contempt], y[idx_without_contempt], y_value[idx_without_contempt], imgs[idx_without_contempt]
-    y[np.where(self.y==7)[0]] = 2
+    y[np.where(y==7)[0]] = 2
     y = np.array(y[:,0])-1
     emo_id = emos_dict[emo]
     plot_idx = np.where(y=emo_id)[0]
