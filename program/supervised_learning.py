@@ -140,9 +140,9 @@ def imshow_all(path_vector, path_y_value, path_labels, emo='happy',plot='reconst
     n=len(plot_idx)
     h =-(-n//10)
     if(plot=='reconst'):
-        value = y_value[emo_id]
+        value = y_value[plot_idx]
     else:
-        value = imgs[emo_id]
+        value = imgs[plot_idx]
     fig = plt.figure(figsize=size)
     for i in range(n):
         plt.subplot(h, 10, (i+1))
