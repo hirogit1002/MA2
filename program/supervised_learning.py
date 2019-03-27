@@ -136,7 +136,7 @@ def imshow_all(path_vector, path_y_value, path_labels, emo='happy',plot='reconst
     y[np.where(y==7)[0]] = 2
     y = np.array(y[:,0])-1
     emo_id = emos_dict[emo]
-    plot_idx = np.where(y=emo_id)[0]
+    plot_idx = np.where(y==emo_id)[0]
     n=len(plot_idx)
     h =-(-n//10)
     if(plot=='reconst'):
