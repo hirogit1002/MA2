@@ -499,6 +499,7 @@ class SVM():
                 new_precision[count]  = np.mean(aprecisions[i][idx])
                 count+=1
         new_recalls+=[new_recall]
+        print(len( new_recalls))
         new_precisions+=[new_precision]
         plt.figure(figsize=(7, 8))
         f_scores = np.linspace(0.2, 0.8, num=4)
