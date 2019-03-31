@@ -434,6 +434,7 @@ class SVM():
         scores =[]
         perm = []
         AmAP = []
+        precisions, recalls =[],[]
         AAPs = np.zeros(emo_num)
         vectors = np.array(self.vectors)
         y = np.array(self.y)
@@ -462,6 +463,8 @@ class SVM():
             scores +=[score]
             AmAP += [mAP]
             AAPs += np.array(APs)
+            precisions +=[precision]
+            recalls +=[recall]
         print('Accuracy')
         print('Average: ', avg/k)
         print('Maximum: ', maximum)
@@ -471,6 +474,6 @@ class SVM():
         print('Standard Diviation(mAP): ',np.std(AmAP))
         print('Emotions',emos)
         print('Average AP: ',AAPs/k)
-        return scores, perm
+        return scores, perm, precisions, recalls
 
         
