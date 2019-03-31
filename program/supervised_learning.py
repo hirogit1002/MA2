@@ -488,6 +488,7 @@ class SVM():
         set_dict = dict()
         set_dict = [set(i) for i in arecall]
         new_recalls, new_precisions = [],[]
+        print(emonum)
         for i in range(emonum):
             new_recall = np.empty(len(set_dict[i]))
             new_precision = np.empty(len(set_dict[i]))
@@ -511,8 +512,6 @@ class SVM():
         lines.append(l)
         labels.append('iso-f1 curves')
         mAP = 0.
-        print(len(set(self.y)))
-        print(len(new_recalls))
         for i, color in zip(range(len(set(self.y))), colors):
             idx_ = np.argsort(new_recalls[i])
             l, = plt.plot(new_recalls[i][idx_], new_precisions[i][idx_], color=color, lw=2)
