@@ -488,7 +488,6 @@ class SVM():
         set_dict = dict()
         set_dict = [set(i) for i in arecall]
         new_recalls, new_precisions = [],[]
-        print(emonum)
         for i in range(emonum):
             new_recall = np.empty(len(set_dict[i]))
             new_precision = np.empty(len(set_dict[i]))
@@ -498,9 +497,8 @@ class SVM():
                 new_recall[count] = j
                 new_precision[count]  = np.mean(aprecisions[i][idx])
                 count+=1
-        new_recalls+=[new_recall]
-        print(len( new_recalls))
-        new_precisions+=[new_precision]
+            new_recalls+=[new_recall]
+            new_precisions+=[new_precision]
         plt.figure(figsize=(7, 8))
         f_scores = np.linspace(0.2, 0.8, num=4)
         lines = []
