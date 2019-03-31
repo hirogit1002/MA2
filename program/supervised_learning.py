@@ -49,7 +49,7 @@ def CV(model,num, test_size=0.3):
         model.cv_again(Test_size=test_size)
         model.fit()
         _, score = model.predict()
-        mAP, APs = model.evaluate(plot=False)
+        mAP, APs, precision, recall = model.evaluate(plot=False)
         idx = np.argmax([score,maximum])
         if(idx):
             perm = model.perm
@@ -352,7 +352,7 @@ class SVM():
             plt.title(ttl)
             plt.legend(lines, labels, loc=(1.1, 0.5), prop=dict(size=14))
             plt.show()
-        return mAP, APs
+        return mAP, APs, precision, recall
 
     def cmat(self):
         true = [emos_inv[i] for i in self.y_test.astype(np.int)]
@@ -452,7 +452,7 @@ class SVM():
             self.img_test = imgs[tst_idx]
             self.fit()
             _, score = self.predict()
-            mAP, APs = self.evaluate(plot=False)
+            mAP, APs, precision, recall = self.evaluate(plot=False)
             idx = np.argmax([score,maximum])
             if(idx):
                 perm = (trn_idx,tst_idx)
