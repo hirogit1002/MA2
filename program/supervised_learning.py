@@ -477,26 +477,26 @@ class SVM():
         return scores, perm, self.precisions, self.recalls
 
         def average_pr_curve(self):
-        	arecall = [np.array([])for i in range(6)]
-			aprecisions = [np.array([])for i in range(6)]
-			for i in range(10):
-			    for j in range(6):
-			        arecall[j] = np.append(self.arecall[j],self.recalls[i][j])
-			        aprecisions[j] = np.append(self.aprecisions[j],self.precisions[i][j])
-			set_dict = dict()
-			set_dict = [set(i) for i in arecall]
-			new_recalls, new_precisions = [],[]
-			for i in range(6):
-				new_recall = np.empty(len(set_dict[i]))
-				new_precision = np.empty(len(set_dict[i]))
-				count = 0
-				for j in set_dict[i]:
-					idx = np.where(arecall[i]==j)[0]
-					new_recall[count] = j
-					new_precision[count]  = np.mean(aprecisions[i][idx])
-					count+=1
-			new_recalls+=[new_recall]
-			new_precisions+=[new_precision]
+            arecall = [np.array([])for i in range(6)]
+            aprecisions = [np.array([])for i in range(6)]
+            for i in range(10):
+                for j in range(6):
+                    arecall[j] = np.append(self.arecall[j],self.recalls[i][j])
+                    aprecisions[j] = np.append(self.aprecisions[j],self.precisions[i][j])
+            set_dict = dict()
+            set_dict = [set(i) for i in arecall]
+            new_recalls, new_precisions = [],[]
+            for i in range(6):
+                new_recall = np.empty(len(set_dict[i]))
+                new_precision = np.empty(len(set_dict[i]))
+                count = 0
+                for j in set_dict[i]:
+                    idx = np.where(arecall[i]==j)[0]
+                    new_recall[count] = j
+                    new_precision[count]  = np.mean(aprecisions[i][idx])
+                    count+=1
+            new_recalls+=[new_recall]
+            new_precisions+=[new_precision]
             plt.figure(figsize=(7, 8))
             f_scores = np.linspace(0.2, 0.8, num=4)
             lines = []
@@ -508,17 +508,17 @@ class SVM():
                 plt.annotate('f1={0:0.1f}'.format(f_score), xy=(0.9, y[45] + 0.02))
             lines.append(l)
             labels.append('iso-f1 curves')
-	        mAP = 0.
-	        APs = []
-	        for i, color in zip(range(len(set(self.y))), colors):
-			    idx_ = np.argsort(new_recalls[i])
-			    l, = plt.plot(new_recalls[i][idx_], new_precisions[i][idx_], color=color, lw=2)
+            mAP = 0.
+            APs = []
+            for i, color in zip(range(len(set(self.y))), colors):
+                idx_ = np.argsort(new_recalls[i])
+                l, = plt.plot(new_recalls[i][idx_], new_precisions[i][idx_], color=color, lw=2)
                 lines.append(l)
                 labels.append('Precision-recall for class: {0} (AP = {1:0.2f})'''.format(emos_inv[i], average_precision[i]))
             APs+=[average_precision[i]]
             mAP+= average_precision[i]
-	        mAP = mAP/6.
-	        APs = np.array(APs)
+            mAP = mAP/6.
+            APs = np.array(APs)
             fig = plt.gcf()
             fig.subplots_adjust(bottom=0.25)
             plt.xlim([0.0, 1.0])
