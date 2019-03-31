@@ -465,6 +465,7 @@ class SVM():
             self.AAPs += np.array(APs)
             self.precisions +=[precision]
             self.recalls +=[recall]
+        self.AAPs=self.AAPs/k
         print('Accuracy')
         print('Average: ', avg/k)
         print('Maximum: ', maximum)
@@ -473,7 +474,7 @@ class SVM():
         print('Average mAP: ',np.mean(self.AmAP))
         print('Standard Diviation(mAP): ',np.std(self.AmAP))
         print('Emotions',emos)
-        print('Average AP: ',self.AAPs/k)
+        print('Average AP: ',self.AAPs)
         return scores, perm, self.precisions, self.recalls
 
     def average_pr_curve(self,k):
@@ -510,16 +511,12 @@ class SVM():
         lines.append(l)
         labels.append('iso-f1 curves')
         mAP = 0.
-        APs = []
         for i, color in zip(range(len(set(self.y))), colors):
             idx_ = np.argsort(new_recalls[i])
             l, = plt.plot(new_recalls[i][idx_], new_precisions[i][idx_], color=color, lw=2)
             lines.append(l)
-            labels.append('Precision-recall for class: {0} (AP = {1:0.2f})'''.format(emos_inv[i], average_precision[i]))
-        APs+=[average_precision[i]]
-        mAP+= average_precision[i]
-        mAP = mAP/6.
-        APs = np.array(APs)
+            labels.append('Precision-recall for class: {0} (AP = {1:0.2f})'''.format(emos_inv[i], self.AAPs[i]))
+        mAP = np.mean(self.AmAP)
         fig = plt.gcf()
         fig.subplots_adjust(bottom=0.25)
         plt.xlim([0.0, 1.0])
