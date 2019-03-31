@@ -476,17 +476,18 @@ class SVM():
         print('Average AP: ',self.AAPs/k)
         return scores, perm, self.precisions, self.recalls
 
-    def average_pr_curve(self):
-        arecall = [np.array([])for i in range(6)]
-        aprecisions = [np.array([])for i in range(6)]
-        for i in range(10):
-            for j in range(6):
-                arecall[j] = np.append(self.arecall[j],self.recalls[i][j])
-                aprecisions[j] = np.append(self.aprecisions[j],self.precisions[i][j])
+    def average_pr_curve(self,k):
+        emonum = len(set(self.y))
+        arecall = [np.array([])for i in range(emonum)]
+        aprecisions = [np.array([])for i in range(emonum)]
+        for i in range(k):
+            for j in range(emonum):
+                arecall[j] = np.append(arecall[j],self.recalls[i][j])
+                aprecisions[j] = np.append(aprecisions[j],self.precisions[i][j])
         set_dict = dict()
         set_dict = [set(i) for i in arecall]
         new_recalls, new_precisions = [],[]
-        for i in range(6):
+        for i in range(emonum):
             new_recall = np.empty(len(set_dict[i]))
             new_precision = np.empty(len(set_dict[i]))
             count = 0
