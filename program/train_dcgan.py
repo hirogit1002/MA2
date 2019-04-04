@@ -75,8 +75,9 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
                 _,res_trn ,train_cost = sess.run([gen_op, trn_summary, g_loss], feed_dict=feed)
                 sum_d_loss += (train_d_loss / n_batches)
                 sum_g_loss += (train_g_loss/ n_batches)
-                sys.stdout.write("\r%s" % "batch: {}/{}, d_loss: {}, g_loss: {}, time: {}".format(counter+1, np.int(n/batch_size)+1, sum_d_loss/(i+1), sum_g_loss/(i+1),(time.time()-start_time)))
-                sys.stdout.flush()
+                #sys.stdout.write("\r%s" % "batch: {}/{}, d_loss: {}, g_loss: {}, time: {}".format(counter+1, np.int(n/batch_size)+1, sum_d_loss/(i+1), sum_g_loss/(i+1),(time.time()-start_time)))
+                #sys.stdout.flush()
+                print("\r%s" % "batch: {}/{}, d_loss: {}, g_loss: {}, time: {}".format(counter+1, np.int(n/batch_size)+1, sum_d_loss/(i+1), sum_g_loss/(i+1),(time.time()-start_time)))
                 counter +=1
             file_writer.add_summary(res_trn, (epoch+1))
             saver.save(sess, weight_path)
