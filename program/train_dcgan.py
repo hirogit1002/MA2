@@ -26,7 +26,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
     Training = tf.placeholder(dtype=tf.bool, name='LabelData')
     Batch_size = tf.placeholder(tf.int32)
     generated, gen_op, dis_op, d_loss, g_loss = DCGAN(x,z,Training,batch_size, lr)
-    val_d_loss, val_g_loss = DCGAN(x,z,Training,n_test, lr, reuse=True)
+    val_d_loss, val_g_loss, val_D_logits, val_D_logits_ = DCGAN(x,z,Training,n_test, lr, reuse=True)
     with tf.name_scope('training'):
         tf.summary.scalar("g_loss", g_loss)
         tf.summary.scalar("d_loss", d_loss)
@@ -91,9 +91,10 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
             else:
                 test_imgs =  test_imgs[:,:,:,np.newaxis].astype(np.float32)                
             feed = {z: sample_z(n_test, latent_size), x: test_imgs, Training:False}  
-            test_d_cost, test_g_cost = sess.run([val_d_loss,val_g_loss], feed_dict = feed)
+            test_d_cost, test_g_cost,d_real,d_fake = sess.run([val_d_loss,val_g_loss, val_D_logits, val_D_logits_], feed_dict = feed)
             res_val,_= sess.run([val_summary, val_g_loss], feed_dict = feed)
             print('D Cost:', test_d_cost/n_test,'G Cost:',test_g_cost/n_test)
+            print('d_real:', d_real,'d_fake:',d_fake)
             file_writer.add_summary( res_val, (epoch+1))
             epoch_end = time.time()-epoch_start
             epoch_time+=epoch_end

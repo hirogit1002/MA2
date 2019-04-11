@@ -59,7 +59,7 @@ def DCGAN(x,z,Training, Batch_size, lr,reuse=False):
     
     # Optimizer
     if(reuse):
-        return d_loss, g_loss
+        return d_loss, g_loss, D_logits, D_logits_
     else:
         dis_op = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.5).minimize(d_loss, var_list=d_vars)
         gen_op = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.5).minimize(g_loss, var_list=g_vars)
