@@ -52,14 +52,13 @@ def DCGAN(x,z,Training, Batch_size, lr,reuse=False):
     sig_, D_logits_, _ = discriminator(generated, Training, reuse=True)
     loss_real, loss_fake, g_loss = loss_gan(D_logits,D_logits_)                    
     d_loss = loss_real + loss_fake
-
     t_vars = tf.trainable_variables()
     d_vars = [var for var in t_vars if 'd_' in var.name]
     g_vars = [var for var in t_vars if 'g_' in var.name]
     
     # Optimizer
     if(reuse):
-        return d_loss, g_loss, D_logits, D_logits_
+        return d_loss, g_loss, sig, sig_
     else:
         dis_op = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.5).minimize(d_loss, var_list=d_vars)
         gen_op = tf.train.AdamOptimizer(learning_rate=lr, beta1=0.5).minimize(g_loss, var_list=g_vars)
