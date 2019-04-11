@@ -98,7 +98,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
             d_length = len(flat_d_real)
             ones = np.ones(d_length,np.int)
             zeros = np.zeros(d_length,np.int)
-            accuracy=(((np.append(flat_d_real,flat_d_fake)>=0.5).astype(np.int))==np.append(ones,zeros))/(d_length+d_length)
+            accuracy=(((np.append(flat_d_real,flat_d_fake)>=0.5).astype(np.int))==np.append(ones,zeros)).sum()/(d_length+d_length)
             print('Accuracy of the Discriminator:', accuracy)
             file_writer.add_summary( res_val, (epoch+1))
             epoch_end = time.time()-epoch_start
