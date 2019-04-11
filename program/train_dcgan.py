@@ -53,7 +53,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
         start_time = time.time()
         epoch_time =0.
         k = 1.
-        accuracys =[]
+        f= open("../accuracy_discriminator.txt","w+")
         for epoch in range(epochs):
             epoch_start = time.time()
             sum_d_loss = 0
@@ -101,14 +101,14 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
             zeros = np.zeros(d_length,np.int)
             accuracy=(((np.append(flat_d_real,flat_d_fake)>=0.5).astype(np.int))==np.append(ones,zeros)).sum()/(d_length+d_length)
             print('Accuracy of the Discriminator:', accuracy)
-            accuracys+=[accuracy]
+            f.write("%f\r" % accuracy)
             file_writer.add_summary( res_val, (epoch+1))
             epoch_end = time.time()-epoch_start
             epoch_time+=epoch_end
             print('Time per epoch: ',(epoch_time/k),'s/epoch')
             print('')
             k+=1.
-        
+        f.close() 
         print('Optimization Finished with time: ',(time.time()-start_time))
         sess.close()
 
