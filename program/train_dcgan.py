@@ -73,7 +73,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
                 feed = {z: sample_z(batch_size, latent_size), x: imgs, Training:True}      
                 _,train_d_loss = sess.run([dis_op, d_loss], feed_dict=feed )
                 _,train_g_loss = sess.run([gen_op, g_loss], feed_dict=feed )
-                _,res_trn ,train_cost = sess.run([gen_op, trn_summary, g_loss], feed_dict=feed)
+                _,res_trn = sess.run([gen_op, trn_summary], feed_dict=feed)
                 sum_d_loss += (train_d_loss / n_batches)
                 sum_g_loss += (train_g_loss/ n_batches)
                 sys.stdout.write("\r%s" % "batch: {}/{}, d_loss: {}, g_loss: {}, time: {}".format(counter+1, np.int(n/batch_size)+1, sum_d_loss/(i+1), sum_g_loss/(i+1),(time.time()-start_time)))
@@ -93,7 +93,7 @@ def train_network_gan(data, test_size, batch_size,init,latent_size, normalizario
                 test_imgs =  test_imgs[:,:,:,np.newaxis].astype(np.float32)                
             feed = {z: sample_z(n_test, latent_size), x: test_imgs, Training:False}  
             test_d_cost, test_g_cost,d_real,d_fake = sess.run([val_d_loss,val_g_loss, val_D_logits, val_D_logits_], feed_dict = feed)
-            res_val,_= sess.run([val_summary, val_g_loss], feed_dict = feed)
+            res_val= sess.run([val_summary], feed_dict = feed)
             print('D Cost:', test_d_cost/n_test,'G Cost:',test_g_cost/n_test)
             flat_d_real,flat_d_fake = d_real.flatten(),d_fake.flatten()
             d_length = len(flat_d_real)
