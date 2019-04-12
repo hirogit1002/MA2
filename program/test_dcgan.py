@@ -12,7 +12,7 @@ from model import*
 from imgproc import*
 from extractor_dcgan import*
 
-def test_network_gan(test_size, latent_size, normalizarion, lr, pool_typ):
+def test_network_gan(test_size, latent_size, normalizarion, lr, vector_path, pool_typ):
     print('Test Size',test_size)
     tf.reset_default_graph()
     weight_path = '../weigths/'+'DCGAN'+'_'+str(latent_size) + '.ckpt'
@@ -26,8 +26,14 @@ def test_network_gan(test_size, latent_size, normalizarion, lr, pool_typ):
         saver.restore(sess, weight_path)
         y_values = []
         zs = []
+        if(len(vector_path>0)):
+            with open(vector_path, 'rb') as f:
+                samples = pickle.load(f)
+                test_size = len(samples)
+        else:
+            samples = sample_z(test_size, latent_size)
         for i in range(test_size):
-            sampled = sample_z(1, latent_size)
+            sampled = samples[i]
             feed = {z: sampled, Training:False}  
             output= sess.run([generated], feed_dict = feed)
             y_values +=[output[0][0,:,:,0]]
