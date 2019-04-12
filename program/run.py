@@ -11,6 +11,7 @@ parser.add_argument('--test','-v', default=0, type=int)
 parser.add_argument('--test_size','-ts', default=10, type=int)
 parser.add_argument('--batch_size','-b', default=10, type=int)
 parser.add_argument('--model','-m', default= "AE", type=str)
+parser.add_argument('--pool','-p', default= "max", type=str)
 parser.add_argument('--init','-i', default= 1, type=int)
 parser.add_argument('--norm','-n', default= 1, type=int)
 parser.add_argument('--latent','-l', default= 100, type=int)
@@ -24,6 +25,7 @@ Train = args.train
 Test = args.test
 latent = args.latent
 lr = args.learning_late
+pool_typ = args.pool
 
 if(Train*Test):
     Train = 0
@@ -40,7 +42,7 @@ if(Train):
 if(Test):
     print('Validation start')
     if(args.model=='DCGAN'):
-        test_network_gan(args.test_size, latent, args.norm, lr)
+        test_network_gan(args.test_size, latent, args.norm, lr, pool_typ)
     else:      
         test_network(paths_test, latent, args.norm, args.model,lr)
     

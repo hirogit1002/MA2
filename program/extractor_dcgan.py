@@ -7,7 +7,7 @@ import glob
 import pickle
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-def extractor(latent_size,Reuse=False):
+def extractor(latent_size,pooltyp,Reuse=False):
     weight_path_ext = '../weigths/'+'DCGAN'+'_'+str(latent_size) + '.ckpt'
     imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
     imgs = np.array([np.array(Image.open(i).convert('L')) for i in imgs_path])
@@ -15,7 +15,7 @@ def extractor(latent_size,Reuse=False):
  
     x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
     Training = tf.placeholder(dtype=tf.bool, name='Training')
-    _,_, encoder = discriminator(x, Training, reuse=Reuse)
+    _,_, encoder = discriminator(x, Training, reuse=Reuse, pool_typ=pooltyp)
     with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess_ext:
         sess_ext.run(tf.global_variables_initializer())
         saver = tf.train.Saver()
