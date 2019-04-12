@@ -26,7 +26,7 @@ def test_network_gan(test_size, latent_size, normalizarion, lr, vector_path, poo
         saver.restore(sess, weight_path)
         y_values = []
         zs = []
-        if(len(vector_path>0)):
+        if(len(vector_path)>0):
             with open(vector_path, 'rb') as f:
                 samples = pickle.load(f)
                 test_size = len(samples)
