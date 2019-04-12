@@ -51,14 +51,18 @@ def deconv2d_nrm(x, name, kshape, Training, batchsize, Strides=[1, 2, 2, 1], pad
 
 
 #   ---------------------------------
-def maxpool2d(x,name,kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1]):
+def maxpool2d(x,kshape=[1, 4, 4, 1], strides=[1, 4, 4, 1]):
     out = tf.nn.max_pool(x,ksize=kshape, strides=strides,padding='SAME')
     return out
 
 #   ---------------------------------
-def avgpool2d(x,name,kshape=[1, 2, 2, 1], strides=[1, 2, 2, 1]):
+def avgpool2d(x,kshape=[1, 4, 4, 1], strides=[1, 4, 4, 1]):
     out = tf.nn.avg_pool(x,ksize=kshape, strides=strides,padding='SAME')
     return out
+#   ---------------------------------
+def nopool(x):
+    return x
+
 #   ---------------------------------
 def upsample(x, name, factor=[2,2]):
     size = [int(x.shape[1] * factor[0]), int(x.shape[2] * factor[1])]
