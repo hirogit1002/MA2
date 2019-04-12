@@ -2,7 +2,6 @@ import tensorflow as tf
 import tensorboard as tb 
 import numpy as np
 from PIL import Image, ImageFilter
-#import cv2
 import pandas as pd
 import os
 import sys

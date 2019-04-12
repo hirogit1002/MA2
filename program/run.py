@@ -29,19 +29,9 @@ if(Train*Test):
     Train = 0
     Test =1 
     
-if((1-args.init) or Test):
-    print('Load latent setting')
-    latent_name = '../save/'+args.model+'_latent_setting.pickle'
-    with open(latent_name, 'rb') as f:
-        latent = pickle.load(f)
 
 if(Train):
     print('Train start')
-    if(args.init):
-        print('Save latent setting')
-        latent_name = '../save/'+args.model+'_latent_setting.pickle'
-        with open(latent_name, 'wb') as f:
-            pickle.dump(latent, f)
     if(args.model=='DCGAN'):
         train_network_gan(paths, args.test_size, args.batch_size,args.init,latent, args.norm, args.epochs,"../logs", lr)
     else:
