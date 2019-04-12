@@ -29,9 +29,11 @@ def test_network_gan(test_size, latent_size, normalizarion, lr, vector_path, poo
         if(len(vector_path)>0):
             with open(vector_path, 'rb') as f:
                 samples = pickle.load(f)
-                test_size = len(samples)
+                sshp = samples.shape
+                test_size = sshp[0]
+                samples = samples.reshape(sshp[0],1,sshp[1])
         else:
-            samples = sample_z(test_size, latent_size)
+            samples = sample_z(test_size, latent_size).reshape(test_size,1 ,latent_size)
         for i in range(test_size):
             sampled = samples[i]
             feed = {z: sampled, Training:False}  
