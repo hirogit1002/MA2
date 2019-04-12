@@ -10,7 +10,6 @@ def AE(x, keep_prob, batch_size, latent_size, Training, lr, reuse=False):
         if (reuse):
             scope.reuse_variables()
         flat = encoder(x,Training)
-        flat = tf.layers.flatten(flat)
         z = fullyConnected(flat, name='z', output_size=latent_size)
         output = decoder(z,Training, batch_size)
         cross_entropy = -1. * x * tf.log(output + 1e-10) - (1. - x) * tf.log(1. - output + 1e-10)
@@ -26,7 +25,6 @@ def VAE(x, keep_prob, batch_size, latent_size, Training,lr, reuse=False):
         if (reuse):
             scope.reuse_variables()
         flat = encoder(x,Training)
-        flat = tf.layers.flatten(flat)
         z_mean = fullyConnected(flat, name='z_mean', output_size=latent_size, activation = 'linear')
         z_log_sigma_sq = fullyConnected(flat, name='z_log_sigma_sq', output_size=latent_size, activation = 'linear')
         z = variational(z_mean, z_log_sigma_sq, batch_size, latent_size)
@@ -41,7 +39,6 @@ def VAE(x, keep_prob, batch_size, latent_size, Training,lr, reuse=False):
 def VAE_test(x, keep_prob, batch_size, latent_size, Training,lr,reuse=False):
     with tf.variable_scope("VAE", reuse=tf.AUTO_REUSE):
         flat = encoder(x,Training)
-        flat = tf.layers.flatten(flat)
         z_mean = fullyConnected(flat, name='z_mean', output_size=latent_size, activation = 'linear')
         z_log_sigma_sq = fullyConnected(flat, name='z_log_sigma_sq', output_size=latent_size, activation = 'linear')
         output = decoder(z_mean,Training, batch_size)
@@ -73,8 +70,8 @@ def encoder(x,Training, Name=''):
     p2 = conv2d_nrm(p1, (Name+'conv2'), [5, 5, 64, 128], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
     p3 = conv2d_nrm(p2, (Name+'conv3'), [5, 5, 128, 256], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
     p4 = conv2d_nrm(p3, (Name+'conv4'), [3, 3, 256, 512], Training, [1, 2, 2, 1], 'SAME' ,activation = 'lrelu')
-    #flat = tf.layers.flatten(p4)
-    return p4#flat
+    flat = tf.layers.flatten(p4)
+    return flat
 
 def decoder(z,Training, batchsize, Name='',actf_output='sigmoid'):
     fc1 = fullyConnected(z, name=(Name+'fc1'), output_size=4*4*1024)
@@ -94,18 +91,14 @@ def generator(z, Training, batchsize, reuse=False):
         return output
 
 
-def discriminator(x, Training, reuse=False, pool_typ = 'max'):
-    pooling = {'max':maxpool2d,'avg':avgpool2d}
+def discriminator(x, Training, reuse=False):
     with tf.variable_scope("discriminator") as scope:
         if (reuse):
             scope.reuse_variables()
-        encoded = encoder(x,Training,'d_')
-        extracted = pooling[pool_typ](encoded)
-        vectors = tf.layers.flatten(extracted)
-        flat = tf.layers.flatten(encoded)
+        flat = encoder(x,Training,'d_')
         fc_class = fullyConnected(flat, name='d_fc_class', output_size=1, activation = 'linear')
         sig = tf.nn.sigmoid(fc_class)
-        return sig, fc_class, vectors
+        return sig, fc_class, flat
     
 def variational(z_mean, z_log_sigma_sq, batch_size, latent_size):
     eps = tf.random_normal([batch_size, latent_size], 0.0, 1.0, dtype=tf.float32)
