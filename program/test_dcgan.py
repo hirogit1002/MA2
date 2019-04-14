@@ -12,7 +12,7 @@ from model import*
 from imgproc import*
 from extractor_dcgan import*
 
-def test_network_gan(test_size, latent_size, normalizarion, lr, vector_path, pool_typ):
+def test_network_gan(test_size, latent_size, normalizarion, lr, vector_path, pool_typ,ext_typ):
     print('Test Size',test_size)
     tf.reset_default_graph()
     weight_path = '../weigths/'+'DCGAN'+'_'+str(latent_size) + '.ckpt'
@@ -50,6 +50,6 @@ def test_network_gan(test_size, latent_size, normalizarion, lr, vector_path, poo
     with open(('../save/z_gan_'+str(latent_size)+'.pickle'), 'wb') as f:
         pickle.dump(zs, f)
     print("Extract feature vectors")
-    extractor(latent_size,pool_typ ,Reuse=False)
+    extractor(latent_size,pool_typ, ext_typ,Reuse=False)
     print('Finished')
 

@@ -12,9 +12,11 @@ from model import*
 from imgproc import*
 
 
-def test_network(data, latent_size, normalizarion, model_name,lr):
+def test_network(data, latent_size, normalizarion, model_name,lr,ext_typ):
     models = {'AE':AE,'VAE':VAE_test}
     data = np.array(data)
+    with open("../traindata_for_supervised/train_imgs_sp.pickle", 'rb') as f:
+        images = pickle.load(f)
     n = len(data)
     weight_path = '../weigths/'+model_name +'_'+str(latent_size)+ '.ckpt'
     sess = tf.InteractiveSession()
@@ -31,12 +33,17 @@ def test_network(data, latent_size, normalizarion, model_name,lr):
         saver.restore(sess, weight_path)
         y_values = []
         zs = []
-        for i in data:
-            imgs = np.array(Image.open(i).convert('L'))
-            if (normalizarion):
-                imgs = norm_intg(imgs[np.newaxis,:])
+        if(ext_typ=='test'):
+            images = data
+        for i in images:
+            if(ext_typ=='test'):
+                img = np.array(Image.open(i).convert('L'))
             else:
-                imgs = imgs[np.newaxis,:,:,np.newaxis].astype(np.float32)
+                img = i
+            if (normalizarion):
+                imgs = norm_intg(img[np.newaxis,:])
+            else:
+                imgs = img[np.newaxis,:,:,np.newaxis].astype(np.float32)
                 
             print('Loss:', cost_val.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:1, Training:False}))
             y_value = out.eval(feed_dict={x: imgs, keep_prob:1., Batch_size:1, Training:False})
@@ -48,9 +55,12 @@ def test_network(data, latent_size, normalizarion, model_name,lr):
         sess.close()
     if (normalizarion):
         y_values = y_values*255.
-        
-    path_y_value = '../save/y_value_'+model_name+'_'+str(latent_size)+'.pickle'
-    path_z = '../save/z_'+model_name+'_'+str(latent_size)+'.pickle'
+    if(ext_typ=='test'):
+        extra = ''
+    else:
+        extra = '_train'
+    path_y_value = '../save/y_value_'+model_name+extra+'_'+str(latent_size)+'.pickle'
+    path_z = '../save/z_'+model_name+extra+'_'+str(latent_size)+'.pickle'
     with open(path_y_value, 'wb') as f:
         pickle.dump(y_values, f)
     with open(path_z , 'wb') as f:
