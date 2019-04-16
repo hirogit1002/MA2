@@ -23,7 +23,6 @@ from sklearn.utils.fixes import signature
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import KFold
 from itertools import cycle
-ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 emos_inv = {0:'anger',1:'surprise',2:'disgust',3:'fear',4:'happy',5:'sad'}
 emos_dict = {'anger':0,'surprise':1,'disgust':2,'fear':3,'happy':4,'sad':5}
@@ -31,70 +30,70 @@ emos_idx = [0,1,2,3,4,5]
 emos = ['anger','surprise','disgust','fear','happy','sad']
 colors = cycle(['navy', 'turquoise', 'darkorange', 'cornflowerblue', 'teal','black'])
 
+class load():
+    def __init__(self, path_vector, path_y_value, path_imgs_train='' ,path_vector_train='', path_y_value_train='',emo_num=6, train_sample_num=100):
+        self.vectors = self.load_vectors(path_vector)
+        self.y_value = self.load_pred_imgs(path_y_value)
+        self.y = self.load_label_test()
+        self.y_value = np.array(self.y_value)
+        self.imgs = self.load_imgs()
+        self.idx_without_contempt = np.where(self.y!=2)[0]
+        self.vectors = self.vectors[self.idx_without_contempt]
+        self.y = self.y[self.idx_without_contempt]
+        self.y_value = self.y_value[self.idx_without_contempt]
+        self.imgs = self.imgs[self.idx_without_contempt]
+        self.y[np.where(self.y==7)[0]] = 2
+        self.y = np.array(self.y[:,0])-1.
+        self.n = len(self.vectors)
+        if(path_vector_train!=''):
+            self.vectors_train = self.load_vectors(path_vector_train)
+            self.y_value_train = self.load_pred_imgs(path_y_value_train)
+            self.y_train = self.label_gen_train(emo_num,train_sample_num)
+            with open(path_imgs_train, 'rb') as f:
+                self.imgs_train = pickle.load(f)
+            self.X_train = self.vectors_train
+            self.X_test = self.vectors
+            self.y_test = self.y
+            self.y_value_test = self.y_value
+            self.img_test = self.imgs
+            self.n_test = len(self.imgs)
+        
+    def output(self):
+        return self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.imgs_train, self.img_test, self.n_test
+            
+    def show(self,num,images, size=(5,5)):
+        fig = plt.figure(figsize=size)
+        plt.axis('off')
+        plt.imshow(images[num],cmap='gray')
+        plt.show()
+    def load_imgs(self):
+        imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
+        imgs = np.array([np.array(Image.open(i).convert('L')) for i in imgs_path]) 
+        return imgs
 
-def split(n, vector_intg, y, y_value, img ,test_size):
-    n_test = int(n*test_size)
-    return vector_intg[:-n_test], vector_intg[-n_test:], y[:-n_test], y[-n_test:], y_value[:-n_test], y_value[-n_test:],img[:-n_test], img[-n_test:], n_test
+    def load_pred_imgs(self,path_y_value):
+        with open(path_y_value, 'rb') as f:
+            imgs = pickle.load(f)
+        return imgs
 
+    def load_vectors(self,path_vector):
+        with open(path_vector, 'rb') as f:
+            vectors = pickle.load(f)
+        return vectors
 
-def CV(model,num, test_size=0.3):
-    maximum = 0.
-    minimum = 100.
-    avg = 0.
-    scores =[]
-    perm = []
-    AmAP = []
-    AAPs = np.zeros(6)
-    for i in range(num):
-        model.cv_again(Test_size=test_size)
-        model.fit()
-        _, score = model.predict()
-        mAP, APs, precision, recall = model.evaluate(plot=False)
-        idx = np.argmax([score,maximum])
-        if(idx):
-            perm = model.perm
-        maximum = max(maximum,score)
-        minimum = min(minimum,score)
-        avg += score
-        scores +=[score]
-        AmAP += [mAP]
-        AAPs += np.array(APs)
-    print('Accuracy')
-    print('Average: ', avg/num)
-    print('Maximum: ', maximum)
-    print('Minimum: ',minimum)
-    print('Standard Diviation: ',np.std(scores))
-    print('Average mAP: ',np.mean(AmAP))
-    print('Standard Diviation(mAP): ',np.std(AmAP))
-    print('Emotions',emos)
-    print('Average AP: ',AAPs/num)
-    return scores, perm
+    def load_label_test(self,path_labels='../labels/*.txt'):
+        path_label = np.array(sorted(glob.glob((path_labels))))
+        y = np.array([np.array(pd.read_csv(i,header=None)[0]) for i in path_label])
+        return y
 
+    def label_gen_train(self,emo_num,num):
+        labels = np.array([])
+        for i in range(emo_num):
+            labels = np.append(labels,np.ones(num)*i)
+        return labels
 
-def cv(vectors, y, y_value ,imgs, Test_size=0.3):
-    idx = [np.where(y==i)[0] for i in emos_idx]
-    X_Train, X_Test, y_Train, y_Test, y_value_Train, y_value_Test, img_Train, img_Test, n_Test, Perm = [], [], [], [], [], [], [], [], [], []
-    for i in idx:
-        n = len(i)
-        vectors_emo = vectors[i]
-        y_emo = y[i]
-        y_value_emo = y_value[i]
-        imgs_emo = imgs[i]
-        perm = np.random.permutation(n)
-        X_train, X_test, y_train, y_test, y_value_train, y_value_test, img_train, img_test, n_test=split(n ,vectors_emo[perm], y_emo[perm], y_value_emo[perm] ,imgs_emo[perm], Test_size)
-        X_Train.extend(X_train)
-        X_Test.extend(X_test)
-        y_Train.extend(y_train)
-        y_Test.extend(y_test)
-        y_value_Train.extend(y_value_train)
-        y_value_Test.extend(y_value_test)
-        img_Train.extend(img_train)
-        img_Test.extend(img_test)
-        n_Test.extend(np.array([n_test]))
-        Perm.extend(perm)
-    return np.array(X_Train), np.array(X_Test), np.array(y_Train), np.array(y_Test), np.array(y_value_Train), np.array(y_value_Test), np.array(img_Train), np.array(img_Test), np.array(n_Test), np.array(Perm)
-
-
+    
+    
 def cv_kfold(y, k,emo_num):
     def append(a,k,emo_num):
         leers = []
@@ -116,206 +115,73 @@ def cv_kfold(y, k,emo_num):
             kfd_trn_idx += [shfld [train_idx]]
             kfd_tst_idx += [shfld [test_idx]]
     return append(kfd_trn_idx,k,emo_num), append(kfd_tst_idx,k,emo_num)
-
-
-def load(path_vector,path_y_value,path_labels):
-    with open(path_vector, 'rb') as f:
-        vectors = pickle.load(f)
-    with open(path_y_value, 'rb') as f:
-        y_values = pickle.load(f)
-    path_label = np.array(sorted(glob.glob((path_labels))))
-    y = np.array([np.array(pd.read_csv(i,header=None)[0]) for i in path_label])
-    return vectors,y_values ,y
-
-def imshow_all(path_vector, path_y_value, path_labels, emo='happy',plot='reconst', size=(50,40)):
-    imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
-    imgs = np.array([np.array(Image.open(i).convert('L')) for i in imgs_path])
-    vectors, y_value, y = load(path_vector, path_y_value, path_labels)
-    idx_without_contempt = np.where(y!=2)[0]
-    vectors, y, y_value, imgs = vectors[idx_without_contempt], y[idx_without_contempt], y_value[idx_without_contempt], imgs[idx_without_contempt]
-    y[np.where(y==7)[0]] = 2
-    y = np.array(y[:,0])-1
-    emo_id = emos_dict[emo]
-    plot_idx = np.where(y==emo_id)[0]
-    n=len(plot_idx)
-    h =-(-n//10)
-    if(plot=='reconst'):
-        value = y_value[plot_idx]
-    else:
-        value = imgs[plot_idx]
-    fig = plt.figure(figsize=size)
-    for i in range(n):
-        plt.subplot(h, 10, (i+1))
-        plt.title((str(i+1)+' Label: '+emo))
-        plt.imshow(value[i],cmap='gray')
-    plt.show()
-
-class Finetuning():
-    def __init__(self,path_vector,path_y_value,path_labels,latent_size=100,class_num=7,lr=1e-4,dim=8192,no_extract=False):
-        self.configure()
-        self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
-        self.logs_path = "../logs"
-        self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
-        self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
-        self.imgs = norm_intg(self.imgs,'tanh')
-        self.vectors, self.y_value, self.y = load(path_vector,path_y_value,path_labels)
-        self.y = (self.y -1.).astype(np.int32)
-        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, self.Test_size)
-        self.weight_path_ext = '../weigths/'+'DCGAN' + '.ckpt'
-        self.weight_path_cls = '../weigths/'+'finetuning' + '.ckpt'
-        self.x = tf.placeholder(tf.float32, [None, 64, 64, 1], name='InputData')
-        self.flat = tf.placeholder(tf.float32, [None, dim], name='feature')
-        self.Training = tf.placeholder(dtype=tf.bool, name='Training')
-        self.label = tf.placeholder(tf.int32, [None, 1], name='label')
-        _1,_2, self.encoder = discriminator(self.x, self.Training, reuse=False)
-        self.vectors_train, self.vectors_test = self.extractor()
-        self.vectors_train, self.vectors_test = self.vectors_train[:,0,:], self.vectors_test[:,0,:]
-        if(no_extract):
-            self.vectors_train, self.vectors_test = self.X_train, self.X_test
-        self.class_layer, self.z, self.loss, self.optimizer = self.Class_layer(self.flat, self.label, class_num, latent_size,lr)
-        self.class_layer_val, self.z_val, self.loss_val = self.Class_layer(self.flat, self.label, class_num, latent_size,lr,reuse=True)
-        
-        
-    def Class_layer(self,flat,y,class_num,latent_size,lr,reuse=False):
-        with tf.variable_scope("Class_layer") as scope:
-            if (reuse):
-                scope.reuse_variables()
-            z = fullyConnected(flat, name='z_FT', output_size=latent_size, activation = 'relu')
-            class_layer = fullyConnected(z, name='classifier', output_size=class_num, activation = 'linear')
-            loss = tf.losses.sparse_softmax_cross_entropy(labels=y, logits=class_layer)
-            optimizer = tf.train.AdamOptimizer(lr).minimize(loss)
-            if(reuse):
-                return class_layer, z, loss,
-            else:
-                optimizer = tf.train.AdamOptimizer(lr).minimize(loss)
-                return class_layer, z, loss, optimizer 
- 
-    def configure(self, epochs=20, batch_size=10,test_size=0.3):
-        self.Test_size = test_size
-        self.epochs = epochs
-        self.batch_size = batch_size
-
-    def fit(self):
-        epochs=self.epochs 
-        batch_size=self.batch_size
-        with tf.name_scope('training_ft'):
-            tf.summary.scalar('loss', self.loss)
-        with tf.name_scope('validation_ft'):
-            tf.summary.scalar('loss', self.loss_val)
-        trn_summary = tf.summary.merge_all(scope='training_ft')
-        val_summary = tf.summary.merge_all(scope='validation_ft')
-        with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess_tra:
-            if tf.gfile.Exists(self.logs_path):
-                tf.gfile.DeleteRecursively(self.logs_path)
-            file_writer = tf.summary.FileWriter(self.logs_path, sess_tra.graph)
-            sess_tra.run(tf.global_variables_initializer())
-            saver = tf.train.Saver()
-            start_time = time.time()
-            epoch_time =0.
-            k = 1.
-            n_train=len(self.vectors_train)
-            n_test=len(self.vectors_test)
-            for epoch in range(epochs):
-                epoch_start = time.time()
-                sum_loss = 0
-                n_batches = int(n_train / batch_size)
-                # Loop over all batches
-                counter = 0
-                perm = np.random.permutation(n_train)
-                train_data = self.vectors_train[perm]
-                train_y = self.y_train[perm]
-                for i in range(n_batches):
-                    batch_x = train_data[i*batch_size:(i+1)*batch_size]
-                    batch_y = train_y[i*batch_size:(i+1)*batch_size]
-
-                    # Run optimization op (backprop) and cost op (to get loss value)
-                    _,res_trn,classes, z ,train_cost = sess_tra.run([self.optimizer,trn_summary , self.class_layer, self.z, self.loss], feed_dict={self.flat: batch_x, self.label:batch_y})
-                    sum_loss += train_cost 
-                    sys.stdout.write("\r%s" % "batch: {}/{}, loss: {}, time: {}".format(counter+1, np.int(n_train/batch_size)+1, sum_loss/(i+1),(time.time()-start_time)))
-                    sys.stdout.flush()
-                    counter +=1
-                file_writer.add_summary(res_trn, (epoch+1))
-            
-                saver.save(sess_tra, self.weight_path_cls)
-                print('')
-                print('Epoch', epoch+1, ' / ', epochs, 'Training Loss:', sum_loss/n_batches)
-
-                res_val,classes_val, z_val ,test_cost = sess_tra.run([val_summary , self.class_layer_val, self.z_val, self.loss_val], feed_dict={self.flat: self.vectors_test, self.label:self.y_test})
-                print('Validation Loss:', test_cost/n_test)
-                file_writer.add_summary( res_val, (epoch+1))
-                epoch_end = time.time()-epoch_start
-                epoch_time+=epoch_end
-                print('Time per epoch: ',(epoch_time/k),'s/epoch')
-                print('')
-                k+=1.
-        print('Optimization Finished with time: ',(time.time()-start_time))
-        sess_tra.close()
-        self.classes_val = classes_val
-        return classes_val, z_val ,test_cost
     
-    def predict(self):
-        pred = np.argmax(self.classes_val,axis=1)
-        return pred,(pred.astype(np.int32)==self.y_test[:,0]).sum()/len(pred)
-    
-    
-    def extractor(self):
-        with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess_ext:
-            sess_ext.run(tf.global_variables_initializer())
-            saver = tf.train.Saver()
-            saver.restore(sess_ext, self.weight_path_ext)
-            vectors_train = []
-            vectors_test = []
-            for i in self.img_train:
-                img = i[np.newaxis,:]
-                vector = self.encoder.eval(feed_dict={self.x: img, self.Training:False})
-                vectors_train +=[vector]
-            for i in self.img_test:
-                img = i[np.newaxis,:]
-                vector = self.encoder.eval(feed_dict={self.x: img, self.Training:False})
-                vectors_test +=[vector]
-            vectors_train = np.array(vectors_train)
-            vectors_test = np.array(vectors_test)
-            sess_ext.close()
-        return vectors_train, vectors_test
-    
-    def cv_again(self,Test_size):
-        self.Test_size = Test_size
-        vectors = np.append(self.vectors_train,self.vectors_test,axis=0)
-        label = np.append(self.y_train,self. y_test,axis=0)
-        n = len(label)
-        n_test = int(n*Test_size)
-        self.vectors_train, self.vectors_test =vectors[:-n_test], vectors[-n_test:]
-        self.y_train, self.y_test= label[:-n_test],label[-n_test:]
+def CV_kfold(data,model,k=10, emo_num=6):
+    kfd_trn_idx, kfd_tst_idx = cv_kfold(data.y, k,emo_num)
+    maximum = 0.
+    minimum = 100.
+    avg = 0.
+    scores =[]
+    perm = []
+    AmAP = []
+    precisions, recalls =[],[]
+    AAPs = np.zeros(emo_num)
+    vectors = np.array(data.vectors)
+    y = np.array(data.y)
+    y_value = np.array(data.y_value)
+    imgs = np.array(data.imgs)
+    for i in range(k):
+        trn_idx = np.array(kfd_trn_idx[i],np.int)
+        tst_idx = np.array(kfd_tst_idx[i],np.int)
+        X_train = vectors[trn_idx]
+        X_test = vectors[tst_idx]
+        y_train = y[trn_idx]
+        y_test = y[tst_idx]
+        y_value_train = y_value[trn_idx]
+        y_value_test = y_value[tst_idx]
+        img_train = imgs[trn_idx]
+        img_test = imgs[tst_idx]
+        model.fit(X_train,y_train)
+        _, score = model.predict(X_test,y_test)
+        mAP, APs, precision, recall = model.evaluate(plot=False)
+        idx = np.argmax([score,maximum])
+        if(idx):
+            perm = (trn_idx,tst_idx)
+        maximum = max(maximum,score)
+        minimum = min(minimum,score)
+        avg += score
+        scores +=[score]
+        AmAP += [mAP]
+        AAPs += np.array(APs)
+        precisions +=[precision]
+        recalls +=[recall]
+    AAPs=AAPs/k
+    print('Accuracy')
+    print('Average: ', avg/k)
+    print('Maximum: ', maximum)
+    print('Minimum: ',minimum)
+    print('Standard Diviation: ',np.std(scores))
+    print('Average mAP: ',np.mean(AmAP))
+    print('Standard Diviation(mAP): ',np.std(AmAP))
+    print('Emotions',emos)
+    print('Average AP: ',AAPs)
+    return scores, perm, precisions, recalls
+
 
 class SVM():
-    def __init__(self,path_vector,path_y_value,path_labels,Kernel='linear',Test_size=0.3):
-        print('Data loaded')
-        self.imgs_path = np.array(sorted(glob.glob('../data_test/*.jpg')))
-        self.imgs = np.array([np.array(Image.open(i).convert('L')) for i in self.imgs_path])
-        self.vectors, self.y_value, self.y = load(path_vector,path_y_value,path_labels)
-        self.y_value = np.array(self.y_value)
-        self.idx_without_contempt = np.where(self.y!=2)[0]
-        self.vectors, self.y, self.y_value ,self.imgs = self.vectors[self.idx_without_contempt], self.y[self.idx_without_contempt], self.y_value[self.idx_without_contempt], self.imgs[self.idx_without_contempt]
-        self.y[np.where(self.y==7)[0]] = 2
-        self.y = np.array(self.y[:,0])-1.
-        self.n = len(self.vectors)
-        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
-        print('Construct binary labels')
-        self.bis = []
+    def __init__(self,Kernel='linear'):
         print('Construct SVCs')
         self.model = SVC(kernel=Kernel, random_state=None,gamma='auto')
-        print('Finish construction SVCs')
-
     def evaluate(self,plot=True):
         precision = dict()
         recall = dict()
         average_precision = dict()
         self.bis = []
-        for i in set(self.y):
+        for i in set(self.y_test):
             bi=np.zeros(len(self.y_test),np.int)
             bi[np.where(self.y_test==i)[0]] =1
             self.bis+=[bi]
-        for i in range(len(set(self.y))):
+        for i in range(len(set(self.y_test))):
             precision[i], recall[i], _ = precision_recall_curve(self.bis[i],self.value[:, i])
             average_precision[i] = average_precision_score(self.bis[i], self.value[:, i])  
         if(plot):
@@ -332,7 +198,7 @@ class SVM():
             labels.append('iso-f1 curves')
         mAP = 0.
         APs = []
-        for i, color in zip(range(len(set(self.y))), colors):
+        for i, color in zip(range(len(set(self.y_test))), colors):
             if(plot):
                 l, = plt.plot(recall[i], precision[i], color=color, lw=2)
                 lines.append(l)
@@ -366,164 +232,152 @@ class SVM():
         sns.heatmap(df_cmx, annot=True)
         plt.show()
         
-    def fit(self):
-        self.model.fit(X=self.X_train, y=self.y_train)
+    def fit(self,X_train,y_train):
+        self.model.fit(X=X_train, y=y_train)
     
-    def predict(self):
-        score = self.model.score(X=self.X_test, y=self.y_test)
-        self.value = self.model.decision_function(self.X_test)
-        self.pred = self.model.predict(self.X_test)
+    def predict(self,X_test, y_test):
+        self.y_test = y_test
+        score = self.model.score(X=X_test, y=y_test)
+        self.value = self.model.decision_function(X_test)
+        self.pred = self.model.predict(X_test)
         return self.pred, score
 
-    def visualize(self, pca=True, size=(20,20)):
-        if(pca):
-            decomp = PCA(n_components=30).fit_transform(self.vectors)
-            z_tsne = TSNE(n_components=2, random_state=0).fit_transform(decomp)
-        else:
-            z_tsne = TSNE(n_components=2, random_state=0).fit_transform(self.vectors)
+def visualize(vectors, y,pca=30, size=(20,20)):
+    if(pca>0):
+        decomp = PCA(n_components=pca).fit_transform(vectors)
+        z_tsne = TSNE(n_components=2, random_state=0).fit_transform(decomp)
+    else:
+        z_tsne = TSNE(n_components=2, random_state=0).fit_transform(vectors)
 
-        anger = z_tsne[np.where(self.y==0.)[0]]
-        disgust = z_tsne[np.where(self.y==2.)[0]]
-        fear = z_tsne[np.where(self.y==3.)[0]]
-        happy = z_tsne[np.where(self.y==4.)[0]]
-        sad = z_tsne[np.where(self.y==5.)[0]]
-        surprise = z_tsne[np.where(self.y==1.)[0]]
+    anger = z_tsne[np.where(y==0.)[0]]
+    disgust = z_tsne[np.where(y==2.)[0]]
+    fear = z_tsne[np.where(y==3.)[0]]
+    happy = z_tsne[np.where(y==4.)[0]]
+    sad = z_tsne[np.where(y==5.)[0]]
+    surprise = z_tsne[np.where(y==1.)[0]]
 
-        fig = plt.figure(figsize=size)
-        ax = fig.add_subplot(1,1,1)
-        ax.scatter(anger[:, 0],anger[:, 1], c='red', marker='^', label='anger')
-        ax.scatter(disgust[:, 0],disgust[:, 1], c='blue',marker='o', label='disgust')
-        ax.scatter(fear[:, 0],fear[:, 1], c='green',marker='s', label='fear')
-        ax.scatter(happy[:, 0],happy[:, 1], c='yellow',marker='o', label='happy')
-        ax.scatter(sad[:, 0],sad[:, 1], c='blue',marker='s', label='sad')
-        ax.scatter(surprise[:, 0], surprise[:, 1], c='red',marker='.', label='surprise')
-        ax.set_title('Distribution of emotion')
-        ax.set_xlabel('x')
-        ax.set_ylabel('y')
-        ax.legend(loc='upper left')
-        fig.show()       
+    fig = plt.figure(figsize=size)
+    ax = fig.add_subplot(1,1,1)
+    ax.scatter(anger[:, 0],anger[:, 1], c='red', marker='^', label='anger')
+    ax.scatter(disgust[:, 0],disgust[:, 1], c='blue',marker='o', label='disgust')
+    ax.scatter(fear[:, 0],fear[:, 1], c='green',marker='s', label='fear')
+    ax.scatter(happy[:, 0],happy[:, 1], c='yellow',marker='o', label='happy')
+    ax.scatter(sad[:, 0],sad[:, 1], c='blue',marker='s', label='sad')
+    ax.scatter(surprise[:, 0], surprise[:, 1], c='red',marker='.', label='surprise')
+    ax.set_title('Distribution of emotion')
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.legend(loc='upper left')
+    fig.show()       
         
         
-    def imshow(self,plot='reconst', size=(50,40)):
-        n=self.n_test.sum()
-        h =-(-n//10)
-        if(plot=='reconst'):
-            value = self.y_value_test
-        else:
-            value = self.img_test
-        fig = plt.figure(figsize=size)
-        for i in range(n):
-            plt.subplot(h, 10, (i+1))
-            plt.title((str(i+1)+' Label: '+emos_inv[int(self.y_test[i])]))
-            plt.imshow(value[i],cmap='gray')
-        plt.show()
-        
-    def split_again(self,perm):
-        n = len(self.y)
-        Test_size = self.n_test.sum()/n
-        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test=split(n, self.vectors[perm], self.y[perm], self.y_value[perm], self.imgs[perm] , Test_size)
+def imshow(value,label, size=(50,40)):
+    n = len(value)
+    h =-(-n//10)
+    fig = plt.figure(figsize=size)
+    for i in range(n):
+        plt.subplot(h, 10, (i+1))
+        plt.title((str(i+1)+' Label: '+emos_inv[int(label[i])]))
+        plt.imshow(value[i],cmap='gray')
+    plt.show()
+
     
-    def cv_again(self, Test_size=0.3):
-        self.X_train, self.X_test, self.y_train, self.y_test, self.y_value_train, self.y_value_test, self.img_train, self.img_test, self.n_test, self.perm = cv(self.vectors, self.y, self.y_value ,self.imgs, Test_size)
+class Finetuning():
+    def __init__(self,X_train, X_test, y_train, y_test,latent_size=100,class_num=6,lr=1e-4):
+        self.configure()
+        self.emos_inv = {1:'anger',2:'contempt',3:'disgust',4:'fear',5:'happy',6:'sad',7:'surprise'}
+        self.logs_path = "../logs"
+        self.weight_path_ext = '../weigths/'+'DCGAN' + '.ckpt'
+        self.weight_path_cls = '../weigths/'+'finetuning' + '.ckpt'
+        self.x = tf.placeholder(tf.float32, [None, X_train.shape[1]], name='InputData')
+        self.Training = tf.placeholder(dtype=tf.bool, name='Training')
+        self.label = tf.placeholder(tf.int32, [None, 1], name='label')
+        self.vectors_train, self.vectors_test = X_train, X_test
+        self.y_train, self.y_test = y_train.reshape(len(y_train),1), y_test.reshape(len(y_test),1)
+        self.class_layer, self.z, self.loss, self.optimizer = self.Class_layer(self.x, self.label, class_num, latent_size,lr)
+        self.class_layer_val, self.z_val, self.loss_val = self.Class_layer(self.x, self.label, class_num, latent_size,lr,reuse=True)
         
-    def CV_kfold(self,k=5, emo_num=6):
-        kfd_trn_idx, kfd_tst_idx = cv_kfold(self.y, k,emo_num)
-        maximum = 0.
-        minimum = 100.
-        avg = 0.
-        scores =[]
-        perm = []
-        self.AmAP = []
-        self.precisions, self.recalls =[],[]
-        self.AAPs = np.zeros(emo_num)
-        vectors = np.array(self.vectors)
-        y = np.array(self.y)
-        y_value = np.array(self.y_value)
-        imgs = np.array(self.imgs)
-        for i in range(k):
-            trn_idx = np.array(kfd_trn_idx[i],np.int)
-            tst_idx = np.array(kfd_tst_idx[i],np.int)
-            self.X_train = vectors[trn_idx]
-            self.X_test = vectors[tst_idx]
-            self.y_train = y[trn_idx]
-            self.y_test = y[tst_idx]
-            self.y_value_train = y_value[trn_idx]
-            self.y_value_test = y_value[tst_idx]
-            self.img_train = imgs[trn_idx]
-            self.img_test = imgs[tst_idx]
-            self.fit()
-            _, score = self.predict()
-            mAP, APs, precision, recall = self.evaluate(plot=False)
-            idx = np.argmax([score,maximum])
-            if(idx):
-                perm = (trn_idx,tst_idx)
-            maximum = max(maximum,score)
-            minimum = min(minimum,score)
-            avg += score
-            scores +=[score]
-            self.AmAP += [mAP]
-            self.AAPs += np.array(APs)
-            self.precisions +=[precision]
-            self.recalls +=[recall]
-        self.AAPs=self.AAPs/k
-        print('Accuracy')
-        print('Average: ', avg/k)
-        print('Maximum: ', maximum)
-        print('Minimum: ',minimum)
-        print('Standard Diviation: ',np.std(scores))
-        print('Average mAP: ',np.mean(self.AmAP))
-        print('Standard Diviation(mAP): ',np.std(self.AmAP))
-        print('Emotions',emos)
-        print('Average AP: ',self.AAPs)
-        return scores, perm, self.precisions, self.recalls
+        
+    def Class_layer(self,flat,y,class_num,latent_size,lr,reuse=False):
+        with tf.variable_scope("Class_layer") as scope:
+            if (reuse):
+                scope.reuse_variables()
+            z = fullyConnected(flat, name='z_FT', output_size=latent_size, activation = 'relu')
+            class_layer = fullyConnected(z, name='classifier', output_size=class_num, activation = 'linear')
+            loss = tf.losses.sparse_softmax_cross_entropy(labels=y, logits=class_layer)
+            optimizer = tf.train.AdamOptimizer(lr).minimize(loss)
+            if(reuse):
+                return class_layer, z, loss,
+            else:
+                optimizer = tf.train.AdamOptimizer(lr).minimize(loss)
+                return class_layer, z, loss, optimizer 
+ 
+    def configure(self, epochs=20, batch_size=10,test_size=0.3):
+        self.epochs = epochs
+        self.batch_size = batch_size
 
-    def average_pr_curve(self,k):
-        emonum = len(set(self.y))
-        arecall = [np.array([])for i in range(emonum)]
-        aprecisions = [np.array([])for i in range(emonum)]
-        for i in range(k):
-            for j in range(emonum):
-                arecall[j] = np.append(arecall[j],self.recalls[i][j])
-                aprecisions[j] = np.append(aprecisions[j],self.precisions[i][j])
-        set_dict = dict()
-        set_dict = [set(i) for i in arecall]
-        new_recalls, new_precisions = [],[]
-        for i in range(emonum):
-            new_recall = np.empty(len(set_dict[i]))
-            new_precision = np.empty(len(set_dict[i]))
-            count = 0
-            for j in set_dict[i]:
-                idx = np.where(arecall[i]==j)[0]
-                new_recall[count] = j
-                new_precision[count]  = np.mean(aprecisions[i][idx])
-                count+=1
-            new_recalls+=[new_recall]
-            new_precisions+=[new_precision]
-        plt.figure(figsize=(7, 8))
-        f_scores = np.linspace(0.2, 0.8, num=4)
-        lines = []
-        labels = []
-        for f_score in f_scores:
-            x = np.linspace(0.01, 1)
-            y = f_score * x / (2 * x - f_score)
-            l, = plt.plot(x[y >= 0], y[y >= 0], color='gray', alpha=0.2)
-            plt.annotate('f1={0:0.1f}'.format(f_score), xy=(0.9, y[45] + 0.02))
-        lines.append(l)
-        labels.append('iso-f1 curves')
-        mAP = 0.
-        for i, color in zip(range(len(set(self.y))), colors):
-            idx_ = np.argsort(new_recalls[i])
-            l, = plt.plot(new_recalls[i][idx_], new_precisions[i][idx_], color=color, lw=2)
-            lines.append(l)
-            labels.append('Precision-recall for class: {0} (AP = {1:0.2f})'''.format(emos_inv[i], self.AAPs[i]))
-        mAP = np.mean(self.AmAP)
-        fig = plt.gcf()
-        fig.subplots_adjust(bottom=0.25)
-        plt.xlim([0.0, 1.0])
-        plt.ylim([0.0, 1.05])
-        plt.xlabel('Recall')
-        plt.ylabel('Precision')
-        ttl = 'Precision-Recall curve with mAP = ' + str(mAP)
-        plt.title(ttl)
-        plt.legend(lines, labels, loc=(1.1, 0.5), prop=dict(size=14))
-        plt.show()
+    def fit(self):
+        epochs=self.epochs 
+        batch_size=self.batch_size
+        with tf.name_scope('training_ft'):
+            tf.summary.scalar('loss', self.loss)
+        with tf.name_scope('validation_ft'):
+            tf.summary.scalar('loss', self.loss_val)
+        trn_summary = tf.summary.merge_all(scope='training_ft')
+        val_summary = tf.summary.merge_all(scope='validation_ft')
+        with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess_tra:
+            if tf.gfile.Exists(self.logs_path):
+                tf.gfile.DeleteRecursively(self.logs_path)
+            file_writer = tf.summary.FileWriter(self.logs_path, sess_tra.graph)
+            sess_tra.run(tf.global_variables_initializer())
+            saver = tf.train.Saver()
+            start_time = time.time()
+            epoch_time =0.
+            k = 1.
+            n_train=len(self.vectors_train)
+            n_test=len(self.vectors_test)
+            accuracys = []
+            for epoch in range(epochs):
+                epoch_start = time.time()
+                sum_loss = 0
+                n_batches = int(n_train / batch_size)
+                # Loop over all batches
+                counter = 0
+                perm = np.random.permutation(n_train)
+                train_data = self.vectors_train[perm]
+                train_y = self.y_train[perm]
+                for i in range(n_batches):
+                    batch_x = train_data[i*batch_size:(i+1)*batch_size]
+                    batch_y = train_y[i*batch_size:(i+1)*batch_size]
+
+                    # Run optimization op (backprop) and cost op (to get loss value)
+                    _,res_trn,classes, z ,train_cost = sess_tra.run([self.optimizer,trn_summary , self.class_layer, self.z, self.loss], feed_dict={self.x: batch_x, self.label:batch_y})
+                    sum_loss += train_cost 
+                    sys.stdout.write("\r%s" % "batch: {}/{}, loss: {}, time: {}".format(counter+1, np.int(n_train/batch_size)+1, sum_loss/(i+1),(time.time()-start_time)))
+                    sys.stdout.flush()
+                    counter +=1
+                file_writer.add_summary(res_trn, (epoch+1))
+            
+                saver.save(sess_tra, self.weight_path_cls)
+                print('')
+                print('Epoch', epoch+1, ' / ', epochs, 'Training Loss:', sum_loss/n_batches)
+
+                res_val,classes_val, z_val ,test_cost = sess_tra.run([val_summary , self.class_layer_val, self.z_val, self.loss_val], feed_dict={self.x: self.vectors_test, self.label:self.y_test})
+                print('Validation Loss:', test_cost/n_test)
+                accuracy = (np.argmax(classes_val,axis=1)==self.y_test[:,0].astype(np.int)).sum()/len(self.y_test)
+                accuracys += [accuracy]
+                print('Accuracy:', accuracy)
+                file_writer.add_summary( res_val, (epoch+1))
+                epoch_end = time.time()-epoch_start
+                epoch_time+=epoch_end
+                print('Time per epoch: ',(epoch_time/k),'s/epoch')
+                print('')
+                k+=1.
+        print('Optimization Finished with time: ',(time.time()-start_time))
+        sess_tra.close()
+        self.classes_val = classes_val
+        return classes_val, z_val ,test_cost,accuracys
+    
+    def predict(self):
+        pred = np.argmax(self.classes_val,axis=1)
+        return pred,(pred.astype(np.int32)==self.y_test[:,0]).sum()/len(pred)
