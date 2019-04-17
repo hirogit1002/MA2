@@ -169,9 +169,9 @@ def CV_kfold(data,model,k=10, emo_num=6):
 
 
 class SVM():
-    def __init__(self,Kernel='linear'):
+    def __init__(self,Kernel='linear',C=1.0):
         print('Construct SVCs')
-        self.model = SVC(kernel=Kernel, random_state=None,gamma='auto')
+        self.model = SVC(kernel=Kernel,C=C ,random_state=None,gamma='auto')
     def evaluate(self,plot=True):
         precision = dict()
         recall = dict()
