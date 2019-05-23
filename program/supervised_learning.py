@@ -381,3 +381,36 @@ class Finetuning():
     def predict(self):
         pred = np.argmax(self.classes_val,axis=1)
         return pred,(pred.astype(np.int32)==self.y_test[:,0]).sum()/len(pred)
+
+def mean_and_cov(X,Y):
+    Mu = []
+    Z = []
+    y = np.unique(Y)
+    for i in y:
+        idx = np.where(Y==i)[0]
+        mu = np.mean(X[idx],0)
+        z = np.cov(X[idx].T)
+        Mu+= [mu]
+        Z+= [z]
+    return np.array(Mu), np.array(Z)
+
+def KL_dive(Mu_0,Z_0,Mu_1,Z_1,tol):
+    d = len(Mu_0)
+    detZ0=np.linalg.det(Z_0)
+    detZ1=np.linalg.det(Z_1)
+    invZ1=np.linalg.inv(Z_1+np.eye(d)*tol)
+    mu1_mu0 = (Mu_1 - Mu_0).reshape(d,1)
+    kernel = np.dot(mu1_mu0.T,np.dot(invZ1,mu1_mu0))
+    0.5*(np.log(detZ1/detZ0)-d+np.trace(np.dot(invZ1,Z_0))+kernel)
+    return kernel
+
+
+def KL_all_conbo(X,Y,Tol=0.00001):
+    Mu,Z = mean_and_cov(X,Y)
+    n = len(Mu)
+    KL_values=np.empty((n,n))
+    for i in range(n):
+         for j in range(n):
+                value = KL_dive(Mu[i],Z[i],Mu[j],Z[j],tol=Tol)
+                KL_values[i,j]=value[0,0]
+    return KL_values
