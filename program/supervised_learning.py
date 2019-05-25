@@ -372,10 +372,11 @@ class Finetuning():
                 print('Time per epoch: ',(epoch_time/k),'s/epoch')
                 print('')
                 k+=1.
+            classes, z, train_cost = sess_tra.run([self.class_layer,self.z,self.z_val], feed_dict={self.x: self.vectors_train,self.label:self.y_train})
         print('Optimization Finished with time: ',(time.time()-start_time))
         sess_tra.close()
         self.classes_val = classes_val
-        return classes_val, z_val ,test_cost,accuracys
+        return classes_val,z, z_val ,test_cost,accuracys
     
     def predict(self):
         pred = np.argmax(self.classes_val,axis=1)
