@@ -19,7 +19,6 @@ import sys
 import matplotlib.pyplot as plt
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import average_precision_score
-from sklearn.utils.fixes import signature
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import KFold
 from itertools import cycle
